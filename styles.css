@@ -1,0 +1,307 @@
+/* Global Styles */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffffff;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  /* Header */
+  header {
+    background: #0077b6;
+    color: white;
+    padding: 10px;
+    top: 0;
+    transition: top 0.3s ease-in-out;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Navbar Container */
+  .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 0 15px;
+  }
+  
+  /* Hamburger Menu (hidden on desktop) */
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+  .hamburger:hover {
+    transform: scale(1.2);
+  }
+  
+  /* Logo and Company Name */
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+  }
+  .logo img {
+    height: 60px;
+  }
+  .shop-name {
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  
+  /* Desktop Search Bar */
+  .nav-container .search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 25px;
+    padding: 5px 10px;
+    width: 60%;
+    position: relative;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .nav-container .search-box input {
+    border: none;
+    outline: none;
+    padding: 8px;
+    flex: 1;
+    border-radius: 20px;
+    font-size: 14px;
+  }
+  .nav-container .search-box .search-btn {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: #0077b6;
+  }
+  
+  /* Autocomplete for Desktop */
+  #autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    width: 100%;
+    list-style: none;
+    padding: 0;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    margin-top: 5px;
+  }
+  #autocomplete-list li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  #autocomplete-list li:hover {
+    background: #f0f8ff;
+  }
+  
+  /* Navigation Icons */
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .nav-icons a,
+  .nav-icons button {
+    background: none;
+    border: none;
+    color: white;
+    text-decoration: none;
+    font-size: 24px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+  .nav-icons a:hover,
+  .nav-icons button:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Cart Icon */
+  .cart-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .cart-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Categories (Desktop Only) */
+  #categories {
+    text-align: center;
+  }
+  .category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .category-buttons button {
+    background: white;
+    color: #03045e;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    font-size: 16px;
+  }
+  .category-buttons button:hover {
+    background: #0077b6;
+    color: white;
+  }
+  
+  /* Mobile Search Bar (Animated) */
+  .mobile-search {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+  }
+  .mobile-search.active {
+    max-height: 80px; /* Adjust based on your search box height */
+  }
+  .mobile-search .search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 25px;
+    padding: 5px 10px;
+    margin: 10px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .mobile-search .search-box input {
+    border: none;
+    outline: none;
+    padding: 8px;
+    flex: 1;
+    border-radius: 20px;
+    font-size: 14px;
+  }
+  .mobile-search .search-box .search-btn {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: #0077b6;
+  }
+  
+  /* Autocomplete for Mobile */
+  #mobile-autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 15px;
+    right: 15px;
+    background: white;
+    list-style: none;
+    padding: 0;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    margin-top: 5px;
+  }
+  #mobile-autocomplete-list li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  #mobile-autocomplete-list li:hover {
+    background: #f0f8ff;
+  }
+  
+  /* Mobile Search Toggle Button (only visible on mobile) */
+  @media (max-width: 768px) {
+    /* Hide the desktop search box */
+    .nav-container .search-box {
+      display: none;
+    }
+    /* Show mobile search toggle */
+    #mobile-search-toggle {
+      display: inline-flex;
+    }
+  }
+  @media (min-width: 769px) {
+    /* Hide mobile-specific elements on desktop */
+    #mobile-search,
+    #mobile-search-toggle {
+      display: none;
+    }
+  }
+  
+  /* Mobile Menu (Sidebar) */
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100vh;
+    background: #0077b6;
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: left 0.3s ease-in-out;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-menu.active {
+    left: 0;
+  }
+  .close-menu {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    align-self: flex-end;
+    cursor: pointer;
+  }
+  .mobile-category-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  .mobile-category-buttons button {
+    background: white;
+    color: #03045e;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    font-size: 16px;
+  }
+  .mobile-category-buttons button:hover {
+    background: #0077b6;
+    color: white;
+  }
+  
