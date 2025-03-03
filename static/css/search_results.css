@@ -1,0 +1,347 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+}
+.sk-search_results-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  margin-top: 120px;
+}
+/* Header Container */
+.sk-search_results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.sk-search_results-left h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.sk-search_results-subheading {
+  color: #777;
+  margin: 0;
+}
+.sk-search_results-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+/* Dropdown Container */
+.sk-search_results-dropdown {
+  position: relative;
+  display: inline-block;
+}
+/* Dropdown Button */
+.sk-search_results-dropdown-btn {
+  background-color: #ffa500; /* Orange */
+  border: none;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  outline: none;
+  transition: background-color 0.2s ease;
+}
+.sk-search_results-dropdown-btn:hover {
+  background-color: #ff8c00;
+}
+/* Dropdown Content */
+.sk-search_results-dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #fff;
+  min-width: 150px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 999;
+}
+.sk-search_results-dropdown-content a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+.sk-search_results-dropdown-content a:hover {
+  background-color: #f2f2f2;
+}
+/* Show dropdown when container is active */
+.sk-search_results-dropdown.active .sk-search_results-dropdown-content {
+  display: block;
+}
+/* Responsive Adjustments for Mobile & Tablet */
+@media (max-width: 768px) {
+  .sk-search_results-left h1 {
+    font-size: 1.25rem;
+  }
+  .sk-search_results-dropdown-btn {
+    font-size: 0.9rem;
+    padding: 0.65rem 0.8rem;
+  }
+  .sk-search_results-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sk-search_results-right {
+    margin-top: 1rem;
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/***** FLASH SALE SECTION *****/
+
+#search_results-sale {
+  width: 100%;
+  padding: 5px;
+  background-color: #fdfbf6; /* Light background to highlight the cards */
+  box-sizing: border-box;
+  margin-top: 40px;
+}
+
+/* Header (Title + Explore All Button) */
+.search_results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+/* Title */
+.search_results-header h2 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  color: black;
+  font-size: 24px;
+  margin: 0;
+}
+
+
+/* Product Cards Layout */
+.search_results-products {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+
+/* Product Card */
+.search_results-card {
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.search_results-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+/* Product Card Image */
+.search_results-card-image {
+  position: relative;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.search_results-img-primary {
+  width: 100%;
+  display: block;
+}
+
+.search_results-img-secondary {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.search_results-card-image:hover .search_results-img-secondary {
+  opacity: 1;
+}
+
+/* Product Title */
+.search_results-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: black;
+  margin: 10px 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Product Rating */
+.search_results-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+  color: #ffc107;
+  font-size: 14px;
+}
+
+.search_results-rating i {
+  margin-right: 2px;
+}
+
+.search_results-rating-text {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  color: #333;
+  margin-left: 5px;
+}
+
+/* Product Pricing */
+.search_results-pricing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.search_results-discount-price {
+  font-weight: bold;
+  color: orange;
+}
+
+.search_results-original-price {
+  color: grey;
+  font-weight: bold;
+  text-decoration: line-through;
+  font-size: 12px;
+}
+
+.search_results-discount-percent {
+  color: #2a9d8f;
+  font-weight: bold;
+  font-size: 16px;
+  font-style: italic;
+}
+
+/* Add to Cart Button */
+.search_results-add-cart-btn {
+  background-color: #ffde59;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.search_results-add-cart-btn:hover {
+  background-color: #ffa500;
+  transform: scale(1.03);
+}
+
+/* Mobile Button Wrapper */
+.search_results-mobile-wrapper {
+  display: none;
+}
+
+/* RESPONSIVE STYLES */
+@media (max-width: 992px) {
+  .search_results-products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .search_results-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search_results-products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+
+
+}
+
+/* SCROLL ANIMATION CLASSES */
+.search_results-card.search_results-card-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.search_results-card.search_results-card-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+
+
+/* Pagination Container */
+.search_results-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  margin-top: 50px;
+}
+
+/* Pagination Links & Ellipsis */
+.search_results-pagination a,
+.search_results-pagination span {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #333;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+}
+
+.search_results-pagination a:hover {
+  background-color: #e0e0e0;
+}
+
+/* Active Page */
+.search_results-pagination-page.active {
+  background-color: orange;
+  color: #fff;
+  pointer-events: none;
+}
+
+/* Ellipsis Styling */
+.search_results-pagination-ellipsis {
+  padding: 8px 12px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  color: #333;
+}

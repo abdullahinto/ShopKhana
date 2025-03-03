@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+
+  <!-- Google Font: Bangers -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+  <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <!-- <script defer src="{{ url_for('static', filename='js/auth.js') }}"></script> -->
+
+
+  {% block extra_css %}
+
+  {% endblock extra_css %}
+
+
+
+  {% block extra_js %}
+
+  {% endblock extra_js %}
+
+
+
+  <title>{% block title %}ShopKhana | Home {% endblock title %}</title>
+
+
+
+  <style>
+    /* Global Box Sizing and Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Global Styles */
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #FDFBF6;
+      /* Ensuring overall page color */
+      transition: background 0.3s ease-in-out;
+    }
+
+
+    #toast-container>.toast {
+      border: 1px solid orange;
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <header id="header">
+    <div class="nav-container">
+      <!-- Hamburger Menu (visible only on mobile) -->
+      <button id="menu-btn" class="hamburger" title="Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Logo and Company Name -->
+      <div class="logo">
+        <a href="{{url_for('main_page')}}">
+          <img class="mylogo" src="{{ url_for('static', filename='img/mylogo.png') }}" alt="ShopKhana" />
+          <img class="co-name" src="{{ url_for('static', filename='img/ShopKhana.svg') }}" alt="ShopKhana">
+        </a>
+      </div>
+
+      <!-- Desktop Search Bar (hidden on mobile) -->
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search in ShopKhana..." />
+        <button class="search-btn">
+          <i class="fas fa-search"></i>
+        </button>
+        <ul id="autocomplete-list"></ul>
+      </div>
+
+      <!-- Navigation Icons -->
+      <div class="nav-icons">
+        <!-- Login Icon with Dropdown -->
+        <div class="dropdown-container">
+          <a href="#" title="Login" id="login-icon"><i class="fas fa-user"></i></a>
+          <div class="dropdown-menu" id="dropdown-menu">
+
+            <div class="dropdown-item" data-href="{{url_for('manage_account')}}">
+              <i class="fas fa-user-cog"></i> Manage Account
+            </div>
+
+
+            <div class="dropdown-item" data-href="{{url_for('my_orders')}}">
+              <i class="fas fa-box"></i> My Orders
+            </div>
+            <div class="dropdown-item" data-href="{{url_for('my_wish')}}">
+              <i class="fas fa-heart"></i> My Wishlist
+            </div>
+            <div class="dropdown-item" data-href="{{url_for('my_reviews')}}">
+              <i class="fas fa-star"></i> My Reviews
+            </div>
+            <div class="dropdown-item" data-href="{{url_for('returns_page')}}">
+              <i class="fas fa-undo-alt"></i> My Returns
+            </div>
+            <div class="dropdown-item" data-href="{{url_for('cancel_page')}}">
+              <i class="fas fa-minus-circle"></i> My Cancellations
+
+            </div>
+            <div class="dropdown-item">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Icons -->
+        <a href="{{url_for('my_wish')}}" title="Wishlist"><i class="fas fa-heart"></i></a>
+        <a href="{{url_for('cart')}}" class="cart-icon" title="Cart">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count">2</span>
+        </a>
+
+        <!-- Mobile Search Toggle (only visible on mobile) -->
+        <button id="mobile-search-toggle" class="mobile-search-toggle" title="Search">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Categories Navigation (Desktop only: visible above 768px) -->
+    <nav id="categories">
+      <div class="category-buttons">
+        <button><i class="fas fa-box-open"></i> New Arrivals</button>
+        <button><i class="fas fa-gift"></i> Gift Deals</button>
+        <button><i class="fas fa-bolt"></i> Flash Sale</button>
+        <button><i class="fas fa-thumbs-up"></i> Best Buy</button>
+
+      </div>
+    </nav>
+
+    <!-- Mobile Search Bar (hidden by default, toggled by the search icon) -->
+    <div id="mobile-search" class="mobile-search">
+      <div class="search-box">
+        <input type="text" id="mobile-search-input" placeholder="Search in ShopKhana..." />
+        <button class="search-btn">
+          <i class="fas fa-search"></i>
+        </button>
+        <ul id="mobile-autocomplete-list"></ul>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- Mobile Menu (Sidebar) -->
+  <div id="mobile-menu" class="mobile-menu">
+    <button id="close-menu" class="close-menu" title="Close Menu">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="mobile-category-buttons">
+      <button><i class="fas fa-box-open"></i> New Arrivals</button>
+      <button><i class="fas fa-gift"></i> Gift Deals</button>
+      <button><i class="fas fa-bolt"></i> Flash Sale</button>
+      <button><i class="fas fa-thumbs-up"></i> Best Buy</button>
+    </div>
+  </div>
+
+
+  <!-- Auth Popup Overlay -->
+  <div id="authPopup" class="auth-popup">
+    <div class="auth-container">
+      <!-- Close Button -->
+      <span class="close-btn">&times;</span>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="tab-btn active" data-tab="signupTab">Sign up</button>
+        <button class="tab-btn" data-tab="loginTab">Login</button>
+      </div>
+
+      <!-- Tab Content Wrapper -->
+      <div class="auth-forms">
+
+        <!-- SIGN UP TAB -->
+        <div id="signupTab" class="tab-content active">
+          <form class="auth-form" id="signupForm">
+            <input type="text" id="signupPhoneEmail" placeholder="Please enter your Phone Number or Email" required />
+            <div class="password-field">
+              <input type="password" id="signupPassword" placeholder="Please enter your password" required />
+              <span class="toggle-password" data-target="signupPassword">
+                <i class="fas fa-eye"></i>
+              </span>
+            </div>
+            <button type="submit" class="cta-btn">Sign up</button>
+          </form>
+
+          <p class="or-text">Or Sign up with</p>
+          <div class="social-login">
+            <button class="social-btn google">
+              <i class="fab fa-google"></i> Google
+            </button>
+            <button class="social-btn facebook">
+              <i class="fab fa-facebook-f"></i> Facebook
+            </button>
+          </div>
+        </div>
+
+        <!-- LOGIN TAB -->
+        <div id="loginTab" class="tab-content">
+          <form class="auth-form" id="loginForm">
+            <input type="text" id="loginPhoneEmail" placeholder="Please enter your Phone Number or Email" required />
+            <div class="password-field">
+              <input type="password" id="loginPassword" placeholder="Please enter your password" required />
+              <span class="toggle-password" data-target="loginPassword">
+                <i class="fas fa-eye"></i>
+              </span>
+            </div>
+            <button type="submit" class="cta-btn">Login</button>
+          </form>
+
+          <p class="or-text">Or Login with</p>
+          <div class="social-login">
+            <button class="social-btn google">
+              <i class="fab fa-google"></i> Google
+            </button>
+            <button class="social-btn facebook">
+              <i class="fab fa-facebook-f"></i> Facebook
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  {% block body %}
+  {% endblock body %}
+
+
+
+</body>
+
+<footer id="site-footer">
+  <div class="footer-top">
+    <!-- 1) CUSTOMER SERVICE -->
+    <div class="footer-column">
+      <h3>Customer Service</h3>
+      <ul>
+        <li><a href="#">Help Center</a></li>
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">FAQs</a></li>
+        <li><a href="#">Return Policy</a></li>
+        <li><a href="#">Shipping Info</a></li>
+      </ul>
+    </div>
+
+    <!-- 2) SHOPPING & COLLABORATE -->
+    <div class="footer-column">
+      <h3>Shopping With Us</h3>
+      <ul>
+        <li><a href="#">Making Payments</a></li>
+        <li><a href="#">Delivery Options</a></li>
+        <li><a href="#">Buyer Protection</a></li>
+      </ul>
+
+      <h3>Collaborate With Us</h3>
+      <ul>
+        <li><a href="#">Partnerships</a></li>
+        <li><a href="#">Affiliate Program</a></li>
+      </ul>
+    </div>
+
+    <!-- 3) ABOUT US -->
+    <div class="footer-column">
+      <h3>About Us</h3>
+      <p>
+        We are ShopKhana, your #1 source for all things eCommerce.
+        We strive to give you the best shopping experience with a wide range of products.
+      </p>
+      <a href="#" class="read-more-btn">Read More</a>
+    </div>
+
+    <!-- 4) PAY WITH -->
+    <div class="footer-column">
+      <h3>Pay With</h3>
+      <div class="payment-logos">
+        <!-- Font Awesome Payment Icons -->
+        <i class="fab fa-cc-visa" title="Visa"></i>
+        <i class="fab fa-cc-mastercard" title="MasterCard"></i>
+        <i class="fab fa-cc-paypal" title="PayPal"></i>
+        <img src="{{ url_for('static', filename='img/jazzcash.jfif') }}" class="jazz-cash-logo" alt="Jazz Cash"
+          title="Jazz Cash">
+        <img src="{{ url_for('static', filename='img/epaisa.webp') }}" class="epaisa-logo" alt="Easy Paisa"
+          title="Easy paisa">
+        <i class="fas fa-credit-card" title="Credit Card"></i>
+      </div>
+    </div>
+
+    <!-- 5) STAY CONNECTED -->
+    <div class="footer-column">
+      <h3>Stay Connected</h3>
+      <div class="social-icons-footer">
+        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+
+    <!-- 6) NEWSLETTER & LANGUAGE -->
+    <div class="footer-column">
+      <h3>Newsletter Signup</h3>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Your Email" required />
+        <button type="submit">Subscribe</button>
+      </form>
+
+      <h3>Language</h3>
+      <div class="language-selector">
+        <select>
+          <option value="en">English</option>
+          <option value="ur">Urdu</option>
+          <option value="fr">French</option>
+          <option value="ar">Arabic</option>
+          <!-- Add more languages as needed -->
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 ShopKhana. All rights reserved.</p>
+  </div>
+</footer>
+
+</html>

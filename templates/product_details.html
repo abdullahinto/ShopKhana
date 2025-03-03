@@ -1,0 +1,531 @@
+{% extends 'index.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_details.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_extra_info.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/related_products.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rev.css') }}" />
+{% endblock extra_css %}
+
+{% block extra_js %}
+<script defer src="{{ url_for('static', filename='js/product_details.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/product_extra_info.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/related_products.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/rev.js') }}"></script>
+{% endblock extra_js %}
+
+{% block title %}ShopKhana - Details{% endblock title %}
+
+{% block body %}
+<!-- BREADCRUMBS -->
+<nav class="breadcrumbs">
+  <a href="#">Home</a>
+  <i class="fas fa-chevron-right"></i>
+  <a href="#">Fashion</a>
+  <i class="fas fa-chevron-right"></i>
+  <a href="#">Women Leather Handbag</a>
+</nav>
+
+<!-- PRODUCT DETAILS SECTION -->
+<section id="product-details-section" class="scroll-hidden">
+
+  <!-- PRODUCT NAME & SHARE -->
+  <div class="product-header">
+    <h1 class="product-name">Daisy – Oil Gel Pen yen hai hai kgis hg women leather handbag</h1>
+    <div class="share-section">
+      <a href="#" id="share-trigger" class="share-trigger">
+        <i class="fas fa-share-alt"></i> Share
+      </a>
+    </div>
+  </div>
+
+  <div class="product-layout">
+    <!-- LEFT COLUMN: IMAGES -->
+    <div class="image-gallery">
+      <!-- Thumbnails -->
+      <div class="thumbnails">
+        <img src="{{ url_for('static', filename='img/pro1 (1).jfif') }}" alt="Thumb 1" class="active-thumb"
+          data-full="{{ url_for('static', filename='img/pro1 (1).jfif') }}" />
+        <img src="{{ url_for('static', filename='img/pro1 (2).jfif') }}" alt="Thumb 2"
+          data-full="{{ url_for('static', filename='img/pro1 (2).jfif') }}" />
+        <img src="{{ url_for('static', filename='img/pro1 (3).jfif') }}" alt="Thumb 3"
+          data-full="{{ url_for('static', filename='img/pro1 (3).jfif') }}" />
+      </div>
+
+      <!-- Main Image Container -->
+      <div class="main-image">
+        <!-- Overlaid Navigation Buttons -->
+        <button class="nav-btn prev-btn" aria-label="Previous Image">&#10094;</button>
+        <button class="nav-btn next-btn" aria-label="Next Image">&#10095;</button>
+        <img id="main-product-image" src="{{ url_for('static', filename='img/pro1 (1).jfif') }}"
+          alt="Main Product Image" />
+        <!-- Zoom Modal -->
+        <div id="zoom-modal" class="zoom-modal">
+          <img id="zoom-img" src="" alt="Zoomed Image" />
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: DETAILS -->
+    <div class="product-info">
+      <!-- PRICE & DISCOUNT BADGE -->
+      <div class="price-section">
+        <span id="discount-price" class="discount-price"></span>
+        <span id="original-price" class="original-price"></span>
+        <span id="discount-badge" class="discount-badge"></span>
+      </div>
+
+      <!-- STATUS, RATINGS, SOLD -->
+      <div class="status-rating">
+        <span class="status">
+          <i class="fas fa-circle in-stock"></i> <b>In Stock</b>
+        </span>
+        <span class="rating">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          <span class="rating-number">4.5/5</span>
+        </span>
+        <span class="sold-quantity">
+          <i class="fas fa-fire"></i> 53 sold in last 24 hours
+        </span>
+      </div>
+
+      <!-- VARIATIONS (Sizes) -->
+      <div class="variations-section">
+        <label>Sizes:</label>
+        <div class="variation-list">
+          <button class="variation-btn">Large</button>
+          <button class="variation-btn">Medium</button>
+          <button class="variation-btn">XL</button>
+          <button class="variation-btn">XXL</button>
+          <button class="variation-btn">Large</button>
+          <button class="variation-btn">Medium</button>
+          <button class="variation-btn">XL</button>
+          <button class="variation-btn">XXL</button>
+        </div>
+      </div>
+
+      <!-- QUANTITY & FAVORITE -->
+      <div class="quantity-favorite">
+        <label>Quantity</label>
+        <div class="quantity-box">
+          <button id="qty-decrease"><i class="fas fa-minus"></i></button>
+          <input type="number" id="quantity-input" value="1" min="1" max="50" />
+          <button id="qty-increase"><i class="fas fa-plus"></i></button>
+        </div>
+        <button id="favorite-btn" class="favorite-btn" title="Add to favorites">
+          <i class="far fa-heart"></i>
+        </button>
+      </div>
+
+      <!-- ASK A QUESTION -->
+      <div class="ask-question">
+        <a href="#" id="ask-question-trigger" class="ask-question-trigger">
+          <i class="fas fa-question-circle"></i> Ask a question
+        </a>
+      </div>
+
+      <!-- ADD TO CART & BUY NOW -->
+      <div class="action-buttons">
+        <button id="add-to-cart-btn" class="PD_add-to-cart-btn">Add to Cart</button>
+        <button data-href="{{url_for('del_info_promo_page')}}" id="buy-now-btn" class="PD_buy-now-btn">Buy Now</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHARE POPUP (HIDDEN BY DEFAULT) -->
+<div id="share-popup" class="share-popup">
+  <div class="share-content">
+    <button class="close-share">&times;</button>
+    <h3>Share this product</h3>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" title="Share on Facebook"
+        target="_blank">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="https://twitter.com/intent/tweet?url={{ request.url }}" title="Share on Twitter" target="_blank">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://www.instagram.com" title="Share on Instagram" target="_blank">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://wa.me/?text={{ request.url }}" title="Share on WhatsApp" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+      </a>
+    </div>
+    <div class="share-link">
+      <input type="text" id="product-link" readonly />
+      <button id="copy-link-btn">Copy Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASK A QUESTION MODAL (HIDDEN BY DEFAULT) -->
+<div id="ask-question-modal" class="ask-question-modal">
+  <div class="modal-content">
+    <button class="close-modal">&times;</button>
+    <h3 style="text-align: center; margin-bottom: 20px;">Ask a Question</h3>
+    <label for="product-link-modal">Product Link:</label>
+    <input type="text" id="product-link-modal" value="{{ request.url }}" readonly />
+    <label for="question-input">Your Question:</label>
+    <textarea id="question-input" placeholder="Type your question here..."></textarea>
+    <button id="send-question-btn">Send</button>
+  </div>
+</div>
+
+
+
+<section id="product-extra-info" class="product-extra-info-section">
+  <!-- TABS (Desktop) -->
+  <ul class="tabs-nav" id="tabsNav">
+    <li class="active" data-tab="reviewsTab">
+
+      <i class="fas fa-star"></i> Customer Reviews (40)
+    </li>
+    <li data-tab="descTab">
+      <i class="fas fa-info-circle"></i> Description
+    </li>
+    <li data-tab="infoTab">
+      <i class="fas fa-list"></i> Additional Info
+    </li>
+    <li data-tab="catTab">
+      <i class="fas fa-tags"></i> Category
+    </li>
+    <li data-tab="faqTab">
+      <i class="fas fa-question-circle"></i> FAQs
+    </li>
+  </ul>
+
+  <!-- TABS (Mobile Dropdown) -->
+  <div class="tabs-dropdown" id="tabsDropdown">
+    <select>
+      <option value="reviewsTab" selected>Customer Reviews (40)</option>
+      <option value="descTab">Description</option>
+      <option value="infoTab">Additional Info</option>
+      <option value="catTab">Category</option>
+      <option value="faqTab">FAQs</option>
+    </select>
+  </div>
+
+  <!-- TAB CONTENT: REVIEWS -->
+  <div class="tab-content active" id="reviewsTab">
+    <div class="reviews-container" id="reviewsContainer">
+      <!-- Single Review -->
+      <a href="#" id="write-review-link">Write a Review😊</a>
+      <div class="review-item">
+        <div class="review-header">
+          <div class="stars">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star-half-alt"></i>
+          </div>
+          <div class="verified-purchase">
+            <i class="fas fa-check-circle"></i> Verified Purchase
+          </div>
+        </div>
+        <div class="review-body">
+          <strong>Emily S.</strong><br />
+          "Absolutely love this handbag! The leather is top-notch, and it adds a touch of elegance to any outfit."
+        </div>
+        <div class="review-images">
+          <img src="{{ url_for('static', filename='img/nec.jpg') }}" class="review-image-thumbnail"
+            alt="Product view 1">
+          <img src="{{ url_for('static', filename='img/p1.webp') }}" class="review-image-thumbnail"
+            alt="Product view 2">
+        </div>
+      </div>
+
+
+
+      <!-- Add more reviews as needed -->
+    </div>
+    <button class="see-more-btn" id="seeMoreReviewsBtn">See More Reviews</button>
+  </div>
+
+
+  <!-- TAB CONTENT: DESCRIPTION -->
+  <div class="tab-content" id="descTab">
+    <div class="description-section">
+      <p>
+        This is a short paragraph describing the product. It highlights the
+        features and benefits, providing a clear understanding of why this product
+        is perfect for you.
+      </p>
+    </div>
+  </div>
+
+  <!-- TAB CONTENT: ADDITIONAL INFO -->
+  <div class="tab-content" id="infoTab">
+    <div class="additional-info-section">
+  
+    </div>
+  </div>
+
+  <!-- TAB CONTENT: CATEGORY -->
+  <div class="tab-content" id="catTab">
+    <div class="category-section">
+      <p>Category: Women's Handbags</p>
+      <p>Want more products like this?</p>
+      <button class="see-more-cat">See More</button>
+    </div>
+  </div>
+
+  <!-- TAB CONTENT: FAQS -->
+  <div class="tab-content" id="faqTab">
+    <div class="faqs-section">
+      <!-- FAQ 1 -->
+      <div class="faq-item">
+        <div class="faq-question">
+          <i class="fas fa-question-circle"></i>
+          What is the return policy?
+          <span class="faq-arrow"><i class="fas fa-chevron-right"></i></span>
+        </div>
+        <div class="faq-answer">
+          <p>You can return the product within 30 days of purchase with a valid receipt.</p>
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="faq-item">
+        <div class="faq-question">
+          <i class="fas fa-question-circle"></i>
+          Do you offer international shipping?
+          <span class="faq-arrow"><i class="fas fa-chevron-right"></i></span>
+        </div>
+        <div class="faq-answer">
+          <p>Yes, we ship worldwide. Shipping charges may vary based on location.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <i class="fas fa-question-circle"></i>
+          What is the return policy?
+          <span class="faq-arrow"><i class="fas fa-chevron-right"></i></span>
+        </div>
+        <div class="faq-answer">
+          <p>You can return the product within 30 days of purchase with a valid receipt.</p>
+        </div>
+      </div>
+
+      <!-- Add more FAQ items as needed -->
+    </div>
+  </div>
+</section>
+
+<!-- Popup Structure -->
+<!-- Popup Structure -->
+<div class="image-popup" id="imagePopup">
+  <div class="popup-content">
+    <button class="close-popup" aria-label="Close">&times;</button>
+    <img class="popup-image" id="popupImage" alt="Popup Image">
+  </div>
+</div>
+
+
+
+<section id="recommended-products">
+  <div class="recommended-products-header">
+    <h2>You may also like</h2>
+  </div>
+
+  <div class="recommended-products-products">
+    <!-- Product Card 1 -->
+    <div class="product-card">
+      <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+        <div class="product-image">
+          <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image" class="primary-image">
+          <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image" class="secondary-image">
+        </div>
+        <h3 class="product-title">The handbags for Women 100% leather</h3>
+        <div class="product-rating">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+          <span class="rating-text">4.5</span>
+        </div>
+        <div class="product-pricing">
+          <span class="discount-price">Rs.600</span>
+          <span class="original-price">Rs.1000</span>
+          <span class="discount-percent">-50%</span>
+        </div>
+      </a>
+      <button class="add-to-cart-btn">Add to Cart</button>
+    </div>
+
+    <!-- Product Card 2 -->
+    <div class="product-card">
+      <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+        <div class="product-image">
+          <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image" class="primary-image">
+          <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image" class="secondary-image">
+        </div>
+        <h3 class="product-title">The handbags for Women 100% leather</h3>
+        <div class="product-rating">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+          <span class="rating-text">4.5</span>
+        </div>
+        <div class="product-pricing">
+          <span class="discount-price">Rs.600</span>
+          <span class="original-price">Rs.1000</span>
+          <span class="discount-percent">-50%</span>
+        </div>
+      </a>
+      <button class="add-to-cart-btn">Add to Cart</button>
+    </div>
+
+    <!-- Product Card 3 -->
+    <div class="product-card">
+      <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+        <div class="product-image">
+          <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image" class="primary-image">
+          <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image" class="secondary-image">
+        </div>
+        <h3 class="product-title">The handbags for Women 100% leather</h3>
+        <div class="product-rating">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+          <span class="rating-text">4.5</span>
+        </div>
+        <div class="product-pricing">
+          <span class="discount-price">Rs.600</span>
+          <span class="original-price">Rs.1000</span>
+          <span class="discount-percent">-50%</span>
+        </div>
+      </a>
+      <button class="add-to-cart-btn">Add to Cart</button>
+    </div>
+
+    <!-- Product Card 4 -->
+    <div class="product-card">
+      <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+        <div class="product-image">
+          <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image" class="primary-image">
+          <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image" class="secondary-image">
+        </div>
+        <h3 class="product-title">The handbags for Women 100% leather</h3>
+        <div class="product-rating">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+          <span class="rating-text">4.5</span>
+        </div>
+        <div class="product-pricing">
+          <span class="discount-price">Rs.600</span>
+          <span class="original-price">Rs.1000</span>
+          <span class="discount-percent">-50%</span>
+        </div>
+      </a>
+      <button class="add-to-cart-btn">Add to Cart</button>
+    </div>
+
+    <!-- Product Card 5 -->
+    <div class="product-card">
+      <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+        <div class="product-image">
+          <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image" class="primary-image">
+          <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image" class="secondary-image">
+        </div>
+        <h3 class="product-title">The handbags for Women 100% leather</h3>
+        <div class="product-rating">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+          <span class="rating-text">4.5</span>
+        </div>
+        <div class="product-pricing">
+          <span class="discount-price">Rs.600</span>
+          <span class="original-price">Rs.1000</span>
+          <span class="discount-percent">-50%</span>
+        </div>
+      </a>
+      <button class="add-to-cart-btn">Add to Cart</button>
+    </div>
+
+    <!-- Product Card 6 -->
+    <div class="product-card">
+      <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+        <div class="product-image">
+          <img src="{{ url_for('static', filename='img/pro1 (1).jfif') }}" alt="Product Image" class="primary-image">
+          <img src="{{ url_for('static', filename='img/pro1 (2).jfif') }}" alt="Product Image" class="secondary-image">
+        </div>
+        <h3 class="product-title">The handbags for Women 100% leather</h3>
+        <div class="product-rating">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+          <span class="rating-text">4.5</span>
+        </div>
+        <div class="product-pricing">
+          <span class="discount-price">Rs.600</span>
+          <span class="original-price">Rs.1000</span>
+          <span class="discount-percent">-50%</span>
+        </div>
+      </a>
+      <button class="add-to-cart-btn">Add to Cart</button>
+    </div>
+  </div>
+
+  <div class="load-more-container">
+    <button class="load-more-btn">Load More</button>
+  </div>
+</section>
+
+
+
+<!-- Review Popup Overlay -->
+<div id="sk-rv-overlay" class="sk-rv-overlay">
+  <div class="sk-rv-container">
+    <!-- Close Button -->
+    <span class="sk-rv-close-btn">&times;</span>
+
+    <!-- Heading -->
+    <h2 class="sk-rv-heading">Submit Your Review</h2>
+
+    <!-- Review Text Field -->
+    <textarea id="sk-rv-textarea" class="sk-rv-textarea" placeholder="Write your review here..."></textarea>
+
+    <!-- Image Upload Area -->
+    <div id="sk-rv-upload-area" class="sk-rv-upload-area">
+      <p>Want to upload images also? Just <b>“CLICK”</b> here.</p>
+      <!-- Hidden file input -->
+      <input type="file" id="sk-rv-file-input" multiple accept="image/*" style="display: none;" />
+      <!-- Preview Container -->
+      <div id="sk-rv-preview-container" class="sk-rv-preview-container"></div>
+    </div>
+
+    <!-- Actions: Submit + Ratings Dropdown -->
+    <div class="sk-rv-actions">
+      <button id="sk-rv-submit-btn" class="sk-rv-submit-btn">SUBMIT</button>
+      <select id="sk-rv-rating-dropdown" class="sk-rv-rating-dropdown">
+        <option value="">Ratings</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+
+{% endblock body %}

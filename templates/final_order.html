@@ -1,0 +1,110 @@
+{% extends 'index.html' %}
+
+
+
+{% block title %}
+ShopKhana - Order Placed
+{% endblock title %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/final_order.css') }}">
+
+{% endblock extra_css %}
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/final_order.js') }}"></script>
+
+{% endblock extra_js %}
+
+
+
+{% block body %}
+
+
+<!-- Main Heading -->
+<h1 class="sk-final-heading">WOOHOO!</h1>
+
+<!-- First Mini-Section: Order Placed -->
+<div class="sk-final-section sk-final-section1">
+  <p class="sk-final-order-placed">
+    Your order has been successfully placed.
+  </p>
+  <p class="sk-final-price">
+    <span class="sk-final-rs-label">Rs.</span> <span id="skFinalTotalPrice">1157</span>
+  </p>
+  <p class="sk-final-order-number">
+    Your order number is <strong id="skFinalOrderNum">209282801928274</strong>
+  </p>
+</div>
+
+<!-- Second Mini-Section -->
+<div class="sk-final-section sk-final-section2">
+  <!-- Payment Reminder -->
+  <p class="sk-final-reminder">
+    Please have this amount ready on delivery day.
+  </p>
+  <p class="sk-final-reminder-price">
+    <span class="sk-final-rs-label">Rs.</span> <span id="skFinalRemindPrice">1157</span>
+  </p>
+
+  <!-- Delivery Info Container -->
+  <div class="sk-final-delivery-info">
+    <div class="sk-final-delivery-top">
+      <!-- Left: Estimated Delivery -->
+      <div class="sk-final-delivery-date">
+        <p>Est. 27 Feb - 02 Mar</p>
+      </div>
+      <!-- Right: Product Thumbnail -->
+      <div class="sk-final-delivery-thumb">
+        <img src="{{ url_for('static', filename='img/p2.webp') }}" alt="Product Thumbnail" />
+      </div>
+    </div>
+    <!-- Grey line separator -->
+    <hr class="sk-final-grey-line" />
+    <!-- Tracking & Button -->
+    <div class="sk-final-tracking-info">
+      <p>
+        To track the delivery of your order, click on your <strong>profile &gt; My Orders</strong>
+        or click the button below:
+      </p>
+      <button class="sk-final-view-order-btn">View Order</button>
+    </div>
+  </div>
+
+  <!-- Email Sent Container -->
+  <div class="sk-final-email-sent">
+    <i class="fas fa-envelope"></i>
+    <p>
+      We’ve sent a confirmation email to <strong>printabduallah285@gmail.com</strong>.
+      Check your email-inbox regularly to receive real-time updates of your order.
+    </p>
+    <p style="font-style: italic;"><strong>Note: </strong>Your order will be processed after <b> 2 hours</b>. Please be aware that once your order is placed, it cannot be <b>canceled</b>.</p>
+  </div>
+
+  <!-- Order Summary Dropdown -->
+  <div class="sk-final-summary-dropdown">
+    <button id="skFinalSummaryToggle" class="sk-final-summary-btn">
+      Order Summary <span id="skFinalSummaryIcon"><i class="fas fa-chevron-down"></i></span>
+    </button>
+    <div id="skFinalSummaryContent" class="sk-final-summary-content">
+      <ul>
+        <li>Item 1: Rs. 300</li>
+        <li>Item 2: Rs. 200</li>
+        <li>Shipping Fee: Rs. 150</li>
+        <li>Cash Payment Fee: Rs. 50</li>
+        <hr />
+        <li><strong>Total: Rs. 700</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Continue Shopping Button -->
+  <a style="text-decoration: none;" href="{{url_for('home')}}" class="sk-final-continue-btn">
+    Continue Shopping
+  </a>
+</div>
+
+
+{% endblock body %}

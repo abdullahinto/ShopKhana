@@ -1,0 +1,334 @@
+/* ----- CONTAINER & BASIC LAYOUT ----- */
+.product-extra-info-section {
+  border: 2px solid #ffa500; /* Orange border */
+  padding: 20px;
+  margin: 30px 0;
+  background-color: #fff;
+  border-radius: 6px;
+  position: relative;
+  /* Fade-in animation on load */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInTabs 0.6s forwards ease;
+}
+
+@keyframes fadeInTabs {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ----- TABS (DESKTOP) ----- */
+.tabs-nav {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+  list-style: none;
+  padding: 0;
+}
+.tabs-nav li {
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Poppins", sans-serif;
+  color: #333;
+  transition: background 0.3s, color 0.3s;
+  border-radius: 4px 4px 0 0;
+  margin-right: 5px;
+}
+.tabs-nav li:hover {
+  background-color: #ffa500;
+  color: #fff;
+}
+.tabs-nav li.active {
+  background-color: #ffa500;
+  color: #fff;
+}
+
+/* Icons in the tab */
+.tabs-nav li i {
+  font-size: 16px;
+}
+
+/* ----- TABS DROPDOWN (MOBILE) ----- */
+.tabs-dropdown {
+  display: none;
+  margin-bottom: 20px;
+}
+.tabs-dropdown select {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ----- TAB CONTENT ----- */
+.tab-content {
+  display: none; /* hidden by default */
+  animation: fadeContent 0.5s ease;
+}
+.tab-content.active {
+  display: block;
+}
+@keyframes fadeContent {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ----- SUB-SECTIONS STYLES ----- */
+
+/* CUSTOMER REVIEWS */
+.reviews-container {
+  max-height: 250px; /* initial limit */
+  overflow-y: hidden;
+  transition: max-height 0.5s ease;
+  position: relative;
+  margin-bottom: 10px;
+}
+.reviews-container.expanded {
+  max-height: 600px; /* expanded limit */
+}
+.review-item {
+  margin-bottom: 15px;
+  border-bottom: 1px dashed #ddd;
+  padding-bottom: 10px;
+}
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.review-header .stars i {
+  color: #ffc107;
+  margin-right: 2px;
+}
+.verified-purchase {
+  color: green;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.verified-purchase i {
+  color: green;
+}
+.review-body {
+  font-size: 14px;
+  color: #555;
+}
+.see-more-btn {
+  background-color: #ffa500;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s;
+}
+.see-more-btn:hover {
+  background-color: #e69500;
+}
+
+/* DESCRIPTION */
+.description-section p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* ADDITIONAL INFO */
+.additional-info-section ul {
+  list-style: disc;
+  padding-left: 20px;
+  color: #555;
+  font-size: 14px;
+}
+
+/* CATEGORY */
+.category-section {
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.category-section .see-more-cat {
+  background-color: #ffa500;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s;
+  width: fit-content;
+}
+.category-section .see-more-cat:hover {
+  background-color: #e69500;
+}
+
+/* FAQS */
+.faqs-section .faq-item {
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.faq-question {
+  background-color: #f8f8f8;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+.faq-question:hover {
+  background-color: #ececec;
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  background-color: #fff;
+  padding: 0 10px;
+}
+.faq-answer.open {
+  padding: 10px;
+}
+
+/* ARROW ICON FOR FAQ */
+.faq-arrow {
+  margin-left: auto;
+  transition: transform 0.3s;
+}
+.faq-arrow.rotate {
+  transform: rotate(90deg);
+}
+
+/* ----- RESPONSIVE (MOBILE) ----- */
+@media (max-width: 768px) {
+  .tabs-nav {
+    display: none; /* hide tabs on mobile */
+  }
+  .tabs-dropdown {
+    display: block; /* show dropdown on mobile */
+  }
+}
+
+.no-reviews-message {
+  font-size: 16px;
+  color: #555;
+  padding: 20px;
+  text-align: center;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.review-images {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+
+.review-image-thumbnail {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+/* Overlay for the popup, hidden initially */
+.image-popup {
+  display: none; /* Hidden initially; add the "active" class to show */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+}
+
+/* When the popup is active, show it as a flex container */
+.image-popup.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Popup content container with a slide-in animation */
+.popup-content {
+  position: relative;
+  max-width: 80vw; /* Reduced width for desktop */
+  max-height: 80vh; /* Reduced height for desktop */
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Image styling inside the popup */
+.popup-image {
+  display: block;
+  max-width: 50%;
+  max-height: 50%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  margin: auto;
+}
+
+/* Close button styling */
+.close-popup {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.close-popup:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Keyframes for slide-in animation */
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments for smaller devices */
+@media (max-width: 768px) {
+  .popup-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+  .popup-image {
+    max-width: 90%;
+    max-height: 80%;
+  }
+}

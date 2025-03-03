@@ -1,0 +1,61 @@
+{% extends 'index.html' %}
+
+{% block title %}
+{{ banner.bannerName }} - Products
+{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bannerprod.css') }}">
+{% endblock extra_css %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/bannerprod.js') }}"></script>
+{% endblock extra_js %}
+
+{% block body %}
+
+<section id="sk-banner-page">
+    <div class="banner-header">
+        <h2>{{ banner.bannerName }}</h2>
+    </div>
+
+    <div class="banner-products">
+        {% if products|length > 0 %}
+        {% for bannerprod in products %}
+        <div class="banner-product-card">
+            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+                <div class="banner-product-image">
+                    <img src="{{ bannerprod.images[0] if bannerprod.images else '/static/img/placeholder.png' }}"
+                        alt="Product Image" class="banner-primary-image">
+                    <img src="{{ (bannerprod.images[1] if bannerprod.images|length > 1 else bannerprod.images[0])|default('path/to/default-image.jpg') }}"
+                        alt="Product Image" class="banner-secondary-image">
+                </div>
+                <h3 class="banner-product-title">{{bannerprod.title}}</h3>
+                <div class="banner-product-rating">
+                    <span class="banner-rating-text"><strong style="color: orange;">Brand:
+                        </strong>{{bannerprod.brandName}}</span>
+                </div>
+                <div class="banner-product-pricing">
+                    <span class="banner-discount-price">Rs.{{bannerprod.discountedPrice}}</span>
+                    <span class="banner-original-price">Rs.{{bannerprod.originalPrice}}</span>
+                    <span class="banner-discount-percent">{{bannerprod.discountPercent}}%</span>
+                </div>
+            </a>
+            <button class="banner-add-to-cart-btn">Add to Cart</button>
+        </div>
+        {% endfor %}
+        {% else %}
+        <!-- Display a styled message when no products are found -->
+        <div class="no-products-message">
+            <p>Oops! No products were found for "<strong>{{ banner.bannerName }}</strong>".</p>
+            <p>Please try again later or explore other categories.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="banner-load-more-container">
+        <button class="banner-load-more-btn">Load More</button>
+    </div>
+</section>
+
+{% endblock body %}

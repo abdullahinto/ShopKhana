@@ -1,0 +1,154 @@
+/* Manage Account Section */
+.manage-account-section {
+  padding: 20px 5%;
+  background-color: #FDFBF6;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 100px;
+}
+
+/* Tabs Navigation (Desktop) */
+.account-tabs {
+  display: flex;
+  list-style: none;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.account-tabs li {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.account-tabs li.active {
+  border-bottom-color: orange;
+  font-weight: 600;
+  color: black;
+}
+
+/* Tabs Dropdown (Mobile) */
+.account-tabs-dropdown {
+  display: none;
+  margin-bottom: 20px;
+}
+
+.account-tabs-dropdown select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Account Forms */
+.account-form {
+  max-width: 600px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 3px;
+  display: none;
+}
+
+.toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.save-btn {
+  background-color: orange;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.save-btn:hover {
+  background-color: #FF8C42;
+}
+
+.save-message {
+  margin-left: 10px;
+  font-size: 14px;
+  color: green;
+  display: none;
+}
+
+/* Preferences Tab General Styles */
+.pref-section {
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.pref-section h3 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0077b6;
+}
+
+
+/* Responsive: Tabs become Dropdown on Mobile */
+@media (max-width: 768px) {
+  .account-tabs {
+    display: none;
+  }
+  .account-tabs-dropdown {
+    display: block;
+  }
+}
+
+/* Add additional spacing for live validation errors */
+.form-group input:invalid + .error-message {
+  display: block;
+}

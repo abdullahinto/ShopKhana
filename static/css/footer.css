@@ -1,0 +1,166 @@
+/* FOOTER STYLES */
+#site-footer {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  padding: 30px 5%;
+  box-sizing: border-box;
+  margin-top: 40px;
+}
+
+/* TOP SECTION: 6 columns */
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+
+/* Each Column */
+.footer-column h3 {
+  font-weight: 600; /* medium/bold heading */
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.footer-column p {
+  font-weight: 100;
+  font-size: small;
+  line-height: 1.6;
+}
+
+.footer-column ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 8px;
+}
+
+.footer-column ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s;
+  font-weight: 100;
+  font-size: small;
+}
+
+.footer-column ul li a:hover {
+  color: #ff8c42;
+}
+
+/* Payment Logos */
+.payment-logos i {
+  font-size: 24px; /* Font Awesome icons size */
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+/* Jazz Cash Logo */
+.jazz-cash-logo {
+  width: 24px; /* Match the size of Font Awesome icons */
+  height: 24px; /* Ensure consistent sizing */
+  margin-right: 10px;
+  object-fit: contain; /* Ensures the image scales properly without distortion */
+}
+
+.epaisa-logo {
+  width: 24px; /* Match the size of Font Awesome icons */
+  height: 24px; /* Ensure consistent sizing */
+  margin-right: 10px;
+  object-fit: contain; /* Ensures the image scales properly without distortion */
+}
+
+/* Social Icons */
+.social-icons-footer a {
+  color: #ffffff;
+  text-decoration: none;
+  margin-right: 10px;
+  font-size: 20px;
+  transition: transform 0.3s;
+}
+
+.social-icons-footer a:hover {
+  transform: scale(1.1);
+  color: #ff8c42;
+}
+
+/* Newsletter & Language */
+.newsletter-form {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.newsletter-form input[type="email"] {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+  font-size: 14px;
+}
+
+.newsletter-form button {
+  background-color: #ff8c42;
+  color: black;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.newsletter-form button:hover {
+  background-color: #e67e3a;
+}
+
+.language-selector select {
+  padding: 8px;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Read More Button */
+.read-more-btn {
+  display: inline-block;
+  margin-top: 10px;
+  color: black;
+  background-color: #ff8c42;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.read-more-btn:hover {
+  background-color: #e67e3a;
+  transform: scale(1.05);
+}
+
+/* BOTTOM SECTION */
+.footer-bottom {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .footer-top {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .footer-top {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

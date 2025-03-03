@@ -1,0 +1,79 @@
+{% extends 'index.html' %}
+
+
+{% block title %}
+ShopKhana - My Wishlist
+{% endblock title %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/my_wish.css') }}">
+
+
+{% endblock extra_css %}
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/my_wish.js') }}"></script>
+
+
+{% endblock extra_js %}
+
+{% block body %}
+
+<h1 class="sk-wl-heading">My Wishlist</h1>
+
+<!-- Bulk Actions & Sorting Controls -->
+<div class="sk-wl-controls">
+  <select id="sk-wl-sort">
+    <option value="category">Sort by Category</option>
+    <option value="price">Sort by Price</option>
+    <option value="date">Sort by Date Added</option>
+  </select>
+  <button id="sk-wl-selectAll" class="sk-wl-btn sk-wl-select-all">
+    <i class="fas fa-check-square"></i> Select All
+  </button>
+  <button id="sk-wl-deleteSelected" class="sk-wl-btn sk-wl-delete-selected">
+    <i class="fas fa-trash"></i> Delete Selected
+  </button>
+  <button id="sk-wl-deleteAll" class="sk-wl-btn sk-wl-delete-all">
+    <i class="fas fa-times-circle"></i> Delete All
+  </button>
+  <button id="sk-wl-shareGlobal" class="sk-wl-btn sk-wl-share">
+    <i class="fas fa-share-alt"></i> Share Wishlist
+  </button>
+</div>
+
+<!-- Wishlist Items Container -->
+<div id="sk-wl-items" class="sk-wl-items-container">
+  <!-- Wishlist product cards will be rendered here via JS -->
+</div>
+
+<!-- Empty State -->
+<div id="sk-wl-empty" class="sk-wl-empty" style="display: none;">
+  <i class="fas fa-heart-broken"></i>
+  <p>Your wishlist is empty! 💖 Start discovering and adding your favorite items by <br> clicking the <b>"heart"</b>  icon on product pages.</p>
+
+</div>
+
+<!-- Global Wishlist Share Popup -->
+<div id="sk-wl-sharePopup" class="sk-wl-share-popup">
+  <div class="sk-wl-share-content">
+    <button class="sk-wl-close-share">&times;</button>
+    <h3>Share Your Wishlist</h3>
+    <div class="sk-wl-social-icons">
+      <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+    </div>
+    <div class="sk-wl-share-link">
+      <input type="text" id="sk-wl-link" readonly>
+      <button id="sk-wl-copyLink">Copy Link</button>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock body %}

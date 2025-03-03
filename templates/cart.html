@@ -1,0 +1,70 @@
+{% extends 'index.html' %}
+
+{% block title %}
+ShopKhana - Shopping Cart
+{% endblock title %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
+
+
+{% endblock extra_css %}
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+
+{% endblock extra_js %}
+
+
+{% block body %}
+
+<h1 class="cart-page-heading">Shopping Cart</h1>
+
+<!-- CTA Buttons on Top (outside the container) -->
+<div class="cart-cta-buttons">
+    <button id="selectAllBtn" class="cta-select-all">
+        <i class="fas fa-check-square"></i> Select All
+    </button>
+    <button id="deleteSelectedBtn" class="cta-delete-selected">
+        <i class="fas fa-trash"></i> Delete Selected
+    </button>
+    <button id="deleteAllBtn" class="cta-delete-all">
+        <i class="fas fa-times-circle"></i> Delete All
+    </button>
+</div>
+
+<!-- Main Container for cart & summary -->
+<div class="cart-summary-container">
+    <!-- Product Cart Container -->
+    <div id="productCartContainer" class="product-cart-container">
+        <!-- Items or empty-cart message will be rendered here by JS -->
+    </div>
+
+    <!-- Order Summary Container -->
+    <div id="orderSummaryContainer" class="order-summary-container">
+        <h2>Order Summary</h2>
+        <div class="summary-row">
+            <span>Subtotal (<span id="itemCount">0</span> item(s))</span>
+            <span>Rs. <span id="subTotal">0</span></span>
+        </div>
+        <div class="summary-row">
+            <span>Shipping Fee</span>
+            <span>Rs. <span id="shippingFee">0</span></span>
+        </div>
+        <div class="coupon-row">
+            <input type="text" id="couponInput" placeholder="Enter ShopKhana/Coupon code" />
+            <button id="applyCouponBtn" class="apply-coupon-btn">APPLY</button>
+        </div>
+        <div class="summary-row total-row">
+            <span>Total</span>
+            <span>Rs. <span id="grandTotal">0</span></span>
+        </div>
+        <button id="proceedCheckoutBtn" class="proceed-checkout-btn">
+            PROCEED TO CHECKOUT(0)
+        </button>
+    </div>
+</div>
+
+{% endblock body %}

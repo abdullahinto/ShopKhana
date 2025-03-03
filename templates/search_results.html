@@ -1,0 +1,246 @@
+{% extends 'index.html' %}
+
+{% block title %}
+ShopKhana - Search Results
+{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/search_results.css') }}">
+{% endblock extra_css %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/search_results.js') }}"></script>
+{% endblock extra_js %}
+
+{% block body %}
+<div class="sk-search_results-container">
+    <div class="sk-search_results-header">
+        <!-- Left: Heading & Subheading -->
+        <div class="sk-search_results-left">
+            <h1>Showing search results for <b> "Water Bottle"</b></h1>
+            <p class="sk-search_results-subheading">449303 items found</p>
+        </div>
+        <!-- Right: Sort-by Options -->
+        <div class="sk-search_results-right">
+            <div class="sk-search_results-dropdown">
+                <button class="sk-search_results-dropdown-btn">
+                    Price: Low to High <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="sk-search_results-dropdown-content">
+                    <a href="#">Price: High to Low</a>
+                    <a href="#">Price: Low to High</a>
+                    <a href="#">Price: Average</a>
+                </div>
+            </div>
+            <div class="sk-search_results-dropdown">
+                <button class="sk-search_results-dropdown-btn">
+                    Brand <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="sk-search_results-dropdown-content">
+                    <a href="#">Brand A</a>
+                    <a href="#">Brand B</a>
+                    <a href="#">Brand C</a>
+                </div>
+            </div>
+            <div class="sk-search_results-dropdown">
+                <button class="sk-search_results-dropdown-btn">
+                    Color/Family <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="sk-search_results-dropdown-content">
+                    <a href="#">Color: Red</a>
+                    <a href="#">Color: Blue</a>
+                    <a href="#">Color: Green</a>
+                </div>
+            </div>
+            <div class="sk-search_results-dropdown">
+                <button class="sk-search_results-dropdown-btn">
+                    Promotion <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="sk-search_results-dropdown-content">
+                    <a href="#">Sale Items</a>
+                    <a href="#">Clearance</a>
+                    <a href="#">Bundle Deals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section id="search_results-sale">
+
+    <div class="search_results-products">
+        <div class="search_results-card">
+            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+                <div class="search_results-card-image">
+                    <!-- First Image (Displayed by default) -->
+                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
+                        class="search_results-img-primary">
+                    <!-- Second Image (Hidden by default, shown on hover) -->
+                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
+                        class="search_results-img-secondary">
+                </div>
+                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
+                <div class="search_results-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span class="search_results-rating-text">4.5</span>
+                </div>
+                <div class="search_results-pricing">
+                    <span class="search_results-discount-price">Rs.600</span>
+                    <span class="search_results-original-price">Rs.1000</span>
+                    <span class="search_results-discount-percent">-50%</span>
+                </div>
+            </a>
+            <button class="search_results-add-cart-btn">Add to Cart</button>
+        </div>
+
+        <div class="search_results-card">
+            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+                <div class="search_results-card-image">
+                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
+                        class="search_results-img-primary">
+                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
+                        class="search_results-img-secondary">
+                </div>
+                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
+                <div class="search_results-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span class="search_results-rating-text">4.5</span>
+                </div>
+                <div class="search_results-pricing">
+                    <span class="search_results-discount-price">Rs.600</span>
+                    <span class="search_results-original-price">Rs.1000</span>
+                    <span class="search_results-discount-percent">-50%</span>
+                </div>
+            </a>
+            <button class="search_results-add-cart-btn">Add to Cart</button>
+        </div>
+
+        <div class="search_results-card">
+            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+                <div class="search_results-card-image">
+                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
+                        class="search_results-img-primary">
+                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
+                        class="search_results-img-secondary">
+                </div>
+                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
+                <div class="search_results-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span class="search_results-rating-text">4.5</span>
+                </div>
+                <div class="search_results-pricing">
+                    <span class="search_results-discount-price">Rs.600</span>
+                    <span class="search_results-original-price">Rs.1000</span>
+                    <span class="search_results-discount-percent">-50%</span>
+                </div>
+            </a>
+            <button class="search_results-add-cart-btn">Add to Cart</button>
+        </div>
+
+        <div class="search_results-card">
+            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+                <div class="search_results-card-image">
+                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
+                        class="search_results-img-primary">
+                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
+                        class="search_results-img-secondary">
+                </div>
+                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
+                <div class="search_results-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span class="search_results-rating-text">4.5</span>
+                </div>
+                <div class="search_results-pricing">
+                    <span class="search_results-discount-price">Rs.600</span>
+                    <span class="search_results-original-price">Rs.1000</span>
+                    <span class="search_results-discount-percent">-50%</span>
+                </div>
+            </a>
+            <button class="search_results-add-cart-btn">Add to Cart</button>
+        </div>
+
+        <div class="search_results-card">
+            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+                <div class="search_results-card-image">
+                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
+                        class="search_results-img-primary">
+                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
+                        class="search_results-img-secondary">
+                </div>
+                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
+                <div class="search_results-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span class="search_results-rating-text">4.5</span>
+                </div>
+                <div class="search_results-pricing">
+                    <span class="search_results-discount-price">Rs.600</span>
+                    <span class="search_results-original-price">Rs.1000</span>
+                    <span class="search_results-discount-percent">-50%</span>
+                </div>
+            </a>
+            <button class="search_results-add-cart-btn">Add to Cart</button>
+        </div>
+
+        <div class="search_results-card">
+            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+                <div class="search_results-card-image">
+                    <img src="{{ url_for('static', filename='img/pro1 (1).jfif') }}" alt="Product Image"
+                        class="search_results-img-primary">
+                    <img src="{{ url_for('static', filename='img/pro1 (2).jfif') }}" alt="Product Image"
+                        class="search_results-img-secondary">
+                </div>
+                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
+                <div class="search_results-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span class="search_results-rating-text">4.5</span>
+                </div>
+                <div class="search_results-pricing">
+                    <span class="search_results-discount-price">Rs.600</span>
+                    <span class="search_results-original-price">Rs.1000</span>
+                    <span class="search_results-discount-percent">-50%</span>
+                </div>
+            </a>
+            <button class="search_results-add-cart-btn">Add to Cart</button>
+        </div>
+    </div>
+</section>
+
+<div class="search_results-pagination">
+    <a href="#" class="search_results-pagination-prev">« Prev</a>
+    <a href="#" class="search_results-pagination-page active">1</a>
+    <a href="#" class="search_results-pagination-page">2</a>
+    <a href="#" class="search_results-pagination-page">3</a>
+    <a href="#" class="search_results-pagination-page">4</a>
+    <span class="search_results-pagination-ellipsis">...</span>
+    <a href="#" class="search_results-pagination-page">10</a>
+    <a href="#" class="search_results-pagination-next">Next »</a>
+</div>
+
+
+
+{% endblock body %}

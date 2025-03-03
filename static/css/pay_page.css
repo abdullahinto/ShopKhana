@@ -1,0 +1,179 @@
+/* ===========================
+   SK-PAY: Payment Page Styles
+   =========================== */
+
+/* Body */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #ece9e9;
+
+}
+
+/* Main Container */
+.sk-pay-main-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+  animation: skPaySlideFadeIn 0.7s ease forwards;
+  opacity: 0;
+  transform: translateY(30px);
+  margin-top: 120px;
+}
+
+@keyframes skPaySlideFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Left Column */
+.sk-pay-left-column {
+  flex: 1 1 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Heading */
+.sk-pay-heading {
+  font-size: 20px;
+  color: #333;
+  margin-top: 20px;
+  font-weight: 500;
+
+}
+
+/* Payment Methods Row */
+.sk-pay-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Single Payment Method Icon Container */
+.sk-pay-method {
+  background-color: #ccc; /* grey container by default */
+  border-radius: 6px;
+  padding: 10px;
+  width: 100px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s, border 0.3s;
+  border: 2px solid transparent;
+}
+
+.sk-pay-method img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin-bottom: 5px;
+}
+
+.sk-pay-method p {
+  font-size: 12px;
+  color: #333;
+  margin: 0;
+}
+
+.sk-pay-method:hover {
+  background-color: #bbb;
+}
+
+.sk-pay-method.active {
+  background-color: #fff; /* white when selected */
+  border: 2px solid orange; /* orange border when selected */
+}
+
+/* Dynamic Info Container */
+.sk-pay-info-container {
+  background-color: #fff;
+  border: 2px solid orange;
+  border-radius: 6px;
+  padding: 15px;
+  min-height: 150px;
+}
+
+.sk-pay-info-placeholder {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Confirm Order Button */
+.sk-pay-confirm-btn {
+  background-color: orange;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  width: 200px;
+}
+.sk-pay-confirm-btn:hover {
+  background-color: #e69500;
+  transform: scale(1.03);
+}
+
+/* Right Column: Order Summary */
+.sk-pay-right-column {
+  flex: 1 1 35%;
+  display: flex;
+  justify-content: center;
+}
+
+.sk-pay-summary-container {
+  background-color: #fff;
+  border: 2px solid orange;
+  border-radius: 6px;
+  padding: 20px;
+  width: 100%;
+  max-width: 450px;
+  align-self: flex-start;
+}
+
+.sk-pay-summary-container h3 {
+  margin-top: 0;
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: 500;
+}
+
+.sk-pay-summary-container p {
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0;
+  
+}
+
+.sk-pay-summary-container hr {
+  margin: 10px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+.sk-pay-subtotal,
+.sk-pay-cod-fee,
+.sk-pay-total {
+  text-align: right;
+  font-weight: 500;
+  font-size: 14px;
+
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sk-pay-main-container {
+    flex-direction: column;
+  }
+  .sk-pay-left-column,
+  .sk-pay-right-column {
+    flex: 1 1 100%;
+  }
+}

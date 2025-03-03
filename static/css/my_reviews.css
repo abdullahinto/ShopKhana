@@ -1,0 +1,276 @@
+/* My Reviews Section */
+.reviews-section {
+  padding: 20px 5%;
+  background-color: #fdfbf6;
+  font-family: "Poppins", sans-serif;
+  color: #333;
+  margin-top: 100px;
+}
+
+.reviews-section h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+/* Filters & Sorting */
+.reviews-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.reviews-controls select {
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* Reviews List */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Review Card */
+.review-card {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 15px;
+  background: #fff;
+  transition: box-shadow 0.3s;
+}
+.review-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Review Header */
+.review-header {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+.review-thumb img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.review-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.review-product-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0077b6;
+  text-decoration: none;
+}
+.review-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #ffc107;
+  font-size: 14px;
+}
+.rating-value {
+  color: #333;
+  font-weight: 500;
+}
+.review-date {
+  font-size: 12px;
+  color: #777;
+}
+
+/* Review Body & Read More */
+.review-body {
+  margin-bottom: 10px;
+}
+.review-text {
+  font-size: 14px;
+  color: #555;
+  max-height: 50px;
+  overflow: hidden;
+  position: relative;
+}
+.review-text.expanded {
+  max-height: none;
+}
+.read-more {
+  color: #0077b6;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+/* Review Actions */
+.review-actions {
+  display: flex;
+  gap: 10px;
+}
+.review-actions button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s;
+}
+.edit-review-btn {
+  background-color: #ffde59;
+  color: #333;
+}
+.edit-review-btn:hover {
+  background-color: #ffa500;
+}
+.delete-review-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+.delete-review-btn:hover {
+  background-color: #b02a37;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+.page-btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #0077b6;
+  background-color: #fff;
+  color: #0077b6;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.page-btn:hover {
+  background-color: #0077b6;
+  color: #fff;
+}
+#currentPage {
+  font-size: 14px;
+}
+
+/* Empty State */
+.empty-reviews {
+  text-align: center;
+  padding: 40px;
+  color: #555;
+}
+.empty-reviews p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* Edit Review Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+.form-group label {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+.form-group input,
+.form-group textarea {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Global Share Popup (reused from wishlist) */
+.share-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.share-popup .share-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  width: 300px;
+  text-align: center;
+  position: relative;
+}
+.share-popup .close-share {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+.share-popup .social-icons a {
+  margin: 0 5px;
+  font-size: 18px;
+  color: #0077b6;
+  transition: color 0.3s;
+}
+.share-popup .social-icons a:hover {
+  color: #00508f;
+}
+.share-popup .share-link {
+  margin-top: 15px;
+  display: flex;
+  gap: 5px;
+}
+.share-popup .share-link input {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+.share-popup .share-link button {
+  background: #0077b6;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+}

@@ -1,0 +1,121 @@
+/***** FLASH SALE SECTION *****/
+
+#flash-sale {
+  width: 100%;
+  padding: 5px;
+  background-color: #fdfbf6; /* Light background to highlight the cards */
+  box-sizing: border-box;
+}
+
+/* Header (Title + Explore All Button) */
+.flash-sale-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap; /* Allows items to move when needed */
+}
+
+/* Title */
+.flash-sale-header h2 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  color: black;
+  font-size: 24px;
+  margin: 0;
+}
+
+/* Explore All Button (Default) */
+.explore-all-btn {
+  background: linear-gradient(45deg, #ffde59, #ffd700);
+  color: black;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.explore-all-btn:hover {
+  transform: scale(1.05);
+  background-color: #ffa500;
+}
+
+/* Product Cards Layout */
+.flash-sale-products {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+/* Product Card */
+.product-card {
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+
+.mobile-btn-wrapper {
+  display: none; /* Hidden by default */
+}
+/* RESPONSIVE STYLES */
+@media (max-width: 992px) {
+  .flash-sale-products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .flash-sale-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .flash-sale-products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Move the button below the product grid only on mobile */
+  .explore-all-btn-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 15px;
+    order: 1;
+  }
+
+  /* Hide the button in the header on mobile */
+  .flash-sale-header .explore-all-btn {
+    display: none;
+  }
+
+  /* Show the button below the grid on mobile */
+  .mobile-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+}
+
+/* SCROLL ANIMATION CLASSES */
+.product-card.card-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.product-card.card-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}

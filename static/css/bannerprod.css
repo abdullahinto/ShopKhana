@@ -1,0 +1,235 @@
+/***** BANNER SECTION *****/
+
+#sk-banner-page {
+  width: 100%;
+  max-width: 1200px;
+  padding: 5px;
+  background-color: #fdfbf6;
+  box-sizing: border-box;
+  margin-top: 120px;
+}
+
+/* Header (Title) */
+.banner-header {
+  margin-bottom: 25px;
+}
+
+.banner-header h2 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  color: black;
+  font-size: 24px;
+  margin: 0;
+}
+
+/* Product Cards Layout */
+.banner-products {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+/* Product Card */
+.banner-product-card {
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.banner-product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+/* Product Image Container */
+.banner-product-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+/* Product Images */
+.banner-product-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: opacity 0.5s ease, transform 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.banner-product-image .banner-primary-image {
+  opacity: 1;
+}
+
+.banner-product-image .banner-secondary-image {
+  opacity: 0;
+}
+
+.banner-product-card:hover .banner-primary-image {
+  opacity: 0;
+}
+
+.banner-product-card:hover .banner-secondary-image {
+  opacity: 1;
+}
+
+.banner-product-card:hover .banner-product-image img {
+  transform: scale(1.05);
+}
+
+/* Product Title */
+.banner-product-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: black;
+  margin: 10px 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Rating */
+.banner-product-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+  color: #ffc107;
+  font-size: 14px;
+}
+
+.banner-rating-text {
+  color: black;
+  font-weight: 500;
+}
+
+/* Pricing */
+.banner-product-pricing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.banner-discount-price {
+  color: #ffa500;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.banner-original-price {
+  color: grey;
+  font-weight: bold;
+  text-decoration: line-through;
+  font-size: 12px;
+}
+
+.banner-discount-percent {
+  color: #2a9d8f;
+  font-weight: bold;
+  font-size: 16px;
+  font-style: italic;
+}
+
+/* Add to Cart Button */
+.banner-add-to-cart-btn {
+  background-color: #ffde59;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.banner-add-to-cart-btn:hover {
+  background-color: #ffa500;
+  transform: scale(1.03);
+}
+
+/* Load More Button Container */
+.banner-load-more-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.banner-load-more-btn {
+  background: linear-gradient(45deg, #ffde59, #ffd700);
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.banner-load-more-btn:hover {
+  transform: scale(1.05);
+  background-color: #ffa500;
+}
+
+/* RESPONSIVE STYLES */
+@media (max-width: 992px) {
+  .banner-products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .banner-products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* SCROLL ANIMATION CLASSES */
+.banner-product-card.card-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.banner-product-card.card-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+
+
+.no-products-message {
+  width: 90%;           /* Responsive width on smaller screens */
+  max-width: 400px;     /* Limits width on larger screens */
+  text-align: center;   /* Centers the text inside */
+  margin: 50px auto;    /* Centers the element horizontally */
+  padding: 20px 10px;
+  border: 1px solid orange;
+  background-color: white;
+  color: #333;
+  font-size: 18px;
+  border-radius: 8px;
+}
+
+
+
+.no-products-message p {
+  margin: 10px 0;
+}

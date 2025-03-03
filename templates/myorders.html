@@ -1,0 +1,156 @@
+{% extends 'index.html' %}
+
+
+{% block title %}
+ShopKhana - My Orders
+{% endblock title %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/myorders.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cancel-order.css') }}">
+
+{% endblock extra_css %}
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/myorders.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cancel-order.js') }}"></script>
+
+{% endblock extra_js %}
+
+
+{% block body %}
+
+
+
+<section id="my-orders">
+  <h2>My Orders</h2>
+
+  <!-- Filters -->
+  <div class="orders-filter">
+    <label for="orderFilter">Filter by status:</label>
+    <select id="orderFilter">
+      <option value="all">All</option>
+      <option value="delivered">Delivered</option>
+      <option value="pending">Pending</option>
+      <option value="canceled">Canceled</option>
+    </select>
+  </div>
+
+  <!-- Orders Container -->
+  <div class="orders-container">
+    <!-- Order Card 1 -->
+    <div class="order-card" data-status="delivered">
+      <div class="order-summary">
+        <div class="order-info">
+          <span class="order-number">Order #12345</span>
+          <span class="order-date">2025-01-15</span>
+          <span class="order-total">Total: Rs. 2500</span>
+        </div>
+        <div class="order-status delivered">Delivered</div>
+        <div class="order-actions">
+          <button class="reorder-btn">Reorder</button>
+          <button class="track-btn">Track Shipment</button>
+          <button style="background-color: red;" class="cancel-order-btn">Cancel Order</button>
+          <a href="#" class="invoice-link">Download Invoice</a>
+        </div>
+      </div>
+      <!-- Expandable Order Details -->
+      <div class="order-details">
+        <p><strong>Items:</strong> Leather Bag, Wallet, Scarf</p>
+        <p><strong>Shipping Address:</strong> 123 Main Street, City, Country</p>
+        <p><strong>Payment:</strong> Visa ending in 1234</p>
+        <p><strong>Tracking Info:</strong> Tracking No: XYZ123456</p>
+      </div>
+    </div>
+
+    <!-- Order Card 2 -->
+    <div class="order-card" data-status="pending">
+      <div class="order-summary">
+        <div class="order-info">
+          <span class="order-number">Order #12346</span>
+          <span class="order-date">2025-01-20</span>
+          <span class="order-total">Total: Rs. 1500</span>
+        </div>
+        <div class="order-status pending">Pending</div>
+        <div class="order-actions">
+          <button class="reorder-btn">Reorder</button>
+          <button class="track-btn">Track Shipment</button>
+          <button style="background-color: red; " class="cancel-order-btn">Cancel Order</button>
+          <a href="#" class="invoice-link">Download Invoice</a>
+        </div>
+      </div>
+      <!-- Expandable Order Details -->
+      <div class="order-details">
+        <p><strong>Items:</strong> T-Shirt, Jeans</p>
+        <p><strong>Shipping Address:</strong> 456 Elm Street, City, Country</p>
+        <p><strong>Payment:</strong> EasyPaisa</p>
+        <p><strong>Tracking Info:</strong> Tracking No: ABC789101</p>
+      </div>
+    </div>
+    <!-- Additional order cards can be added here -->
+  </div>
+
+  <!-- Load More Orders Button -->
+  <button id="loadMoreOrders" class="load-more-btn">Load More Orders</button>
+</section>
+
+
+
+<!-- Cancel Order Popup Overlay -->
+<div id="cancelOrderPopup" class="cancel-order-overlay">
+  <div class="cancel-order-container">
+    <span class="close-popup-btn">&times;</span>
+    <h2>Want to Cancel Order?</h2>
+    <p class="subheading">Please select a reason to cancel the order <span class="required">*</span></p>
+
+    <!-- Error Container -->
+    <div class="error-message" id="cancelError"></div>
+
+    <!-- Reasons List -->
+    <div id="reasonButtons" class="reasons-list">
+      <button class="reason-btn" data-reason="Shipping cost is too high">Shipping cost is too high</button>
+      <button class="reason-btn" data-reason="Want to place a new order with more/different items">
+        Want to place a new order with more/different items
+      </button>
+      <button class="reason-btn" data-reason="Delivery time is too long">Delivery time is too long</button>
+      <button class="reason-btn" data-reason="Duplicate order">Duplicate order</button>
+      <button class="reason-btn" data-reason="Change of Delivery Address">Change of Delivery Address</button>
+      <button class="reason-btn" data-reason="Don't want this order/item anymore">Don't want this order/item
+        anymore</button>
+      <button class="reason-btn" data-reason="Decided for alternative product">Decided for alternative product</button>
+      <button class="reason-btn" data-reason="Found cheaper elsewhere">Found cheaper elsewhere</button>
+      <button class="reason-btn" data-reason="Change payment method">Change payment method</button>
+      <button class="reason-btn" data-reason="other">Other</button>
+    </div>
+
+    <!-- Other Reason Section -->
+    <div id="otherReasonContainer" class="other-reason-box" style="display: none;">
+      <textarea id="otherReasonText" rows="3" placeholder="Please specify your reason here..."></textarea>
+      <div class="error-message" id="otherReasonError"></div>
+    </div>
+
+    <button id="submitCancel" class="submit-btn">Submit</button>
+  </div>
+</div>
+
+<!-- Confirmation Dialog -->
+<div id="confirmDialog" class="dialog-overlay">
+  <div class="dialog-box">
+    <h3>Confirm Cancellation</h3>
+    <p id="confirmMessage"></p>
+    <div class="dialog-buttons">
+      <button id="confirmYes" class="dialog-btn success">Yes, Cancel Order</button>
+      <button id="confirmNo" class="dialog-btn danger">No, Go Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success Toast -->
+<div class="toast-notification success" id="successMessage"></div>
+
+
+
+
+{% endblock body %}

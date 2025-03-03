@@ -1,0 +1,59 @@
+{% extends 'index.html' %}
+
+{% block title %}
+ShopKhana | My Cancellations
+{% endblock title %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cancel_page.css') }}">
+
+{% endblock extra_css %}
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/cancel_page.js') }}"></script>
+
+
+{% endblock extra_js %}
+
+{% block body %}
+
+
+
+<section id="search_cancellations-section" class="search_cancellations-section">
+    <h2>My Cancellations</h2>
+    <div class="search_cancellations-cards-container">
+        <!-- Example Cancellation Card -->
+        <div class="search_cancellations-card" data-status="approved">
+            <div class="search_cancellations-card-summary">
+                <div class="search_cancellations-summary-info">
+                    <span class="search_cancellations-order-number">Order #12346</span>
+                    <span class="search_cancellations-item-details">Wireless Headphones</span>
+                    <span class="search_cancellations-request-date">Requested: 2025-03-05</span>
+                </div>
+                <div class="search_cancellations-status-indicator approved">
+                    Cancelled
+                </div>
+            </div>
+            <div class="search_cancellations-card-actions">
+                <a href="#" class="search_cancellations-contact-support">Contact Support</a>
+            </div>
+            <div class="search_cancellations-card-details">
+                <p><strong>Reason:</strong> I no longer need the product.</p>
+                <p><strong>Refund Status:</strong> Refunded.</p>
+                <p><strong>Tracking Info:</strong> N/A</p>
+                <p><strong>Correspondence:</strong> Confirmation received on 2025-03-06.</p>
+            </div>
+        </div>
+        <!-- Additional cancellation cards can be added here -->
+    </div>
+    <!-- Empty Message (shown if no cancellation cards exist) -->
+    <div class="search_cancellations-empty-message" style="display: none;">
+        <i class="fas fa-info-circle"></i>
+        <span>No cancellations found.</span>
+    </div>
+</section>
+
+
+{% endblock body %}

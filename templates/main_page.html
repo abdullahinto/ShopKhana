@@ -1,0 +1,175 @@
+{% extends 'index.html' %}
+
+{% block title %}
+ShopKhana | Home
+{% endblock title %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cat.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/just4u.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+
+{% endblock extra_css %}
+
+{% block extra_js %}
+
+<script src="{{ url_for('static', filename='js/banner.js') }}"></script>
+<script src="{{ url_for('static', filename='js/flash.js') }}"></script>
+<script src="{{ url_for('static', filename='js/just4u.js') }}"></script>
+<script src="{{ url_for('static', filename='js/footer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cat.js') }}"></script>
+
+
+{% endblock extra_js %}
+
+{% block body %}
+
+
+
+<!-- Product Promotion Section (Banner/Carousel) -->
+<section id="product-promotion">
+  <div class="carousel-container">
+    <div class="carousel">
+      <!-- Banner slide 1 -->
+      {% for ban in banners %}
+      <div class="banner">
+        <a href="{{ url_for('show_banner_products', banner_id=ban._id) }}">
+          <img src="{{ ban.image }}" alt="{{ ban.bannerName }}">
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Carousel Navigation Buttons -->
+    <button id="prevBtn" class="nav-button">
+      <span class="material-icons">chevron_left</span>
+    </button>
+    <button id="nextBtn" class="nav-button">
+      <span class="material-icons">chevron_right</span>
+    </button>
+  </div>
+</section>
+
+<section id="flash-sale">
+  <div class="flash-sale-header">
+    <h2>Flash Sale</h2>
+    <a href="#" class="explore-all-btn">Explore All</a>
+  </div>
+
+  <div class="flash-sale-products">
+    {% for prod in flash_sale_products %}
+    <div class="product-card">
+      <a href="{{ url_for('product_page_url') }}" style="text-decoration: none;">
+        <div class="product-image">
+          <!-- First Image (Displayed by default) -->
+          <img src="{{ prod.images[0] if prod.images else '/static/img/placeholder.png' }}" alt="Product Image"
+            class="primary-image">
+          <!-- Second Image (Hidden by default, shown on hover) -->
+          <img
+            src="{{ (prod.images[1] if prod.images|length > 1 else prod.images[0])|default('path/to/default-image.jpg') }}"
+            alt="Product Image" class="secondary-image">
+        </div>
+        <h3 class="product-title">{{ prod.title }}</h3>
+        <div class="product-rating">
+          <!-- <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i> -->
+          <span class="rating-text"><strong style="color: orange;">BRAND: </strong>{{ prod.brandName }}</span>
+        </div>
+        <div class="product-pricing">
+          <span class="discount-price">Rs.{{ prod.discountedPrice }}</span>
+          <span class="original-price">Rs.{{ prod.originalPrice }}</span>
+          <span class="discount-percent">{{ prod.discountPercent }}%</span>
+        </div>
+      </a>
+      <button class="add-to-cart-btn">Add to Cart</button>
+    </div>
+    {% endfor %}
+  </div>
+
+
+  <div class="mobile-btn-wrapper">
+    <a href="#" class="explore-all-btn">Explore All</a>
+  </div>
+</section>
+
+
+
+<section id="categories-section">
+  <div class="flash-sale-header">
+    <h2>Categories</h2>
+    <a href="#" class="load-more-btn">Load More</a>
+  </div>
+
+  <div class="categories-grid">
+    <!-- Earrings Category -->
+     {% for cat in categories %}
+    <div class="category-card card-hidden">
+      <a href="#">
+        <div class="icon-box">
+          <img src="{{cat.images[0]}}" alt="category image" class="category-image">
+        </div>
+        <p class="category-name">{{cat.name}}</p>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+
+</section>
+
+
+
+<section id="just-for-you">
+  <div class="just-for-you-header">
+    <h2>Just For You</h2>
+  </div>
+
+  <div class="just-for-you-products">
+    {% for justprod in just_for_you_products %}
+    <div class="product-card">
+      <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+        <div class="product-image">
+
+          <img src="{{ justprod.images[0] if justprod.images else '/static/img/placeholder.png' }}" alt="Product Image"
+            class="primary-image">
+          <img
+            src="{{ (justprod.images[1] if justprod.images|length > 1 else justprod.images[0])|default('path/to/default-image.jpg') }}"
+            alt="Product Image" class="secondary-image">
+
+        </div>
+        <h3 class="product-title">{{justprod.title}}</h3>
+        <div class="product-rating">
+          <!-- <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i> -->
+          <span class="rating-text"><strong style="color: orange;">Brand: </strong>{{justprod.brandName}}</span>
+        </div>
+        <div class="product-pricing">
+          <span class="discount-price">Rs.{{justprod.discountedPrice}}</span>
+          <span class="original-price">Rs.{{justprod.originalPrice}}</span>
+          <span class="discount-percent">{{justprod.discountPercent}}%</span>
+        </div>
+      </a>
+      <button class="add-to-cart-btn">Add to Cart</button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="load-more-container">
+    <button class="load-more-btn">Load More</button>
+  </div>
+</section>
+
+
+
+
+
+{% endblock body %}
