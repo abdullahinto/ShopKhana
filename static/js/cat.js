@@ -1,36 +1,101 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const categoryCards = document.querySelectorAll("#categories-section .category-card");
-  
-    // Initially hide them
-    categoryCards.forEach((card) => {
-      card.classList.add("card-hidden");
+document.addEventListener("DOMContentLoaded", () => {
+  initializeCategoryCardReveal();
+  initializeLoadMoreCategories();
+});
+
+/**
+ * (Optional) Reveals category cards on scroll using Intersection Observer.
+ */
+function initializeCategoryCardReveal() {
+  const categoryCards = document.querySelectorAll(
+    "#categories-section .category-card"
+  );
+  categoryCards.forEach((card) => card.classList.add("card-hidden"));
+
+  const observerOptions = { root: null, threshold: 0.1 };
+  const observer = new IntersectionObserver((entries, observerInstance) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.remove("card-hidden");
+        entry.target.classList.add("card-visible");
+        observerInstance.unobserve(entry.target);
+      }
     });
-  
-    // Intersection Observer setup
-    const observerOptions = {
-      root: null,
-      threshold: 0.1, // 10% visible triggers
-    };
-  
-    const revealCards = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("card-visible");
-          observer.unobserve(entry.target);
+  }, observerOptions);
+
+  categoryCards.forEach((card) => observer.observe(card));
+}
+
+/**
+ * Initializes the "Load More" functionality for categories.
+ */
+function initializeLoadMoreCategories() {
+  const categoryCards = document.querySelectorAll(
+    "#categories-section .category-card"
+  );
+  const initialVisibleCount = 10;
+  // Hide cards beyond the first 10 initially.
+  categoryCards.forEach((card, index) => {
+    if (index >= initialVisibleCount) {
+      card.style.display = "none";
+    }
+  });
+
+  let expanded = false;
+  const loadMoreBtn = document.getElementById("cat-load-more-categories");
+  const loadingOverlay = document.getElementById("loading-overlay");
+
+  function showLoadingOverlay() {
+    if (loadingOverlay) {
+      loadingOverlay.style.display = "flex";
+    }
+  }
+
+  function hideLoadingOverlay() {
+    if (loadingOverlay) {
+      loadingOverlay.style.display = "none";
+    }
+  }
+
+  loadMoreBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    showLoadingOverlay();
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated delay
+
+    const allCards = Array.from(
+      document.querySelectorAll("#categories-section .category-card")
+    );
+    const hiddenCards = allCards.filter(
+      (card) => card.style.display === "none"
+    );
+
+    if (!expanded) {
+      // Reveal next 10 hidden cards
+      let count = 0;
+      hiddenCards.forEach((card) => {
+        if (count < 10) {
+          card.style.display = "block";
+          count++;
         }
       });
-    }, observerOptions);
-  
-    // Observe each card
-    categoryCards.forEach((card) => {
-      revealCards.observe(card);
-    });
-  
-    // "Load More" button (placeholder functionality)
-    const loadMoreBtn = document.querySelector(".load-more-btn");
-    loadMoreBtn.addEventListener("click", () => {
-      // Placeholder logic for loading more categories
-      alert("Load more categories coming soon!");
-    });
+      // If no hidden cards remain, change button text to "Load Less" and set expanded flag
+      if (
+        allCards.filter((card) => card.style.display === "none").length === 0
+      ) {
+        expanded = true;
+        loadMoreBtn.textContent = "Load Less";
+      }
+    } else {
+      // Collapse: Hide cards beyond the initial 10
+      allCards.forEach((card, index) => {
+        if (index >= initialVisibleCount) {
+          card.style.display = "none";
+        }
+      });
+      expanded = false;
+      loadMoreBtn.textContent = "Load More";
+    }
+
+    hideLoadingOverlay();
   });
-  
+}

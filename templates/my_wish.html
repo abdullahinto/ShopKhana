@@ -1,26 +1,18 @@
 {% extends 'index.html' %}
 
-
 {% block title %}
 ShopKhana - My Wishlist
 {% endblock title %}
 
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/my_wish.css') }}">
-
-
 {% endblock extra_css %}
 
 {% block extra_js %}
-
 <script src="{{ url_for('static', filename='js/my_wish.js') }}"></script>
-
-
 {% endblock extra_js %}
 
 {% block body %}
-
 <h1 class="sk-wl-heading">My Wishlist</h1>
 
 <!-- Bulk Actions & Sorting Controls -->
@@ -46,14 +38,44 @@ ShopKhana - My Wishlist
 
 <!-- Wishlist Items Container -->
 <div id="sk-wl-items" class="sk-wl-items-container">
-  <!-- Wishlist product cards will be rendered here via JS -->
-</div>
-
-<!-- Empty State -->
-<div id="sk-wl-empty" class="sk-wl-empty" style="display: none;">
-  <i class="fas fa-heart-broken"></i>
-  <p>Your wishlist is empty! 💖 Start discovering and adding your favorite items by <br> clicking the <b>"heart"</b>  icon on product pages.</p>
-
+  {% if wishlist_items|length > 0 %}
+    {% for item in wishlist_items %}
+      <div class="sk-wl-card" data-id="{{ item._id }}">
+        <div class="sk-wl-card-header">
+          <input type="checkbox" class="sk-wl-checkbox">
+          <button class="sk-wl-remove-btn" data-id="{{ item._id }}">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <a href="{{ item.product_url or url_for('product_page_url', product_id=item.product_id) }}" class="sk-wl-product-link">
+          <div class="sk-wl-product-image">
+            <img src="{{ item.image }}" alt="Product Image">
+          </div>
+          <div class="sk-wl-product-info">
+            <div class="sk-wl-product-title">{{ item.title }}</div>
+            <div class="sk-wl-product-brand">Brand: {{ item.brand }}</div>
+            <div class="sk-wl-product-color">Color: {{ item.color }}</div>
+            <div class="sk-wl-product-pricing">
+              <span class="sk-wl-discount-price">Rs. {{ item.discountPrice }}</span>
+              <span class="sk-wl-original-price">Rs. {{ item.originalPrice }}</span>
+              <span class="sk-wl-discount-percent">{{ item.discountPercent }}</span>
+            </div>
+          </div>
+        </a>
+        <div class="sk-wl-actions">
+          <button class="sk-wl-add-to-cart-btn" data-id="{{ item._id }}">Add to Cart</button>
+          <button class="sk-wl-share-product-btn" data-id="{{ item._id }}">
+            <i class="fas fa-share-alt"></i>
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div id="sk-wl-empty" class="sk-wl-empty">
+      <i class="fas fa-heart-broken"></i>
+      <p>Your wishlist is empty! 💖 Start discovering and adding your favorite items by clicking the <b>heart</b> icon on product pages.</p>
+    </div>
+  {% endif %}
 </div>
 
 <!-- Global Wishlist Share Popup -->
@@ -73,7 +95,4 @@ ShopKhana - My Wishlist
     </div>
   </div>
 </div>
-
-
-
 {% endblock body %}

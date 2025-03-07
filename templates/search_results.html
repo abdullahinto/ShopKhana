@@ -10,237 +10,115 @@ ShopKhana - Search Results
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/search_results.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search_filter.js') }}"></script>
 {% endblock extra_js %}
 
 {% block body %}
 <div class="sk-search_results-container">
     <div class="sk-search_results-header">
-        <!-- Left: Heading & Subheading -->
         <div class="sk-search_results-left">
-            <h1>Showing search results for <b> "Water Bottle"</b></h1>
-            <p class="sk-search_results-subheading">449303 items found</p>
+            <h1>Showing search results for <strong>"{{ query }}"</strong></h1>
+            <p class="sk-search_results-subheading">{{ total_count }} items found</p>
         </div>
-        <!-- Right: Sort-by Options -->
         <div class="sk-search_results-right">
+            <!-- Price Range Dropdown -->
             <div class="sk-search_results-dropdown">
                 <button class="sk-search_results-dropdown-btn">
-                    Price: Low to High <i class="fa fa-caret-down"></i>
+                    Price Range <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="sk-search_results-dropdown-content">
-                    <a href="#">Price: High to Low</a>
-                    <a href="#">Price: Low to High</a>
-                    <a href="#">Price: Average</a>
+                    <a href="{{ url_for('search_results')|update_query(price_range='300-500pkr') }}">300-500 PKR</a>
+                    <a href="{{ url_for('search_results')|update_query(price_range='500-800pkr') }}">500-800 PKR</a>
+                    <a href="{{ url_for('search_results')|update_query(price_range='1000-2000pkr') }}">1000-2000 PKR</a>
+                    <a href="{{ url_for('search_results')|update_query(price_range='2000+') }}">2000+</a>
+                    <a href="#" id="custom-price-option">Custom</a>
                 </div>
             </div>
+            <!-- Custom Price Inputs -->
+            <div id="custom-price-container" style="display: none;">
+                <input type="number" id="custom-min-price" placeholder="Min Price">
+                <input type="number" id="custom-max-price" placeholder="Max Price">
+                <button id="apply-custom-price">Apply</button>
+            </div>
+            <!-- Brand Dropdown -->
             <div class="sk-search_results-dropdown">
                 <button class="sk-search_results-dropdown-btn">
                     Brand <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="sk-search_results-dropdown-content">
-                    <a href="#">Brand A</a>
-                    <a href="#">Brand B</a>
-                    <a href="#">Brand C</a>
+                    {% for b in brands %}
+                    <a href="{{ url_for('search_results')|update_query(brand=b) }}">{{ b }}</a>
+                    {% endfor %}
                 </div>
             </div>
+            <!-- Color/Family Dropdown -->
             <div class="sk-search_results-dropdown">
                 <button class="sk-search_results-dropdown-btn">
                     Color/Family <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="sk-search_results-dropdown-content">
-                    <a href="#">Color: Red</a>
-                    <a href="#">Color: Blue</a>
-                    <a href="#">Color: Green</a>
+                    {% for c in colors %}
+                    <a href="{{ url_for('search_results')|update_query(color=c) }}">Color: {{ c }}</a>
+                    {% endfor %}
                 </div>
             </div>
+            <!-- Promotion Dropdown -->
             <div class="sk-search_results-dropdown">
                 <button class="sk-search_results-dropdown-btn">
                     Promotion <i class="fa fa-caret-down"></i>
                 </button>
                 <div class="sk-search_results-dropdown-content">
-                    <a href="#">Sale Items</a>
-                    <a href="#">Clearance</a>
-                    <a href="#">Bundle Deals</a>
+                    <a href="{{ url_for('search_results')|update_query(promotion='Flash Sale') }}">Flash Sale</a>
+                    <a href="{{ url_for('search_results')|update_query(promotion='Best Buy') }}">Best Buy</a>
+                    <a href="{{ url_for('search_results')|update_query(promotion='New Arrivals') }}">New Arrivals</a>
+                    <a href="{{ url_for('search_results')|update_query(promotion='Gift Deals') }}">Gift Deals</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
-<section id="search_results-sale">
-
-    <div class="search_results-products">
-        <div class="search_results-card">
-            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
-                <div class="search_results-card-image">
-                    <!-- First Image (Displayed by default) -->
-                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
-                        class="search_results-img-primary">
-                    <!-- Second Image (Hidden by default, shown on hover) -->
-                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
-                        class="search_results-img-secondary">
+<section id="sk-search-results-page">
+    <div class="sk-search-results-products">
+        {% for product in products %}
+        <div class="sk-search-results-product-card">
+            <a href="{{ url_for('product_page_url', product_id=product._id) }}" style="text-decoration: none;">
+                <div class="sk-search-results-product-image">
+                    <img src="{{ product.images[0] if product.images else url_for('static', filename='img/placeholder.png') }}"
+                        alt="Product Image" class="sk-search-results-primary-image">
+                    <img src="{{ product.images[1] if product.images|length > 1 else product.images[0] }}"
+                        alt="Product Image" class="sk-search-results-secondary-image">
                 </div>
-                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
-                <div class="search_results-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span class="search_results-rating-text">4.5</span>
+                <h3 class="sk-search-results-product-title">{{ product.title }}</h3>
+                <div class="sk-search-results-product-rating">
+                    <span class="sk-search-results-rating-text"><strong style="color: orange;">Brand:</strong> {{
+                        product.brandName }}</span>
                 </div>
-                <div class="search_results-pricing">
-                    <span class="search_results-discount-price">Rs.600</span>
-                    <span class="search_results-original-price">Rs.1000</span>
-                    <span class="search_results-discount-percent">-50%</span>
+                <div class="sk-search-results-product-pricing">
+                    <span class="sk-search-results-discount-price">Rs.{{ product.discountedPrice }}</span>
+                    <span class="sk-search-results-original-price">Rs.{{ product.originalPrice }}</span>
+                    <span class="sk-search-results-discount-percent">{{ product.discountPercent }}%</span>
                 </div>
             </a>
-            <button class="search_results-add-cart-btn">Add to Cart</button>
+            <button class="sk-search-results-add-to-cart-btn">Add to Cart</button>
         </div>
-
-        <div class="search_results-card">
-            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
-                <div class="search_results-card-image">
-                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
-                        class="search_results-img-primary">
-                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
-                        class="search_results-img-secondary">
-                </div>
-                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
-                <div class="search_results-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span class="search_results-rating-text">4.5</span>
-                </div>
-                <div class="search_results-pricing">
-                    <span class="search_results-discount-price">Rs.600</span>
-                    <span class="search_results-original-price">Rs.1000</span>
-                    <span class="search_results-discount-percent">-50%</span>
-                </div>
-            </a>
-            <button class="search_results-add-cart-btn">Add to Cart</button>
-        </div>
-
-        <div class="search_results-card">
-            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
-                <div class="search_results-card-image">
-                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
-                        class="search_results-img-primary">
-                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
-                        class="search_results-img-secondary">
-                </div>
-                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
-                <div class="search_results-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span class="search_results-rating-text">4.5</span>
-                </div>
-                <div class="search_results-pricing">
-                    <span class="search_results-discount-price">Rs.600</span>
-                    <span class="search_results-original-price">Rs.1000</span>
-                    <span class="search_results-discount-percent">-50%</span>
-                </div>
-            </a>
-            <button class="search_results-add-cart-btn">Add to Cart</button>
-        </div>
-
-        <div class="search_results-card">
-            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
-                <div class="search_results-card-image">
-                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
-                        class="search_results-img-primary">
-                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
-                        class="search_results-img-secondary">
-                </div>
-                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
-                <div class="search_results-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span class="search_results-rating-text">4.5</span>
-                </div>
-                <div class="search_results-pricing">
-                    <span class="search_results-discount-price">Rs.600</span>
-                    <span class="search_results-original-price">Rs.1000</span>
-                    <span class="search_results-discount-percent">-50%</span>
-                </div>
-            </a>
-            <button class="search_results-add-cart-btn">Add to Cart</button>
-        </div>
-
-        <div class="search_results-card">
-            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
-                <div class="search_results-card-image">
-                    <img src="{{ url_for('static', filename='img/p1.webp') }}" alt="Product Image"
-                        class="search_results-img-primary">
-                    <img src="{{ url_for('static', filename='img/p3.webp') }}" alt="Product Image"
-                        class="search_results-img-secondary">
-                </div>
-                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
-                <div class="search_results-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span class="search_results-rating-text">4.5</span>
-                </div>
-                <div class="search_results-pricing">
-                    <span class="search_results-discount-price">Rs.600</span>
-                    <span class="search_results-original-price">Rs.1000</span>
-                    <span class="search_results-discount-percent">-50%</span>
-                </div>
-            </a>
-            <button class="search_results-add-cart-btn">Add to Cart</button>
-        </div>
-
-        <div class="search_results-card">
-            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
-                <div class="search_results-card-image">
-                    <img src="{{ url_for('static', filename='img/pro1 (1).jfif') }}" alt="Product Image"
-                        class="search_results-img-primary">
-                    <img src="{{ url_for('static', filename='img/pro1 (2).jfif') }}" alt="Product Image"
-                        class="search_results-img-secondary">
-                </div>
-                <h3 class="search_results-title">The handbags for Women 100% leather</h3>
-                <div class="search_results-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span class="search_results-rating-text">4.5</span>
-                </div>
-                <div class="search_results-pricing">
-                    <span class="search_results-discount-price">Rs.600</span>
-                    <span class="search_results-original-price">Rs.1000</span>
-                    <span class="search_results-discount-percent">-50%</span>
-                </div>
-            </a>
-            <button class="search_results-add-cart-btn">Add to Cart</button>
-        </div>
+        {% endfor %}
     </div>
 </section>
 
+<!-- Pagination Controls -->
 <div class="search_results-pagination">
-    <a href="#" class="search_results-pagination-prev">« Prev</a>
-    <a href="#" class="search_results-pagination-page active">1</a>
-    <a href="#" class="search_results-pagination-page">2</a>
-    <a href="#" class="search_results-pagination-page">3</a>
-    <a href="#" class="search_results-pagination-page">4</a>
-    <span class="search_results-pagination-ellipsis">...</span>
-    <a href="#" class="search_results-pagination-page">10</a>
-    <a href="#" class="search_results-pagination-next">Next »</a>
+    {% if current_page > 1 %}
+    <a href="{{ url_for('search_results')|update_query(page=current_page - 1) }}"
+        class="search_results-pagination-prev">« Prev</a>
+    {% endif %}
+    {% for p in range(1, total_pages + 1) %}
+    <a href="{{ url_for('search_results')|update_query(page=p) }}"
+        class="search_results-pagination-page {% if p == current_page %}active{% endif %}">{{ p }}</a>
+    {% endfor %}
+    {% if current_page < total_pages %} <a href="{{ url_for('search_results')|update_query(page=current_page + 1) }}"
+        class="search_results-pagination-next">Next »</a>
+        {% endif %}
 </div>
-
-
-
 {% endblock body %}

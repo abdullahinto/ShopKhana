@@ -20,7 +20,38 @@
 
 
   <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
-  <!-- <script defer src="{{ url_for('static', filename='js/auth.js') }}"></script> -->
+  <script defer src="{{ url_for('static', filename='js/search.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='js/auth.js') }}"></script>
+
+
+
+  <script>
+    var userAuthenticated = "{{ 'true' if current_user.is_authenticated else 'false' }}";
+  </script>
+
+  <script>
+    // Check if the URL has action=login; if so, open the auth popup
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('action') === 'login') {
+      // Assuming you have a function showAuthPopup() that triggers the auth popup
+      showAuthPopup();
+    }
+  </script>
+
+
+
+
+
+  <div id="flash-messages">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-message {{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+  </div>
+
 
 
   {% block extra_css %}
@@ -116,18 +147,21 @@
               <i class="fas fa-minus-circle"></i> My Cancellations
 
             </div>
-            <div class="dropdown-item">
+            <div class="dropdown-item" data-href="{{url_for('logout')}}">
               <i class="fas fa-sign-out-alt"></i> Logout
             </div>
           </div>
         </div>
 
         <!-- Other Icons -->
-        <a href="{{url_for('my_wish')}}" title="Wishlist"><i class="fas fa-heart"></i></a>
-        <a href="{{url_for('cart')}}" class="cart-icon" title="Cart">
+        <a href="{{ url_for('my_wish') }}" title="Wishlist" class="requires-auth">
+          <i class="fas fa-heart"></i>
+        </a>
+        <a href="{{ url_for('cart') }}" class="cart-icon requires-auth" title="Cart">
           <i class="fas fa-shopping-cart"></i>
           <span class="cart-count">2</span>
         </a>
+
 
         <!-- Mobile Search Toggle (only visible on mobile) -->
         <button id="mobile-search-toggle" class="mobile-search-toggle" title="Search">
@@ -139,13 +173,21 @@
     <!-- Categories Navigation (Desktop only: visible above 768px) -->
     <nav id="categories">
       <div class="category-buttons">
-        <button><i class="fas fa-box-open"></i> New Arrivals</button>
-        <button><i class="fas fa-gift"></i> Gift Deals</button>
-        <button><i class="fas fa-bolt"></i> Flash Sale</button>
-        <button><i class="fas fa-thumbs-up"></i> Best Buy</button>
-
+        <a href="{{ url_for('promotion_products', promo_category='New Arrivals') }}">
+          <button type="button"><i class="fas fa-box-open"></i> New Arrivals</button>
+        </a>
+        <a href="{{ url_for('promotion_products', promo_category='Gift Deals') }}">
+          <button type="button"><i class="fas fa-gift"></i> Gift Deals</button>
+        </a>
+        <a href="{{ url_for('promotion_products', promo_category='Flash Sale') }}">
+          <button type="button"><i class="fas fa-bolt"></i> Flash Sale</button>
+        </a>
+        <a href="{{ url_for('promotion_products', promo_category='Best Buy') }}">
+          <button type="button"><i class="fas fa-thumbs-up"></i> Best Buy</button>
+        </a>
       </div>
     </nav>
+
 
     <!-- Mobile Search Bar (hidden by default, toggled by the search icon) -->
     <div id="mobile-search" class="mobile-search">
@@ -166,15 +208,22 @@
       <i class="fas fa-times"></i>
     </button>
     <div class="mobile-category-buttons">
-      <button><i class="fas fa-box-open"></i> New Arrivals</button>
-      <button><i class="fas fa-gift"></i> Gift Deals</button>
-      <button><i class="fas fa-bolt"></i> Flash Sale</button>
-      <button><i class="fas fa-thumbs-up"></i> Best Buy</button>
+      <a href="{{ url_for('promotion_products', promo_category='New Arrivals') }}">
+        <button type="button"><i class="fas fa-box-open"></i> New Arrivals</button>
+      </a>
+      <a href="{{ url_for('promotion_products', promo_category='Gift Deals') }}">
+        <button type="button"><i class="fas fa-gift"></i> Gift Deals</button>
+      </a>
+      <a href="{{ url_for('promotion_products', promo_category='Flash Sale') }}">
+        <button type="button"><i class="fas fa-bolt"></i> Flash Sale</button>
+      </a>
+      <a href="{{ url_for('promotion_products', promo_category='Best Buy') }}">
+        <button type="button"><i class="fas fa-thumbs-up"></i> Best Buy</button>
+      </a>
     </div>
   </div>
 
 
-  <!-- Auth Popup Overlay -->
   <div id="authPopup" class="auth-popup">
     <div class="auth-container">
       <!-- Close Button -->
@@ -182,64 +231,73 @@
 
       <!-- Tabs -->
       <div class="auth-tabs">
-        <button class="tab-btn active" data-tab="signupTab">Sign up</button>
-        <button class="tab-btn" data-tab="loginTab">Login</button>
+        <button class="tab-btn {% if action != 'login' %}active{% endif %}" data-tab="signupTab">Sign Up</button>
+        <button class="tab-btn {% if action == 'login' %}active{% endif %}" data-tab="loginTab">Login</button>
       </div>
 
       <!-- Tab Content Wrapper -->
       <div class="auth-forms">
-
-        <!-- SIGN UP TAB -->
-        <div id="signupTab" class="tab-content active">
-          <form class="auth-form" id="signupForm">
-            <input type="text" id="signupPhoneEmail" placeholder="Please enter your Phone Number or Email" required />
-            <div class="password-field">
-              <input type="password" id="signupPassword" placeholder="Please enter your password" required />
+        <!-- Sign Up Tab -->
+        <div id="signupTab" class="tab-content {% if action != 'login' %}active{% endif %}">
+          <form id="signupForm" class="auth-form" action="{{ url_for('signup') }}" method="POST">
+            <div class="form-group">
+              <label for="signupPhoneEmail">Phone or Email</label>
+              <input type="text" id="signupPhoneEmail" name="signupEmail" placeholder="Enter your Phone or Email"
+                required>
+            </div>
+            <div class="form-group password-group">
+              <label for="signupPassword">Password</label>
+              <input type="password" id="signupPassword" name="signupPassword" placeholder="Enter your password"
+                required>
               <span class="toggle-password" data-target="signupPassword">
                 <i class="fas fa-eye"></i>
               </span>
             </div>
-            <button type="submit" class="cta-btn">Sign up</button>
+            <button type="submit" class="cta-btn">Sign Up</button>
           </form>
-
           <p class="or-text">Or Sign up with</p>
           <div class="social-login">
-            <button class="social-btn google">
+            <a href="{{ url_for('google.login') }}" class="social-btn google">
               <i class="fab fa-google"></i> Google
-            </button>
-            <button class="social-btn facebook">
+            </a>
+            <!-- <a href="{{ url_for('facebook.login') }}" class="social-btn facebook">
               <i class="fab fa-facebook-f"></i> Facebook
-            </button>
+            </a> -->
           </div>
         </div>
 
-        <!-- LOGIN TAB -->
-        <div id="loginTab" class="tab-content">
-          <form class="auth-form" id="loginForm">
-            <input type="text" id="loginPhoneEmail" placeholder="Please enter your Phone Number or Email" required />
-            <div class="password-field">
-              <input type="password" id="loginPassword" placeholder="Please enter your password" required />
+        <!-- Login Tab -->
+        <div id="loginTab" class="tab-content {% if action == 'login' %}active{% endif %}">
+          <form id="loginForm" class="auth-form" action="{{ url_for('login') }}" method="POST">
+            <div class="form-group">
+              <label for="loginPhoneEmail">Phone or Email</label>
+              <input type="text" id="loginPhoneEmail" name="loginEmail" placeholder="Enter your Phone or Email"
+                required>
+            </div>
+            <div class="form-group password-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" name="loginPassword" placeholder="Enter your password" required>
               <span class="toggle-password" data-target="loginPassword">
                 <i class="fas fa-eye"></i>
               </span>
             </div>
+            <a href="{{url_for('forgot_password')}}" target="_blank" class="forgot-password">Forgot Password?</a>
             <button type="submit" class="cta-btn">Login</button>
           </form>
-
           <p class="or-text">Or Login with</p>
           <div class="social-login">
-            <button class="social-btn google">
+            <a href="{{ url_for('google.login') }}" class="social-btn google">
               <i class="fab fa-google"></i> Google
-            </button>
-            <button class="social-btn facebook">
+            </a>
+            <a href="{{ url_for('facebook.login') }}" class="social-btn facebook">
               <i class="fab fa-facebook-f"></i> Facebook
-            </button>
+            </a>
           </div>
         </div>
-
       </div>
     </div>
   </div>
+
 
 
   {% block body %}

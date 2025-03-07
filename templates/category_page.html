@@ -1,0 +1,81 @@
+{% extends 'index.html' %}
+
+{% block title %}
+{{ sk_category }} Products - ShopKhana
+{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/category_page.css') }}">
+{% endblock extra_css %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/category_page.js') }}"></script>
+{% endblock extra_js %}
+
+{% block body %}
+
+<!-- BREADCRUMBS -->
+<nav class="breadcrumbs">
+    <a href="{{ url_for('main_page') }}">Home</a>
+    <i class="fas fa-chevron-right"></i>
+    <a href="#">{{ sk_category }}</a>
+</nav>
+
+<section id="sk-category-product-page">
+    <div class="category-header">
+        <h2>{{ sk_category }}</h2>
+    </div>
+
+    <div class="category-products">
+        {% if products|length > 0 %}
+        {% for categoryprod in products %}
+        <div class="category-product-card">
+            <a href="{{ url_for('product_page_url', product_id=categoryprod._id) }}" style="text-decoration: none;">
+                <div class="category-product-image">
+                    <img src="{{ categoryprod.images[0] if categoryprod.images else '/static/img/placeholder.png' }}"
+                        alt="{{ categoryprod.title }}" class="category-primary-image">
+                    <img src="{{ (categoryprod.images[1] if categoryprod.images|length > 1 else categoryprod.images[0])|default('path/to/default-image.jpg') }}"
+                        alt="{{ categoryprod.title }}" class="category-secondary-image">
+                </div>
+                <h3 class="category-product-title">{{ categoryprod.title }}</h3>
+                <div class="category-product-rating">
+                    <span class="category-rating-text"><strong style="color: orange;">Brand:</strong> {{
+                        categoryprod.brandName }}</span>
+                </div>
+                <div class="category-product-pricing">
+                    <span class="category-discount-price">Rs.{{ categoryprod.discountedPrice }}</span>
+                    <span class="category-original-price">Rs.{{ categoryprod.originalPrice }}</span>
+                    <span class="category-discount-percent">{{ categoryprod.discountPercent }}%</span>
+                </div>
+            </a>
+            <button class="category-add-to-cart-btn">Add to Cart</button>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="no-products-message">
+            <p>Oops! No products were found for "<strong>{{ sk_category }}</strong>".</p>
+            <p>Please try again later or explore other categories.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="search_results-pagination">
+        {% if current_page > 1 %}
+        <a href="{{ url_for('category_products', sk_category=sk_category, page=current_page-1) }}"
+            class="search_results-pagination-prev">« Prev</a>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+        <a href="{{ url_for('category_products', sk_category=sk_category, page=p) }}"
+            class="pagination-page {% if p == current_page %}active{% endif %}">{{ p }}</a>
+        {% endfor %}
+
+        {% if current_page < total_pages %} <a
+            href="{{ url_for('category_products', sk_category=sk_category, page=current_page+1) }}"
+            class="search_results-pagination-next">Next »</a>
+            {% endif %}
+    </div>
+</section>
+
+{% endblock body %}

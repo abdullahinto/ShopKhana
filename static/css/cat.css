@@ -7,7 +7,7 @@
 }
 
 /* Heading */
-#categories-section h2 {
+.flash-sale-header h2 {
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   color: #333;
@@ -18,10 +18,10 @@
 /* Grid for category cards */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   grid-auto-rows: auto;
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 30px; /* Add spacing between the grid and the button */
 }
 
 /* Category Card */
@@ -76,8 +76,15 @@
   margin: 0;
 }
 
-/* Load More Button (Desktop) */
-.load-more-btn {
+/* Load More Button Container (Desktop) */
+.cat-load-more-container {
+  display: flex;
+  justify-content: center; /* Center the button horizontally */
+  margin-top: 20px; /* Add spacing between the grid and the button */
+}
+
+
+.cat-load-more-btn {
   background: linear-gradient(45deg, #ffde59, #ffd700);
   color: #333;
   padding: 10px 20px;
@@ -88,15 +95,12 @@
   transition: background 0.3s, transform 0.3s;
 }
 
-.load-more-btn:hover {
+.cat-load-more-btn:hover {
   background-color: #ffa500;
   transform: scale(1.05);
 }
 
-/* Mobile Load More Button (Hidden by Default) */
-.mobile-load-more {
-  display: none;
-}
+
 
 /* SCROLL ANIMATION */
 .category-card.card-hidden {
@@ -122,15 +126,5 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  /* Hide the Desktop "Load More" Button */
-  #categories-section .load-more-btn {
-    display: none;
-  }
 
-  /* Show the Mobile "Load More" Button Below the Grid */
-  .mobile-load-more {
-    display: flex;
-    justify-content: center;
-    margin-top: 15px;
-  }
 }

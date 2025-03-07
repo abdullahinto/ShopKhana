@@ -284,6 +284,7 @@ header {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
+
 }
 .mobile-search.active {
   max-height: 80px; /* Adjust based on your search box height */
@@ -296,6 +297,8 @@ header {
   padding: 5px 10px;
   margin: 10px 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  outline: 2px solid orange; /* Add orange outline */  
+
 }
 .mobile-search .search-box input {
   border: none;
@@ -408,3 +411,32 @@ header.hidden {
 header.compact #categories {
   display: none;
 }
+
+
+
+#flash-messages {
+  position: fixed;
+  top: 10px;
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust for perfect centering */
+  z-index: 1100;
+}
+
+.flash-message {
+  background: #333;
+  color: #fff;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  opacity: 0.9;
+  transition: opacity 0.5s ease;
+}
+
+.flash-message.error {
+  background: #e74c3c;
+}
+
+.flash-message.success {
+  background: #27ae60;
+}
+  

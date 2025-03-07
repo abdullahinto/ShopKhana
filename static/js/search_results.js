@@ -1,16 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Initialize dropdown functionality
+  // Initialize core functionalities
   initializeDropdowns();
-
-  // Initialize product card reveal on scroll functionality
   initializeProductCardReveal();
-
-  // Initialize pagination functionality
   initializePagination();
+
+  // Initialize custom price functionality
+  initializeCustomPrice();
 });
 
 /**
- * Initializes dropdown functionality for elements with the class 'sk-search_results-dropdown'.
+ * Initializes dropdown functionality for elements with the class 'sk-search-results-dropdown'.
  */
 function initializeDropdowns() {
   const skDropdowns = document.querySelectorAll(".sk-search_results-dropdown");
@@ -60,16 +59,16 @@ function closeAllDropdowns(dropdowns) {
 }
 
 /**
- * Initializes the reveal-on-scroll functionality for product cards in the search results sale section.
+ * Initializes the reveal-on-scroll functionality for product cards in the search results section.
  */
 function initializeProductCardReveal() {
   const searchResultsCards = document.querySelectorAll(
-    "#search_results-sale .search_results-card"
+    "#sk-search_results-page .sk-search_results-product-card"
   );
 
-  // Add the 'search_results-card-hidden' class by default
+  // Add the 'card-hidden' class by default
   searchResultsCards.forEach((card) => {
-    card.classList.add("search_results-card-hidden");
+    card.classList.add("card-hidden");
   });
 
   // Configure Intersection Observer options
@@ -82,7 +81,7 @@ function initializeProductCardReveal() {
   const revealOnScroll = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("search_results-card-visible");
+        entry.target.classList.add("card-visible");
         observer.unobserve(entry.target); // Stop observing once visible
       }
     });
@@ -94,33 +93,33 @@ function initializeProductCardReveal() {
   });
 }
 
-/**
- * Initializes pagination functionality for search results.
- */
-function initializePagination() {
-  const pageLinks = document.querySelectorAll(
-    ".search_results-pagination a.search_results-pagination-page"
-  );
+// /**
+//  * Initializes pagination functionality for search results.
+//  */
+// function initializePagination() {
+//   const pageLinks = document.querySelectorAll(
+//     ".search_results-pagination a.search_results-pagination-page"
+//   );
 
-  // Add click event listeners to pagination links
-  pageLinks.forEach((link) => {
-    link.addEventListener("click", function (e) {
-      e.preventDefault();
-      setActivePage(link); // Set the clicked link as active
-    });
-  });
+//   // Add click event listeners to pagination links
+//   pageLinks.forEach((link) => {
+//     link.addEventListener("click", function (e) {
+//       e.preventDefault();
+//       setActivePage(link); // Set the clicked link as active
+//     });
+//   });
 
-  // Handle Prev/Next button clicks
-  const prevBtn = document.querySelector(".search_results-pagination-prev");
-  const nextBtn = document.querySelector(".search_results-pagination-next");
+//   // Handle Prev/Next button clicks
+//   const prevBtn = document.querySelector(".search_results-pagination-prev");
+//   const nextBtn = document.querySelector(".search_results-pagination-next");
 
-  [prevBtn, nextBtn].forEach((btn) => {
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      handlePaginationNavigation(btn); // Handle navigation logic
-    });
-  });
-}
+//   [prevBtn, nextBtn].forEach((btn) => {
+//     btn.addEventListener("click", function (e) {
+//       e.preventDefault();
+//       handlePaginationNavigation(btn); // Handle navigation logic
+//     });
+//   });
+// }
 
 /**
  * Sets the active state for a pagination link.
@@ -134,17 +133,17 @@ function setActivePage(activeLink) {
   activeLink.classList.add("active"); // Add active class to the clicked link
 }
 
-/**
- * Handles navigation logic for Prev/Next buttons.
- * @param {HTMLElement} btn - The Prev/Next button that was clicked.
- */
-function handlePaginationNavigation(btn) {
-  // Example: Implement custom logic for Prev/Next transitions here
-  console.log(
-    `${
-      btn.classList.contains("search_results-pagination-prev")
-        ? "Previous"
-        : "Next"
-    } page clicked`
-  );
-}
+// /**
+//  * Handles navigation logic for Prev/Next buttons.
+//  * @param {HTMLElement} btn - The Prev/Next button that was clicked.
+//  */
+// function handlePaginationNavigation(btn) {
+//   // Example: Implement custom logic for Prev/Next transitions here
+//   console.log(
+//     `${
+//       btn.classList.contains("search_results-pagination-prev")
+//         ? "Previous"
+//         : "Next"
+//     } page clicked`
+//   );
+// }

@@ -127,9 +127,11 @@
 
       <!-- ADD TO CART & BUY NOW -->
       <div class="action-buttons">
-        <button id="add-to-cart-btn" class="PD_add-to-cart-btn">Add to Cart</button>
-        <button data-href="{{url_for('del_info_promo_page')}}" id="buy-now-btn" class="PD_buy-now-btn">Buy Now</button>
+        <button id="add-to-cart-btn" class="PD_add-to-cart-btn requires-auth">Add to Cart</button>
+        <button data-href="{{ url_for('del_info_promo_page') }}" id="buy-now-btn"
+          class="PD_buy-now-btn requires-auth">Buy Now</button>
       </div>
+
     </div>
   </div>
 </section>
@@ -212,7 +214,7 @@
   <div class="tab-content active" id="reviewsTab">
     <div class="reviews-container" id="reviewsContainer">
       <!-- Single Review -->
-      <a href="#" id="write-review-link">Write a Review😊</a>
+      <a href="#" id="write-review-link" class="requires-auth">Write a Review😊</a>
       <div class="review-item">
         <div class="review-header">
           <div class="stars">
@@ -260,7 +262,7 @@
   <!-- TAB CONTENT: ADDITIONAL INFO -->
   <div class="tab-content" id="infoTab">
     <div class="additional-info-section">
-  
+
     </div>
   </div>
 
