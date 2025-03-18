@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 
 {% block title %}
-ShopKhana | Home
+Home - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
@@ -61,7 +61,7 @@ ShopKhana | Home
   <div class="flash-sale-products">
     {% for prod in flash_sale_products %}
     <div class="product-card">
-      <a href="{{ url_for('product_page_url') }}" style="text-decoration: none;">
+      <a href="{{ url_for('product_page', product_id=prod._id) }}" style="text-decoration: none;">
         <div class="product-image">
           <!-- First Image (Displayed by default) -->
           <img src="{{ prod.images[0] if prod.images else '/static/img/placeholder.png' }}" alt="Product Image"
@@ -86,7 +86,7 @@ ShopKhana | Home
           <span class="discount-percent">{{ prod.discountPercent }}%</span>
         </div>
       </a>
-      <button  class="add-to-cart-btn  requires-auth">Add to Cart</button>
+      <button data-href="{{url_for('product_page',  product_id=prod._id)}}"   class="main-add-to-cart-btn  requires-auth">Add to Cart</button>
     </div>
     {% endfor %}
   </div>
@@ -145,7 +145,7 @@ ShopKhana | Home
   <div class="just-for-you-products">
     {% for justprod in just_for_you_products %}
     <div class="product-card">
-      <a href="{{ url_for('product_page_url', product_id=justprod._id) }}" style="text-decoration: none;">
+      <a href="{{ url_for('product_page', product_id=justprod._id) }}" style="text-decoration: none;">
         <div class="product-image">
           <img src="{{ justprod.images[0] if justprod.images else '/static/img/placeholder.png' }}" alt="Product Image"
             class="primary-image">
@@ -163,7 +163,7 @@ ShopKhana | Home
           <span class="discount-percent">{{ justprod.discountPercent }}%</span>
         </div>
       </a>
-      <button class="add-to-cart-btn  requires-auth">Add to Cart</button>
+      <button data-href="{{url_for('product_page',  product_id=justprod._id)}}" class="main-add-to-cart-btn  requires-auth">Add to Cart</button>
     </div>
     {% endfor %}
   </div>

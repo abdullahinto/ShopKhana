@@ -1,31 +1,65 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Select all product cards in the Recommended Products section
-    const productCards = document.querySelectorAll("#recommended-products .product-card");
-  
-    // Add the 'card-hidden' class by default
-    productCards.forEach((card) => {
-      card.classList.add("card-hidden");
-    });
-  
-    // Create an Intersection Observer
-    const observerOptions = {
-      root: null,
-      threshold: 0.2,
-    };
-  
-    const revealOnScroll = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("card-visible");
-          // Stop observing once the element is visible
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-  
-    // Observe each product card
-    productCards.forEach((card) => {
-      revealOnScroll.observe(card);
-    });
+  const productCards = document.querySelectorAll(
+    "#rec_products_4u .product-card"
+  );
+  const loadMoreBtn = document.querySelector("#rec_products_4u .load-more-btn");
+  const loadingOverlay = document.getElementById("loading-overlay");
+
+  // Set initial number of visible products (20 products)
+  const initialVisibleCount = 20;
+  productCards.forEach((card, index) => {
+    if (index >= initialVisibleCount) {
+      card.style.display = "none";
+    }
   });
-  
+
+  // Function to show loading overlay
+  function showLoadingOverlay() {
+    if (loadingOverlay) {
+      loadingOverlay.style.display = "flex";
+    }
+  }
+
+  // Function to hide loading overlay
+  function hideLoadingOverlay() {
+    if (loadingOverlay) {
+      loadingOverlay.style.display = "none";
+    }
+  }
+
+  // Event listener for the Load More button
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener("click", async function (e) {
+      e.preventDefault();
+      showLoadingOverlay();
+
+      // Simulate a loading delay (e.g., 1 second)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Check if there are hidden cards
+      let hiddenCards = Array.from(productCards).filter(
+        (card) => card.style.display === "none"
+      );
+
+      if (hiddenCards.length > 0) {
+        // Expand: show all hidden cards
+        productCards.forEach((card, index) => {
+          if (index >= initialVisibleCount) {
+            card.style.display = "block";
+          }
+        });
+        loadMoreBtn.textContent = "Load Less";
+      } else {
+        // Collapse: hide cards beyond initialVisibleCount
+        productCards.forEach((card, index) => {
+          if (index >= initialVisibleCount) {
+            card.style.display = "none";
+          }
+        });
+        loadMoreBtn.textContent = "Load More";
+      }
+
+      hideLoadingOverlay();
+    });
+  }
+});

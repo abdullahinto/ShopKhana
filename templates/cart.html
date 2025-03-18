@@ -5,24 +5,30 @@ ShopKhana - Shopping Cart
 {% endblock title %}
 
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
-
-
+<style>
+    #couponInput,
+    #applyCouponBtn {
+        pointer-events: none;
+        /* Disable clicks and interactions */
+        opacity: 0.8;
+        /* Make it look visually disabled */
+    }
+</style>
 {% endblock extra_css %}
 
 {% block extra_js %}
-
+<script>
+    // Inject cart data from the server into a global variable.
+    window.cartData = {{ cart_data | tojson }};
+</script>
 <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-
 {% endblock extra_js %}
 
-
 {% block body %}
-
 <h1 class="cart-page-heading">Shopping Cart</h1>
 
-<!-- CTA Buttons on Top (outside the container) -->
+<!-- CTA Buttons on Top -->
 <div class="cart-cta-buttons">
     <button id="selectAllBtn" class="cta-select-all">
         <i class="fas fa-check-square"></i> Select All
@@ -35,11 +41,11 @@ ShopKhana - Shopping Cart
     </button>
 </div>
 
-<!-- Main Container for cart & summary -->
+<!-- Main Container for Cart & Order Summary -->
 <div class="cart-summary-container">
     <!-- Product Cart Container -->
     <div id="productCartContainer" class="product-cart-container">
-        <!-- Items or empty-cart message will be rendered here by JS -->
+        <!-- Cart items will be rendered dynamically by JS -->
     </div>
 
     <!-- Order Summary Container -->
@@ -56,15 +62,15 @@ ShopKhana - Shopping Cart
         <div class="coupon-row">
             <input type="text" id="couponInput" placeholder="Enter ShopKhana/Coupon code" />
             <button id="applyCouponBtn" class="apply-coupon-btn">APPLY</button>
+
         </div>
         <div class="summary-row total-row">
             <span>Total</span>
             <span>Rs. <span id="grandTotal">0</span></span>
         </div>
         <button id="proceedCheckoutBtn" class="proceed-checkout-btn">
-            PROCEED TO CHECKOUT(0)
+            PROCEED TO CHECKOUT(<span id="proceedCount">0</span>)
         </button>
     </div>
 </div>
-
 {% endblock body %}

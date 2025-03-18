@@ -22,11 +22,15 @@
   <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script defer src="{{ url_for('static', filename='js/search.js') }}"></script>
   <script defer src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <!-- Add this in your HTML file (before closing </body>) -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 
 
   <script>
     var userAuthenticated = "{{ 'true' if current_user.is_authenticated else 'false' }}";
+
   </script>
 
   <script>
@@ -37,6 +41,7 @@
       showAuthPopup();
     }
   </script>
+
 
 
 
@@ -123,7 +128,7 @@
       <div class="nav-icons">
         <!-- Login Icon with Dropdown -->
         <div class="dropdown-container">
-          <a href="#" title="Login" id="login-icon"><i class="fas fa-user"></i></a>
+          <a href="#" title="Login" id="login-icon"><i class="fas fa-user"></i></a> Account
           <div class="dropdown-menu" id="dropdown-menu">
 
             <div class="dropdown-item" data-href="{{url_for('manage_account')}}">
@@ -134,7 +139,7 @@
             <div class="dropdown-item" data-href="{{url_for('my_orders')}}">
               <i class="fas fa-box"></i> My Orders
             </div>
-            <div class="dropdown-item" data-href="{{url_for('my_wish')}}">
+            <div class="dropdown-item" data-href="{{url_for('my_wishlist')}}">
               <i class="fas fa-heart"></i> My Wishlist
             </div>
             <div class="dropdown-item" data-href="{{url_for('my_reviews')}}">
@@ -154,7 +159,7 @@
         </div>
 
         <!-- Other Icons -->
-        <a href="{{ url_for('my_wish') }}" title="Wishlist" class="requires-auth">
+        <a href="{{ url_for('my_wishlist') }}" title="Wishlist" class="requires-auth">
           <i class="fas fa-heart"></i>
         </a>
         <a href="{{ url_for('cart') }}" class="cart-icon requires-auth" title="Cart">
@@ -298,8 +303,42 @@
     </div>
   </div>
 
+  <script>
+    var options = {
+      "enabled": true,
+      "chatButtonSetting": {
+        "backgroundColor": "#fae500",
+        "ctaText": "Need Help? Chat with Us!",
+        "borderRadius": "10",
+        "marginLeft": "20",
+        "marginBottom": "20",
+        "marginRight": "20",
+        "position": "right",
+        "textColor": "#080808",
+        "phoneNumber": "+923443680542",
+        "messageText": "Hi there! How can I help you?",
+        "trackClick": true
+      },
+      "brandSetting": {
+        "brandName": "ShopEase",
+        "brandSubTitle": "Here to assist 24/7",
+        "headerTextColor": "#fff",
+        "brandImg": "https://yourwebsite.com/path-to-your-logo.png",
+        "welcomeText": "Hello! 👋 Looking for assistance with your shopping?",
+        "messageText": "Hi there! I have a query about this product. Can you help?",
+        "backgroundColor": "#0a5f54",
+        "ctaText": "Start Chat",
+        "borderRadius": "20",
+        "autoShow": false,
+        "btnColor": "#bdc016",
+        "phoneNumber": "+923443680542",
+        "trackClick": true
+      }
+    };
+  </script>
 
 
+  {% include 'wa-widget.html' %}
   {% block body %}
   {% endblock body %}
 
@@ -353,14 +392,18 @@
       <h3>Pay With</h3>
       <div class="payment-logos">
         <!-- Font Awesome Payment Icons -->
-        <i class="fab fa-cc-visa" title="Visa"></i>
-        <i class="fab fa-cc-mastercard" title="MasterCard"></i>
-        <i class="fab fa-cc-paypal" title="PayPal"></i>
-        <img src="{{ url_for('static', filename='img/jazzcash.jfif') }}" class="jazz-cash-logo" alt="Jazz Cash"
+        <img src="{{ url_for('static', filename='img/jc.png') }}" class="jazz-cash-logo" alt="Jazz Cash"
           title="Jazz Cash">
-        <img src="{{ url_for('static', filename='img/epaisa.webp') }}" class="epaisa-logo" alt="Easy Paisa"
+        <img src="{{ url_for('static', filename='img/bank.png') }}" class="epaisa-logo" alt="Easy Paisa"
           title="Easy paisa">
-        <i class="fas fa-credit-card" title="Credit Card"></i>
+        <img src="{{ url_for('static', filename='img/nayapay.png') }}" class="epaisa-logo" alt="Easy Paisa"
+          title="Easy paisa">
+        <img src="{{ url_for('static', filename='img/cod.png') }}" class="epaisa-logo" alt="Easy Paisa"
+          title="Easy paisa">
+        <img src="{{ url_for('static', filename='img/hbl.png') }}" class="epaisa-logo" alt="Easy Paisa"
+          title="Easy paisa">
+        <img src="{{ url_for('static', filename='img/sadapay.png') }}" class="epaisa-logo" alt="Easy Paisa"
+          title="Easy paisa">
       </div>
     </div>
 

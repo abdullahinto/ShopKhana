@@ -83,7 +83,7 @@ ShopKhana - Search Results
     <div class="sk-search-results-products">
         {% for product in products %}
         <div class="sk-search-results-product-card">
-            <a href="{{ url_for('product_page_url', product_id=product._id) }}" style="text-decoration: none;">
+            <a href="{{ url_for('product_page', product_id=product._id) }}" style="text-decoration: none;">
                 <div class="sk-search-results-product-image">
                     <img src="{{ product.images[0] if product.images else url_for('static', filename='img/placeholder.png') }}"
                         alt="Product Image" class="sk-search-results-primary-image">

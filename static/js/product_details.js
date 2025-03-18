@@ -1,10 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM fully loaded. Initializing Ask Question functionality...");
+
   /* ===== ANIMATE PRODUCT DETAILS SECTION ===== */
   const productSection = document.getElementById("product-details-section");
   if (productSection) {
     const observerOptions = { root: null, threshold: 0.1 };
     const sectionObserver = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           productSection.classList.add("visible");
           obs.unobserve(entry.target);
@@ -19,19 +21,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const originalPriceEl = document.getElementById("original-price");
   const discountBadgeEl = document.getElementById("discount-badge");
 
-  let originalPrice = 200.0;
-  let discountPrice = 120.0;
+ 
+  // let originalPrice = {{ product.originalPrice or 3000 }};
+  // let discountPrice = {{ product.discountedPrice }};
+  
 
-  if (discountPriceEl) {
-    discountPriceEl.textContent = `Rs. ${discountPrice.toFixed(2)}`;
-  }
-  if (originalPriceEl) {
-    originalPriceEl.textContent = `Rs. ${originalPrice.toFixed(2)}`;
-  }
-  if (discountBadgeEl) {
-    let discountPercent = ((originalPrice - discountPrice) / originalPrice) * 100;
-    discountBadgeEl.textContent = `${discountPercent.toFixed(0)}% OFF`;
-  }
+  // if (discountPriceEl) {
+  //   discountPriceEl.textContent = `Rs. ${discountPrice.toFixed(2)}`;
+  // }
+  // if (originalPriceEl) {
+  //   originalPriceEl.textContent = `Rs. ${originalPrice.toFixed(2)}`;
+  // }
+  // if (discountBadgeEl) {
+  //   let discountPercent =
+  //     ((originalPrice - discountPrice) / originalPrice) * 100;
+  //   discountBadgeEl.textContent = `${discountPercent.toFixed(0)}% OFF`;
+  // }
 
   /* ===== IMAGE GALLERY & TRANSITIONS ===== */
   const thumbnails = document.querySelectorAll(".thumbnails img");
@@ -51,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mainImage.style.opacity = 0;
     setTimeout(() => {
       mainImage.src = imageUrls[currentImageIndex];
-      thumbnails.forEach(thumb => thumb.classList.remove("active-thumb"));
+      thumbnails.forEach((thumb) => thumb.classList.remove("active-thumb"));
       if (thumbnails[currentImageIndex]) {
         thumbnails[currentImageIndex].classList.add("active-thumb");
       }
@@ -70,11 +75,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
-      currentImageIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
+      currentImageIndex =
+        (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
       updateMainImage();
     });
   }
-
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
       currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
@@ -86,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainImageContainer = document.querySelector(".main-image");
   let touchStartX = 0;
   let touchEndX = 0;
-  const swipeThreshold = 50; // pixels
+  const swipeThreshold = 50;
 
   if (mainImageContainer) {
     mainImageContainer.addEventListener("touchstart", (e) => {
@@ -97,16 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
       handleSwipe();
     });
   }
-
   function handleSwipe() {
     let diff = touchStartX - touchEndX;
     if (Math.abs(diff) > swipeThreshold) {
       if (diff > 0) {
-        // Swiped left → next image
         currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
       } else {
-        // Swiped right → previous image
-        currentImageIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
+        currentImageIndex =
+          (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
       }
       updateMainImage();
     }
@@ -115,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ===== ZOOM FUNCTIONALITY ===== */
   const zoomModal = document.getElementById("zoom-modal");
   const zoomImg = document.getElementById("zoom-img");
-  const zoomFactor = 2; // Adjust as needed
+  const zoomFactor = 2;
   if (mainImage && zoomModal && zoomImg) {
     const zoomModalWidth = zoomModal.offsetWidth;
     const zoomModalHeight = zoomModal.offsetHeight;
@@ -124,7 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
       zoomModal.style.display = "block";
       zoomImg.src = mainImage.src;
     });
-
     mainImage.addEventListener("mousemove", (e) => {
       const rect = mainImage.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -134,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
       zoomImg.style.left = posX + "px";
       zoomImg.style.top = posY + "px";
     });
-
     mainImage.addEventListener("mouseleave", () => {
       zoomModal.style.display = "none";
     });
@@ -147,57 +148,94 @@ document.addEventListener("DOMContentLoaded", () => {
   const productLinkInput = document.getElementById("product-link");
   const copyLinkBtn = document.getElementById("copy-link-btn");
 
-  if (shareTrigger && sharePopup && productLinkInput && copyLinkBtn && closeShare) {
+  if (
+    shareTrigger &&
+    sharePopup &&
+    productLinkInput &&
+    copyLinkBtn &&
+    closeShare
+  ) {
     shareTrigger.addEventListener("click", (e) => {
       e.preventDefault();
       sharePopup.style.display = "flex";
       productLinkInput.value = window.location.href;
     });
-
     closeShare.addEventListener("click", () => {
       sharePopup.style.display = "none";
     });
-
     copyLinkBtn.addEventListener("click", () => {
       productLinkInput.select();
       try {
         document.execCommand("copy");
-        alert("Link copied to clipboard!");
+        showToast("Product link copied!", "success");
       } catch (err) {
         console.error("Copy failed", err);
+        showToast("Failed to copy link.", "error");
       }
     });
   }
 
-  /* ===== ASK A QUESTION MODAL (Messaging System) ===== */
+  /* ===== ASK A QUESTION MODAL ===== */
   const askQuestionTrigger = document.getElementById("ask-question-trigger");
   const askQuestionModal = document.getElementById("ask-question-modal");
-  const closeModalBtn = document.querySelector(".close-modal");
+  const closeModal = document.querySelector(".close-modal");
   const sendQuestionBtn = document.getElementById("send-question-btn");
+  const questionInput = document.getElementById("question-input");
+  const productLinkModal = document.getElementById("product-link-modal");
 
-  if (askQuestionTrigger && askQuestionModal && closeModalBtn && sendQuestionBtn) {
+  if (askQuestionTrigger && askQuestionModal && closeModal && sendQuestionBtn) {
+    // Open the modal and ensure the product link is pre-filled
     askQuestionTrigger.addEventListener("click", (e) => {
       e.preventDefault();
-      document.getElementById("product-link-modal").value = window.location.href;
+      productLinkModal.value = window.location.href; // Populate product link automatically
       askQuestionModal.style.display = "flex";
     });
 
-    closeModalBtn.addEventListener("click", () => {
+    // Close modal
+    closeModal.addEventListener("click", () => {
       askQuestionModal.style.display = "none";
     });
 
-    sendQuestionBtn.addEventListener("click", () => {
-      const question = document.getElementById("question-input").value.trim();
-      if (question === "") {
-        alert("Please enter your question.");
+    // Handle form submission
+    sendQuestionBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const question = questionInput.value.trim();
+      const productLink = productLinkModal.value.trim();
+      if (!productLink || !question) {
+        showToast("Please add both the product link and question.", "error");
         return;
       }
-      // Here you can send the question to your internal messaging/FAQ system.
-      console.log("Question submitted:", question);
-      alert("Your question has been sent!");
-      document.getElementById("question-input").value = "";
-      askQuestionModal.style.display = "none";
+      // Send POST request to the /ask_question endpoint
+      fetch("/ask_question", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `product_link=${encodeURIComponent(
+          productLink
+        )}&question=${encodeURIComponent(question)}`,
+      })
+        .then((response) => response.text())
+        .then(() => {
+          showToast("Your question has been submitted!", "success");
+          questionInput.value = "";
+          askQuestionModal.style.display = "none";
+        })
+        .catch((err) => {
+          console.error(err);
+          showToast("Error submitting your question.", "error");
+        });
     });
+  }
+
+  // Example of a simple toast function for charming notifications
+  function showToast(message, type) {
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
   }
 
   /* ===== QUANTITY SELECTION ===== */
@@ -210,13 +248,21 @@ document.addEventListener("DOMContentLoaded", () => {
       qtyDecrease.addEventListener("click", () => {
         let current = parseInt(qtyInput.value);
         if (current > 1) qtyInput.value = current - 1;
+        updateFormQuantity();
       });
     }
     if (qtyIncrease) {
       qtyIncrease.addEventListener("click", () => {
         let current = parseInt(qtyInput.value);
         if (current < maxQty) qtyInput.value = current + 1;
+        updateFormQuantity();
       });
+    }
+  }
+  function updateFormQuantity() {
+    const formQtyInput = document.getElementById("form-quantity");
+    if (formQtyInput) {
+      formQtyInput.value = qtyInput.value;
     }
   }
 
@@ -225,18 +271,35 @@ document.addEventListener("DOMContentLoaded", () => {
   if (favoriteBtn) {
     let isFavorited = false;
     favoriteBtn.addEventListener("click", () => {
+      // Global auth check is assumed to intercept non-authenticated clicks on requires-auth elements.
       isFavorited = !isFavorited;
       if (isFavorited) {
         favoriteBtn.innerHTML = '<i class="fas fa-heart"></i>';
         favoriteBtn.title = "Remove from favorites";
+        // AJAX POST to add product to wishlist
+        fetch("/add_to_wishlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `product_id=${encodeURIComponent("{{ product._id }}")}`,
+        })
+          .then((response) => response.text())
+          .then(() => {
+            showToast("Added to wishlist!", "success");
+          })
+          .catch((err) => {
+            console.error(err);
+            showToast("Error adding to wishlist.", "error");
+          });
       } else {
         favoriteBtn.innerHTML = '<i class="far fa-heart"></i>';
         favoriteBtn.title = "Add to favorites";
+        // Optional: AJAX to remove from wishlist can be added here
+        showToast("Removed from wishlist.", "success");
       }
     });
   }
 
-  /* ===== VARIATION CAROUSEL NAVIGATION (if applicable) ===== */
+  /* ===== VARIATION CAROUSEL NAVIGATION ===== */
   document.querySelectorAll(".variation-carousel").forEach((carousel) => {
     const variationList = carousel.querySelector(".variation-list");
     if (!variationList) return;
@@ -254,14 +317,27 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
-});
 
-
-document.querySelectorAll('.PD_buy-now-btn').forEach(item => {
-  item.addEventListener('click', () => {
-    const targetUrl = item.getAttribute('data-href');
-    if (targetUrl) {
-      window.location.href = targetUrl;
-    }
+  /* ===== BUY NOW BUTTON ===== */
+  document.querySelectorAll(".PD_buy-now-btn").forEach((item) => {
+    item.addEventListener("click", () => {
+      const targetUrl = item.getAttribute("data-href");
+      console.log("Button Clicked!");
+      if (targetUrl) {
+        window.location.href = targetUrl;
+      }
+    });
   });
+
+  /* ===== GLOBAL TOAST FUNCTIONALITY ===== */
+  function showToast(message, type) {
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
+  }
 });

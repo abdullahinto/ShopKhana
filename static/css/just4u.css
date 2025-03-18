@@ -147,7 +147,7 @@
 }
 
 /* Add to Cart Button */
-.add-to-cart-btn {
+.main-add-to-cart-btn {
   background-color: #ffde59;
   color: black;
   border: none;
@@ -157,7 +157,6 @@
   cursor: pointer;
   font-family: "Poppins", sans-serif;
   transition: background 0.3s, transform 0.3s;
-
   width: 100%;
   box-sizing: border-box;
   /* Other styling like padding, font-size, etc. */
@@ -171,7 +170,7 @@
 /* Load More Button Container */
 .load-more-container {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 .load-more-btn {
@@ -265,4 +264,4 @@
   }
 }
 
-/* (Keep your existing CSS for .product-card, .just-for-you-products, etc.) */
+

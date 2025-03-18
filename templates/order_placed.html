@@ -1,69 +1,62 @@
 {% extends 'index.html' %}
 
-
-
 {% block title %}
-ShopKhana - Order Placed
+Order Placed - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/final_order.css') }}">
-
 {% endblock extra_css %}
 
 {% block extra_js %}
-
 <script src="{{ url_for('static', filename='js/final_order.js') }}"></script>
-
 {% endblock extra_js %}
 
-
-
 {% block body %}
-
-
 <!-- Main Heading -->
 <h1 class="sk-final-heading">WOOHOO!</h1>
 
 <!-- First Mini-Section: Order Placed -->
-<div class="sk-final-section sk-final-section1">
+<div class="sk-final-section sk-final-section1 animate-on-view">
   <p class="sk-final-order-placed">
     Your order has been successfully placed.
   </p>
   <p class="sk-final-price">
-    <span class="sk-final-rs-label">Rs.</span> <span id="skFinalTotalPrice">1157</span>
+    <span class="sk-final-rs-label">Rs.</span> <span id="skFinalTotalPrice">{{ order_details.payment_amount }}</span>
   </p>
   <p class="sk-final-order-number">
-    Your order number is <strong id="skFinalOrderNum">209282801928274</strong>
+    Your order number is <strong id="skFinalOrderNum">{{ order_details.order_id }}</strong>
+    <button id="copyOrderIdBtn" class="copy-btn">Copy</button>
   </p>
 </div>
 
+<div id="toastContainer" class="toast-container"></div>
+
 <!-- Second Mini-Section -->
-<div class="sk-final-section sk-final-section2">
-  <!-- Payment Reminder -->
+<div class="sk-final-section sk-final-section2 animate-on-view">
   <p class="sk-final-reminder">
     Please have this amount ready on delivery day.
   </p>
   <p class="sk-final-reminder-price">
-    <span class="sk-final-rs-label">Rs.</span> <span id="skFinalRemindPrice">1157</span>
+    <span class="sk-final-rs-label">Rs.</span> <span id="skFinalRemindPrice">{{ order_details.payment_amount }}</span>
   </p>
 
   <!-- Delivery Info Container -->
   <div class="sk-final-delivery-info">
     <div class="sk-final-delivery-top">
-      <!-- Left: Estimated Delivery -->
       <div class="sk-final-delivery-date">
-        <p>Est. 27 Feb - 02 Mar</p>
+        <p>{{ order_details.estimated_delivery }}</p>
       </div>
-      <!-- Right: Product Thumbnail -->
       <div class="sk-final-delivery-thumb">
+        <!-- Optionally, show a thumbnail of one of the products -->
+        {% if order_details['items'] and order_details['items'][0]['title'] %}
+        <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="Product Thumbnail" />
+        {% else %}
         <img src="{{ url_for('static', filename='img/p2.webp') }}" alt="Product Thumbnail" />
+        {% endif %}
       </div>
     </div>
-    <!-- Grey line separator -->
     <hr class="sk-final-grey-line" />
-    <!-- Tracking & Button -->
     <div class="sk-final-tracking-info">
       <p>
         To track the delivery of your order, click on your <strong>profile &gt; My Orders</strong>
@@ -74,37 +67,37 @@ ShopKhana - Order Placed
   </div>
 
   <!-- Email Sent Container -->
-  <div class="sk-final-email-sent">
+  <div class="sk-final-email-sent animate-on-view">
     <i class="fas fa-envelope"></i>
     <p>
-      We’ve sent a confirmation email to <strong>printabduallah285@gmail.com</strong>.
-      Check your email-inbox regularly to receive real-time updates of your order.
+      We’ve sent a confirmation email to <strong>{{ order_details.user_email }}</strong>.
+      Check your email inbox regularly to receive real-time updates of your order.
     </p>
-    <p style="font-style: italic;"><strong>Note: </strong>Your order will be processed after <b> 2 hours</b>. Please be aware that once your order is placed, it cannot be <b>canceled</b>.</p>
+    <p style="font-style: italic;">
+      <strong>Note: </strong>Your order will be processed after <b>2 hours</b>. Please be aware that once your order is
+      placed, it cannot be <b>canceled</b>.
+    </p>
   </div>
 
   <!-- Order Summary Dropdown -->
-  <div class="sk-final-summary-dropdown">
+  <div class="sk-final-summary-dropdown animate-on-view">
     <button id="skFinalSummaryToggle" class="sk-final-summary-btn">
       Order Summary <span id="skFinalSummaryIcon"><i class="fas fa-chevron-down"></i></span>
     </button>
     <div id="skFinalSummaryContent" class="sk-final-summary-content">
       <ul>
-        <li>Item 1: Rs. 300</li>
-        <li>Item 2: Rs. 200</li>
-        <li>Shipping Fee: Rs. 150</li>
-        <li>Cash Payment Fee: Rs. 50</li>
+        {% for item in order_details['items'] %}
+        <li>{{ item['title'] }}: Rs. {{ item['price'] }}</li>
+        {% endfor %}
         <hr />
-        <li><strong>Total: Rs. 700</strong></li>
+        <li><strong>Total: Rs. {{ order_details.payment_amount }}</strong></li>
       </ul>
     </div>
   </div>
 
   <!-- Continue Shopping Button -->
-  <a style="text-decoration: none;" href="{{url_for('main_page')}}" class="sk-final-continue-btn">
+  <a style="text-decoration: none;" href="{{ url_for('main_page') }}" class="sk-final-continue-btn">
     Continue Shopping
   </a>
 </div>
-
-
 {% endblock body %}

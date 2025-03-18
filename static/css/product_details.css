@@ -190,22 +190,23 @@ body {
   gap: 0.75rem;
 }
 
-.discount-price {
-  font-size: 1.5rem;
+.pro-details-discount-price {
+  font-size: 2rem;
   font-weight: 600;
   color: #ffa500;
 }
 
-.original-price {
-  font-size: 1rem;
+.pro-details-original-price {
+  font-size: 1.2rem;
   color: #888;
   text-decoration: line-through;
+  font-style: italic;
 }
 
-.discount-badge {
+.pro-details-discount-badge {
   background-color: #ffa500; /* Bright orange for visibility */
   color: #fff;
-  font-size: 0.75rem;
+  font-size: 1rem;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   font-weight: bold;
@@ -218,7 +219,7 @@ body {
 }
 
 /* Hover Effect */
-.discount-badge:hover {
+.pro-details-discount-badge:hover {
   background-color: #ff4500; /* Darker orange for hover state */
   transform: scale(1.1); /* Slightly enlarges the badge on hover */
   transition: background-color 0.3s ease, transform 0.3s ease;
@@ -402,6 +403,7 @@ body {
 .PD_buy-now-btn {
   background-color: #ffde59;
   color: #333;
+  text-align: center;
 }
 .PD_buy-now-btn:hover {
   transform: scale(1.03);

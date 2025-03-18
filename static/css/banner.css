@@ -24,7 +24,7 @@
   /* Banner Styling */
   .banner {
     flex: 0 0 100%;
-    max-height: 400px; /* Set a fixed max-height for desktop */
+    max-height: 500px; /* Set a fixed max-height for desktop */
     overflow: hidden;
   
   }

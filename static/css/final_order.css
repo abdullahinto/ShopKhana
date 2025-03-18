@@ -267,3 +267,76 @@ body {
     margin-bottom: 10px; /* Adds spacing between icon and text */
   }
 }
+
+
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: slideIn 0.6s ease-out forwards;
+}
+
+
+
+
+.copy-btn {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #007bff; /* Customize as needed */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.copy-btn:hover {
+  background-color: #0056b3; /* Add a hover effect */
+}
+
+
+
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  background-color: #4caf50; /* Success green */
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  10%, 90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}

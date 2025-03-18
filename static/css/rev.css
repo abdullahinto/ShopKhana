@@ -1,19 +1,26 @@
+.hidden {
+  display: none;
+}
+
+
+
 /* Overlay */
-.sk-rv-overlay {
+.write-review-popup {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  display: none; /* Hidden by default */
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: 9999;
 }
 
-/* Popup Container with Orange Border */
-.sk-rv-container {
+/* Popup Container */
+.popup-content {
   background-color: #fff;
   border: 2px solid orange;
   border-radius: 8px;
@@ -21,43 +28,58 @@
   max-width: 400px;
   padding: 20px;
   position: relative;
-  animation: sk-rv-slideFadeIn 0.7s ease forwards;
+  animation: slideFadeIn 0.7s ease forwards;
   opacity: 0;
   transform: translateY(30px);
   font-family: "Poppins", sans-serif;
 }
 
 /* Slide/Fade Keyframe */
-@keyframes sk-rv-slideFadeIn {
+@keyframes slideFadeIn {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Close Button (X) */
-.sk-rv-close-btn {
+/* Close Button */
+.close-popup {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  color: #333;
+  top: 12px;
+  right: 12px;
+  font-size: 22px;
+  color: #fff;
+  background: rgba(0,0,0,0.6);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
   cursor: pointer;
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+
+.close-popup:hover {
+  background: #ff4444;
+  color: white;
+  transform: rotate(180deg) scale(1.1);
 }
 
 /* Heading */
-.sk-rv-heading {
+.popup-content h3 {
   text-align: center;
   font-size: 18px;
   margin-bottom: 20px;
   color: #333;
 }
 
-/* Review Textarea (Black Border) */
-.sk-rv-textarea {
+/* Review Textarea */
+#review-text {
   width: 100%;
   height: 80px;
-  border: 1px solid #000; /* black border */
+  border: 1px solid #000;
   border-radius: 8px;
   padding: 10px;
   font-size: 14px;
@@ -65,9 +87,20 @@
   margin-bottom: 15px;
 }
 
-/* Upload Area (Black Border) */
-.sk-rv-upload-area {
-  border: 1px solid #000; /* black border */
+/* Rating Dropdown */
+#rating {
+  padding: 8px;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+/* Upload Area */
+#review-images {
+  border: 1px solid #000;
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 15px;
@@ -75,38 +108,12 @@
   cursor: pointer;
   transition: background 0.3s;
 }
-.sk-rv-upload-area:hover {
+#review-images:hover {
   background: #f1f1f1;
 }
-.sk-rv-upload-area p {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 10px;
-}
 
-/* Preview Container */
-.sk-rv-preview-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-.sk-rv-preview-container img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-/* Actions: Submit & Rating Dropdown */
-.sk-rv-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.sk-rv-submit-btn {
+/* Submit Button */
+.cta-btn {
   background-color: orange;
   color: #fff;
   border: none;
@@ -116,18 +123,128 @@
   cursor: pointer;
   font-family: "Poppins", sans-serif;
   transition: background 0.3s, transform 0.3s;
+  width: 100%;
 }
-.sk-rv-submit-btn:hover {
+.cta-btn:hover {
   background-color: #e69500;
   transform: scale(1.03);
 }
 
-/* Ratings Dropdown */
-.sk-rv-rating-dropdown {
-  padding: 8px;
-  font-size: 14px;
-  font-family: "Poppins", sans-serif;
+/* Image Preview (if you add this functionality later) */
+#review-images + .preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+.preview-container img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
   border-radius: 4px;
   border: 1px solid #ccc;
+}
+
+
+
+
+/* Image Popup Overlay */
+.sk-img-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  overflow: auto;
+  backdrop-filter: blur(3px) saturate(120%);
+  -webkit-backdrop-filter: blur(3px) saturate(120%);
+}
+
+/* Popup Container */
+.sk-img-popup-content {
+  position: relative;
+  background: #fff;
+  border-radius: 15px;
+  max-width: 92%;
+  max-height: 90vh;
+  margin: auto;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+  animation: sk-img-fadeIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Close Button */
+.sk-img-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 32px;
+  color: #fff;
+  background: rgba(0,0,0,0.6);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
   cursor: pointer;
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+.sk-img-close:hover {
+  background: #ff4444;
+  color: white;
+  transform: rotate(180deg) scale(1.1);
+}
+
+/* Image Styles */
+.sk-img-display {
+  width: 100%;
+  height: auto;
+  max-height: 85vh;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s;
+}
+
+/* Responsive Scaling */
+@media (max-width: 768px) {
+  .sk-img-popup-content {
+    border-radius: 10px;
+  }
+  
+  .sk-img-close {
+    font-size: 28px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Animation */
+@keyframes sk-img-fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Accessibility */
+.sk-img-close:focus-visible {
+  outline: 3px solid #ffeb3b;
+  outline-offset: 2px;
+  background: #ff4444;
+}
+
+/* Optimization */
+.sk-img-display {
+  will-change: transform;
+  image-rendering: -webkit-optimize-contrast;
+  aspect-ratio: auto;
 }

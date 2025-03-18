@@ -1,64 +1,69 @@
 {% extends 'index.html' %}
 
 {% block title %}
-ShopKhana - Payment Methods
+Payment Methods - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pay_page.css') }}">
-
 {% endblock extra_css %}
 
 {% block extra_js %}
-
+<script>
+    window.orderSummary = {{ order_summary | tojson }};
+    window.codfee = {{ codfee }};
+</script>
 <script src="{{ url_for('static', filename='js/pay_page.js') }}"></script>
-
-
 {% endblock extra_js %}
 
 
+
+
 {% block body %}
-
-
 <div class="sk-pay-main-container">
     <!-- Left Column: Payment Methods & Dynamic Info -->
     <div class="sk-pay-left-column">
         <h2 class="sk-pay-heading">Select Payment Method</h2>
         <div class="sk-pay-methods" id="skPayMethods">
-            <!-- Each payment method icon in a grey container -->
-            <div class="sk-pay-method" data-method="easypaisa">
-                <img src="{{ url_for('static', filename='img/ep.png') }}" alt="EasyPaisa">
-                <p>EasyPaisa</p>
-            </div>
             <div class="sk-pay-method" data-method="jazzcash">
                 <img src="{{ url_for('static', filename='img/jc.png') }}" alt="JazzCash">
                 <p>JazzCash</p>
             </div>
-            <div class="sk-pay-method" data-method="card">
-                <img src="{{ url_for('static', filename='img/cb.png') }}" alt="Credit/Debit Card">
-                <p>Credit/Debit Card</p>
+            <div class="sk-pay-method" data-method="direct_bank">
+                <img src="{{ url_for('static', filename='img/bank.png') }}" alt="Direct Bank">
+                <p>Direct Bank</p>
             </div>
-            <div class="sk-pay-method" data-method="hbl">
-                <img src="{{ url_for('static', filename='img/hbl.png') }}" alt="HBL Bank Account">
-                <p>HBL Bank Account</p>
+            <div class="sk-pay-method" data-method="nayapay">
+                <img src="{{ url_for('static', filename='img/nayapay.png') }}" alt="NayaPay">
+                <p>NayaPay</p>
             </div>
             <div class="sk-pay-method" data-method="cod">
                 <img src="{{ url_for('static', filename='img/cod.png') }}" alt="Cash on Delivery">
                 <p>Cash on Delivery</p>
             </div>
+            <div class="sk-pay-method" data-method="hbl">
+                <img src="{{ url_for('static', filename='img/hbl.png') }}" alt="HBL Bank Account">
+                <p>HBL Bank Account</p>
+            </div>
+            <div class="sk-pay-method" data-method="sadapay" style="pointer-events: none; opacity: 0.5;">
+                <img src="{{ url_for('static', filename='img/sadapay.png') }}" alt="SadaPay">
+                <p>SadaPay</p>
+            </div>
+            <div class="sk-pay-method" data-method="easypaisa">
+                <img src="{{ url_for('static', filename='img/ep.png') }}" alt="EasyPaisa">
+                <p>EasyPaisa</p>
+            </div>
         </div>
 
         <!-- Dynamic Info Container -->
         <div class="sk-pay-info-container" id="skPayInfoContainer">
-            <!-- This content updates based on the selected method -->
             <p class="sk-pay-info-placeholder">
                 Please select a payment method above to see details...
             </p>
         </div>
 
         <!-- Confirm Order Button -->
-        <button  class="requires-auth" id="skPayConfirmOrder" class="sk-pay-confirm-btn">
+        <button id="skPayConfirmOrder" class="sk-pay-confirm-btn">
             Confirm Order
         </button>
     </div>
@@ -68,15 +73,14 @@ ShopKhana - Payment Methods
         <div class="sk-pay-summary-container">
             <h3>Order Summary</h3>
             <p>Subtotal (Items and shipping fee included)</p>
-            <p class="sk-pay-subtotal">Rs. <span id="skPaySubtotal">0</span></p>
+            <p class="sk-pay-subtotal">Rs. <span id="skPaySubtotal">{{ order_summary.grand_total or 0 }}</span></p>
             <p>Cash Payment Fee</p>
-            <p class="sk-pay-cod-fee">Rs. <span id="skPayCODFee">0</span></p>
+            <p class="sk-pay-cod-fee">Rs. <span id="skPayCODFee">{{codfee or 0}}</span></p>
             <hr>
             <p>Total Amount</p>
-            <p class="sk-pay-total">Rs. <span id="skPayTotal">0</span></p>
+            <p class="sk-pay-total">Rs. <span id="skPayTotal">{{ order_summary.grand_total or 0 }}</span></p>
         </div>
     </div>
+
 </div>
-
-
 {% endblock body %}

@@ -23,7 +23,7 @@
         {% if products|length > 0 %}
         {% for bannerprod in products %}
         <div class="banner-product-card">
-            <a href="{{url_for('product_page_url')}}" style="text-decoration: none;">
+            <a href="{{url_for('product_page', product_id = bannerprod._id)}}" style="text-decoration: none;">
                 <div class="banner-product-image">
                     <img src="{{ bannerprod.images[0] if bannerprod.images else '/static/img/placeholder.png' }}"
                         alt="Product Image" class="banner-primary-image">

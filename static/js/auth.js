@@ -81,13 +81,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // New: Intercept clicks on elements that require authentication
   const requiresAuthElements = document.querySelectorAll(".requires-auth");
+
   requiresAuthElements.forEach((el) => {
     el.addEventListener("click", (e) => {
+      console.log("Button Clicked! 🚀 Submitting form.");
+      // Agar user authenticated nahi hai
       if (userAuthenticated !== "true") {
+        // Lekin agar button pe data-bypass-auth laga hai to usko allow karo
+        if (el.dataset.bypassAuth === "true") {
+          return; // Continue with normal behavior
+        }
+
+        // Prevent default behavior aur authentication popup dikhayein
         e.preventDefault();
-        // Open the auth popup if not authenticated
         if (dropdownMenu) dropdownMenu.style.display = "none";
         authPopup.style.display = "flex";
         setTimeout(() => {
@@ -96,16 +103,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-});
 
-
-
-function showAuthPopup() {
-  const authPopup = document.getElementById("authPopup");
-  if (authPopup) {
-    authPopup.style.display = "flex";
-    setTimeout(() => {
-      authPopup.classList.add("show");
-    }, 10);
+  function showAuthPopup() {
+    const authPopup = document.getElementById("authPopup");
+    if (authPopup) {
+      authPopup.style.display = "flex";
+      setTimeout(() => {
+        authPopup.classList.add("show");
+      }, 10);
+    }
   }
-}
+});

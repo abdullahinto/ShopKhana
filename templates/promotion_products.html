@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 
 {% block title %}
-{{ promo_category }} Products - ShopKhana
+{{ promo_category }} - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
@@ -30,7 +30,7 @@
         {% if products|length > 0 %}
         {% for promotionprod in products %}
         <div class="promotion-product-card">
-            <a href="{{ url_for('product_page_url', product_id=promotionprod._id) }}" style="text-decoration: none;">
+            <a href="{{ url_for('product_page', product_id=promotionprod._id) }}" style="text-decoration: none;">
                 <div class="promotion-product-image">
                     <img src="{{ promotionprod.images[0] if promotionprod.images else '/static/img/placeholder.png' }}"
                         alt="{{ promotionprod.title }}" class="promotion-primary-image">

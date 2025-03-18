@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* ==========================================================================
-     1. TABS FUNCTIONALITY (DESKTOP & MOBILE)
-     ========================================================================== */
+  /* ===== TABS FUNCTIONALITY (DESKTOP & MOBILE) ===== */
   const tabsNav = document.getElementById("tabsNav");
   const tabs = tabsNav.querySelectorAll("li");
   const tabContents = document.querySelectorAll(".tab-content");
@@ -11,113 +9,143 @@ document.addEventListener("DOMContentLoaded", () => {
   // Desktop tab click handler
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      setActiveTab(tab);
-      showTabContent(tab.getAttribute("data-tab"));
+      tabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.getAttribute("data-tab");
+      tabContents.forEach((tc) => tc.classList.remove("active"));
+      document.getElementById(target).classList.add("active");
     });
   });
 
   // Mobile dropdown change handler
   dropdownSelect.addEventListener("change", (e) => {
-    const selectedTabId = e.target.value;
-    const selectedTab = document.querySelector(`[data-tab="${selectedTabId}"]`);
-
-    setActiveTab(selectedTab);
-    showTabContent(selectedTabId);
-  });
-
-  function setActiveTab(activeTab) {
+    const target = e.target.value;
     tabs.forEach((t) => t.classList.remove("active"));
-    activeTab.classList.add("active");
-  }
-
-  function showTabContent(targetId) {
+    const activeTab = document.querySelector(`[data-tab="${target}"]`);
+    if (activeTab) activeTab.classList.add("active");
     tabContents.forEach((tc) => tc.classList.remove("active"));
-    document.getElementById(targetId).classList.add("active");
-  }
-
-  /* ==========================================================================
-     2. REVIEWS EXPANSION
-     ========================================================================== */
-  const reviewsContainer = document.getElementById("reviewsContainer");
-  const seeMoreReviewsBtn = document.getElementById("seeMoreReviewsBtn");
-  let reviewsExpanded = false;
-
-  seeMoreReviewsBtn.addEventListener("click", () => {
-    reviewsExpanded = !reviewsExpanded;
-    reviewsContainer.classList.toggle("expanded", reviewsExpanded);
-    seeMoreReviewsBtn.textContent = reviewsExpanded
-      ? "Show Less Reviews"
-      : "See More Reviews";
+    document.getElementById(target).classList.add("active");
   });
 
-  /* ==========================================================================
-     3. FAQ ACCORDION
-     ========================================================================== */
+  /* ===== REVIEWS "SEE MORE"/"SHOW LESS" FUNCTIONALITY ===== */
+  const reviewsContainer = document.getElementById("reviewsContainer");
+  let reviewItems = Array.from(
+    reviewsContainer.querySelectorAll(".review-item")
+  );
+  const seeMoreReviewsBtn = document.getElementById("seeMoreReviewsBtn");
+
+  // On page load, hide review items beyond the first 10
+  reviewItems.forEach((item, index) => {
+    if (index >= 10) {
+      item.classList.add("hidden");
+    }
+  });
+
+  // Unified event listener for "See More Reviews" button
+  seeMoreReviewsBtn.addEventListener("click", () => {
+    reviewItems = Array.from(reviewsContainer.querySelectorAll(".review-item"));
+    const hiddenReviews = reviewItems.filter((item) =>
+      item.classList.contains("hidden")
+    );
+    if (hiddenReviews.length > 0) {
+      // Reveal next 10 hidden items
+      hiddenReviews
+        .slice(0, 10)
+        .forEach((item) => item.classList.remove("hidden"));
+      // If no hidden reviews remain, change button text to "Show Less Reviews"
+      if (
+        reviewsContainer.querySelectorAll(".review-item.hidden").length === 0
+      ) {
+        seeMoreReviewsBtn.textContent = "Show Less Reviews";
+      }
+    } else {
+      // Collapse: hide all review items beyond the first 10
+      reviewItems.forEach((item, index) => {
+        if (index >= 10) {
+          item.classList.add("hidden");
+        }
+      });
+      seeMoreReviewsBtn.textContent = "See More Reviews";
+    }
+  });
+
+  /* ===== FAQ ACCORDION ===== */
   document.querySelectorAll(".faq-item").forEach((item) => {
     const question = item.querySelector(".faq-question");
     const answer = item.querySelector(".faq-answer");
     const arrow = item.querySelector(".faq-arrow i");
-
     question.addEventListener("click", () => {
       const isOpen = answer.classList.contains("open");
-
       if (isOpen) {
-        // Close the accordion
         answer.style.maxHeight = "0";
         arrow.classList.remove("fa-rotate-90");
         setTimeout(() => answer.classList.remove("open"), 400);
       } else {
-        // Open the accordion
         answer.classList.add("open");
         answer.style.maxHeight = `${answer.scrollHeight}px`;
         arrow.classList.add("fa-rotate-90");
       }
-
       arrow.parentElement.classList.toggle("rotate", !isOpen);
     });
   });
 
-  /* ==========================================================================
-     4. NO REVIEWS HANDLING
-     ========================================================================== */
-  const reviewItems = reviewsContainer.querySelectorAll(".review-item");
+  /* ===== WRITE A REVIEW POPUP ===== */
+  const writeReviewTrigger = document.getElementById("write-review-link");
+  const writeReviewPopup = document.getElementById("write-review-popup");
+  const closeReviewPopup = writeReviewPopup.querySelector(".close-popup");
 
-  if (reviewItems.length === 0) {
-    const noReviewMsg = document.createElement("div");
-    noReviewMsg.className = "no-reviews-message";
-    noReviewMsg.innerHTML = `
-      <i class="fas fa-star"></i>
-      <p>No reviews yet. Be the first to share your thoughts and help others! 🌟</p>
-    `;
-
-    reviewsContainer.appendChild(noReviewMsg);
-    seeMoreReviewsBtn.style.display = "none";
+  if (writeReviewTrigger) {
+    writeReviewTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      // Global auth check assumed here.
+      writeReviewPopup.style.display = "flex";
+    });
+  }
+  if (closeReviewPopup) {
+    closeReviewPopup.addEventListener("click", () => {
+      writeReviewPopup.style.display = "none";
+    });
   }
 
-  /* ==========================================================================
-     5. IMAGE POPUP GALLERY
-     ========================================================================== */
-  const popup = document.getElementById("imagePopup");
-  const popupImage = document.getElementById("popupImage");
-  const closeBtn = document.querySelector(".close-popup");
+  /* ===== REVIEW IMAGE POPUP ===== */
+  const imagePopup = document.getElementById("sk-img-popup");
+  const popupImage = document.getElementById("skImgDisplay");
+  const closeImagePopup = imagePopup
+    ? imagePopup.querySelector(".sk-img-close")
+    : null;
 
-  // Open popup when a thumbnail is clicked
-  document.querySelectorAll(".review-image-thumbnail").forEach((img) => {
+  // Attach event listener to all review image thumbnails
+  const reviewImageThumbnails = document.querySelectorAll(
+    ".review-image-thumbnail"
+  );
+  reviewImageThumbnails.forEach((img) => {
     img.addEventListener("click", (e) => {
-      popup.classList.add("active");
-      popupImage.src = e.target.src.replace("-thumb", ""); // Replace "-thumb" for full-size images
+      e.preventDefault();
+      if (imagePopup && popupImage) {
+        imagePopup.style.display = "flex";
+        popupImage.src = img.src;
+      }
     });
   });
 
-  // Close popup when clicking the close button
-  closeBtn.addEventListener("click", () => {
-    popup.classList.remove("active");
+  if (closeImagePopup) {
+    closeImagePopup.addEventListener("click", () => {
+      imagePopup.style.display = "none";
+    });
+  }
+  window.addEventListener("click", (e) => {
+    if (imagePopup && e.target === imagePopup) {
+      imagePopup.style.display = "none";
+    }
   });
 
-  // Close popup when clicking outside the popup content
-  window.addEventListener("click", (e) => {
-    if (e.target === popup) {
-      popup.classList.remove("active");
-    }
+  /* ===== SEE MORE CATEGORY BUTTON (data-url) ===== */
+  document.querySelectorAll(".see-more-cat").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const url = btn.getAttribute("data-url");
+      if (url) {
+        window.location.href = url;
+      }
+    });
   });
 });

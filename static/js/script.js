@@ -162,3 +162,14 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
     }
   });
 });
+
+
+
+document.querySelectorAll('.main-add-to-cart').forEach(item => {
+  item.addEventListener('click', () => {
+    const targetUrl = item.getAttribute('data-href');
+    if (targetUrl) {
+      window.location.href = targetUrl;
+    }
+  });
+});

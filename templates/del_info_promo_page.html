@@ -1,156 +1,161 @@
 {% extends 'index.html' %}
 
 {% block title %}
-ShopKhana - Delivery Information
+Delivery Information - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/del_info_promo_page.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/package_details.css') }}">
-
 {% endblock extra_css %}
 
 {% block extra_js %}
-
 <script src="{{ url_for('static', filename='js/del_info_promo_page.js') }}"></script>
 <script src="{{ url_for('static', filename='js/package_details.js') }}"></script>
-
 {% endblock extra_js %}
 
-
-
 {% block body %}
-
-
-
 <section id="deliveryPromotionSection" class="delivery-promo-container">
-    <!-- Left: Delivery Information -->
-    <div class="delivery-info">
-        <h2>Delivery Information</h2>
-        <form id="deliveryForm">
-            <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" placeholder="Enter your first and last name" required>
+  <!-- Left: Delivery Information -->
+  <div class="delivery-info">
+    <h2>Delivery Information</h2>
+    <form id="deliveryForm" method="POST"
+      action="{{ url_for('del_info_promo_page', product_id=request.args.get('product_id')) }}">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" name="fullName" placeholder="Enter your first and last name"
+        value="{{ delivery_info.full_name if delivery_info }}" required>
 
-            <label for="phoneNumber">Phone Number</label>
-            <input type="text" id="phoneNumber" placeholder="Enter your phone number" required>
+      <label for="phoneNumber">Phone Number</label>
+      <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number"
+        value="{{ delivery_info.phone_number if delivery_info }}" required>
 
-            <label for="building">Building / House No / Floor / Street</label>
-            <input type="text" id="building" placeholder="E.g. House #123, Street #456" required>
+      <label for="building">Building / House No / Floor / Street</label>
+      <input type="text" id="building" name="building" placeholder="E.g. House #123, Street #456"
+        value="{{ delivery_info.building if delivery_info }}" required>
 
-            <label for="colony">Colony / Suburb / Locality / Landmark</label>
-            <input type="text" id="colony" placeholder="E.g. near famous store or park" required>
+      <label for="colony">Colony / Suburb / Locality / Landmark</label>
+      <input type="text" id="colony" name="colony" placeholder="E.g. near famous store or park"
+        value="{{ delivery_info.colony if delivery_info }}" required>
 
-            <label for="provinceSelect">Province</label>
-            <select id="provinceSelect" required>
-                <option value="">Please choose your province</option>
-                <!-- Dynamically populated by JS -->
-            </select>
+      <label for="province">Province</label>
+      <input type="text" id="province" name="province" placeholder="Enter your province (e.g., Punjab, Sindh)"
+        value="{{ delivery_info.province if delivery_info }}" required>
 
-            <label for="citySelect">City</label>
-            <select id="citySelect" required disabled>
-                <option value="">Please choose your city</option>
-            </select>
+      <label for="city">City</label>
+      <input type="text" id="city" name="city" placeholder="Enter your city (e.g., Karachi, Lahore)"
+        value="{{ delivery_info.city if delivery_info }}" required>
 
-            <label for="areaSelect">Area</label>
-            <select id="areaSelect" required disabled>
-                <option value="">Please choose your area</option>
-            </select>
+      <label for="area">Area</label>
+      <input type="text" id="area" name="area" placeholder="Enter your area (e.g., DHA, Clifton)"
+        value="{{ delivery_info.area if delivery_info }}" required>
 
-            <label for="address">Address</label>
-            <input type="text" id="address" placeholder="For Example: House#123, Street#123 etc" required>
+      <label for="address">Address</label>
+      <input type="text" id="address" name="address" placeholder="For example: House#123, Street#123"
+        value="{{ delivery_info.address if delivery_info }}" required>
 
-            <p>Select a label for effective delivery:</p>
-            <div class="label-toggle">
-                <button type="button" class="label-btn home-btn" data-label="home">
-                    <i class="fas fa-home"></i> HOME
-                </button>
-                <button type="button" class="label-btn office-btn" data-label="office">
-                    <i class="fas fa-briefcase"></i> OFFICE
-                </button>
-            </div>
+      <p>Select a label for effective delivery:</p>
+      <div class="label-toggle">
+        <button type="button" class="label-btn home-btn" data-label="home">
+          <i class="fas fa-home"></i> HOME
+        </button>
+        <button type="button" class="label-btn office-btn" data-label="office">
+          <i class="fas fa-briefcase"></i> OFFICE
+        </button>
+      </div>
+      <!-- Hidden input to store selected label; prepopulate if available -->
+      <input type="hidden" id="effective_delivery" name="effective_delivery"
+        value="{{ delivery_info.effective_delivery if delivery_info }}">
 
-            <button type="submit" class="save-btn">Save</button>
-        </form>
+      <button type="submit" class="save-btn">Save</button>
+    </form>
+  </div>
+
+  <!-- Right: Promotion & Order Summary -->
+  <div class="promotion-summary">
+    <h2>Promotion</h2>
+    {% if products|length == 1 %}
+    <!-- Coupon area appears only in the Buy Now (single product) scenario -->
+    <div class="coupon-area">
+      <label for="couponCode">Enter ShopKhana/Coupon Code</label>
+      <div class="coupon-input">
+        <input type="text" id="couponCode" placeholder="Enter code here">
+        <button type="button" id="applyCoupon" class="apply-btn">Apply</button>
+      </div>
+    </div>
+    <!-- Hidden field to pass product_id for coupon processing -->
+    <input type="hidden" id="couponProductId" value="{{ request.args.get('product_id') }}">
+    {% endif %}
+
+    <div class="invoice-contact">
+      <p>Invoice and Contact Info <span id="editEmailLink" class="edit-link">EDIT</span></p>
+      <!-- Use current user's email if delivery_info.contact_email is empty -->
+      <input placeholder="e.g; youremail@gmail.com" type="text" id="userEmail" name="contact_email"
+      value="{{ delivery_info.contact_email|default(current_user.email)|trim if delivery_info else current_user.email }}">
     </div>
 
-    <!-- Right: Promotion & Summary -->
-    <div class="promotion-summary">
-        <h2>Promotion</h2>
-        <div class="coupon-area">
-            <label for="couponCode">Enter ShopKhana/Coupon Code</label>
-            <div class="coupon-input">
-                <input type="text" id="couponCode" placeholder="Enter code here">
-                <button id="applyCoupon" class="apply-btn">Apply</button>
-            </div>
-        </div>
-
-        <div class="invoice-contact">
-            <p>Invoice and Contact Info <span id="editEmailLink" class="edit-link">EDIT</span></p>
-            <input type="text" id="userEmail" value="user@example.com" readonly>
-        </div>
-
-        <div class="order-summary">
-            <h3>Order Summary</h3>
-            <p><strong>Quantity:</strong> <span id="itemQuantity">1</span> item(s)</p>
-            <p><strong>Item(s) Total:</strong> Rs. <span id="itemCost">445</span></p>
-            <p><strong>Delivery Fee:</strong> Rs. <span id="deliveryFee">145</span></p>
-            <hr>
-            <p><strong>Total:</strong> Rs. <span id="grandTotal">590</span></p>
-            <small>VAT included where applicable</small>
-            <button id="proceedPay" class="pay-btn">Proceed to Pay</button>
-        </div>
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      <p><strong>Quantity: </strong><span id="itemQuantity">{{ quantity }}</span> item(s)</p>
+      <p><strong>Item(s) Total:</strong> Rs. <span id="itemCost">{{ item_total }}</span></p>
+      <p><strong>Delivery Fee:</strong> Rs. <span id="deliveryFee">{{ delivery_fee }}</span></p>
+      <hr>
+      <p><strong>Total:</strong> Rs. <span id="grandTotal">{{ grand_total }}</span></p>
+      <small>VAT included where applicable</small>
+      <button type="button" id="proceedPay" class="pay-btn">Proceed to Pay</button>
     </div>
+  </div>
 </section>
 
-
+<!-- Package Details Section -->
 <section id="packageDetailsSection" class="package-details-container">
-    <div class="package-header">
-      <h3>Package 1 of 1</h3>
-      <div class="delivery-option">
-        <p><strong>Delivery Option:</strong> Standard Delivery (Rs.145)</p>
-        <p><strong>Guaranteed by:</strong> 23–28 Feb</p>
+  {% if products %}
+  {% for product in products %}
+  <div class="package-header">
+    <h3>Package {{ loop.index }} of {{ products|length }}</h3>
+    <div class="delivery-option">
+      <p><strong>Delivery Option:</strong> Standard Delivery (Rs. {{ delivery_fee or 145 }})</p>
+      <p><strong>Guaranteed by:</strong> {{ product.guaranteed_date or "3-7 days" }}</p>
+    </div>
+  </div>
+  <div class="package-body">
+    <!-- Product Thumbnail -->
+    <div class="product-thumbnail">
+      <img src="{{ product.image if product.image else url_for('static', filename='img/placeholder.png') }}"
+        alt="{{ product.title }}" />
+    </div>
+    <!-- Product Info -->
+    <div class="product-info">
+      <h5 class="product-title">{{ product.title }}</h5>
+      <p>Category: <strong>{{ product.productCategory or "Uncategorized" }}</strong></p>
+      <p>Color-Family: {{ product.selected_color }}</p>
+      <div class="product-pricing">
+        <span class="discounted-price">Rs.{{ product.price }}</span>
+        <span class="original-price">Rs.{{ product.originalprice }}</span>
+        <span class="discount-percent">{{ product.discountpercent }}%</span>
       </div>
     </div>
-  
-    <div class="package-body">
-      <!-- Product Thumbnail -->
-      <div class="product-thumbnail">
-        <img
-          src="{{ url_for('static', filename='img/anklets.jpg') }}"
-          alt="Product Thumbnail"
-        />
+    <!-- Quantity & Actions -->
+    <div class="product-actions">
+      <div class="quantity-container">
+        <label for="productQuantity_{{ product._id }}">Quantity</label>
+        <!-- Add a data-price attribute for real-time updates -->
+        <input type="number" id="productQuantity_{{ product._id }}" name="productQuantity"
+          value="{{ product.quantity }}" min="1" max="99" data-price="{{ product.price }}" />
       </div>
-  
-      <!-- Product Info -->
-      <div class="product-info">
-        <h4>Airpods Pro, Earbuds Inpods Black i12 TWS</h4>
-        <p>Category: Electronics</p>
-        <p>Color-Family: Black</p>
-        <div class="product-pricing">
-          <span class="discounted-price">Rs.600</span>
-          <span class="original-price">Rs.779</span>
-          <span class="discount-percent">-44%</span>
-        </div>
-      </div>
-  
-      <!-- Quantity & Actions -->
-      <div class="product-actions">
-        <div class="quantity-container">
-          <label for="productQuantity">Quantity</label>
-          <input
-            type="number"
-            id="productQuantity"
-            name="productQuantity"
-            value="1"
-            min="1"
-            max="99"
-          />
-        </div>
-        <button class="change-product-btn">Change Product</button>
-      </div>
+      <input type="hidden" class="productId" value="{{ product._id }}" data-price="{{ product.price }}">
+      <a style="text-decoration: none;" class="change-product-btn" href="{{ url_for('main_page') }}">Change Product</a>
     </div>
-  </section>
-  
+  </div>
+  {% endfor %}
+  {% else %}
+  <p>No products in your cart.</p>
+  {% endif %}
+</section>
+
+<script>
+  function changeProduct(productId) {
+    window.location.href = `/product_page/${productId}`;
+  }
+</script>
 
 {% endblock body %}

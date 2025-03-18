@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 
 {% block title %}
-ShopKhana - My Wishlist
+My Wishlist - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
@@ -38,43 +38,44 @@ ShopKhana - My Wishlist
 
 <!-- Wishlist Items Container -->
 <div id="sk-wl-items" class="sk-wl-items-container">
-  {% if wishlist_items|length > 0 %}
-    {% for item in wishlist_items %}
-      <div class="sk-wl-card" data-id="{{ item._id }}">
-        <div class="sk-wl-card-header">
-          <input type="checkbox" class="sk-wl-checkbox">
-          <button class="sk-wl-remove-btn" data-id="{{ item._id }}">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <a href="{{ item.product_url or url_for('product_page_url', product_id=item.product_id) }}" class="sk-wl-product-link">
-          <div class="sk-wl-product-image">
-            <img src="{{ item.image }}" alt="Product Image">
-          </div>
-          <div class="sk-wl-product-info">
-            <div class="sk-wl-product-title">{{ item.title }}</div>
-            <div class="sk-wl-product-brand">Brand: {{ item.brand }}</div>
-            <div class="sk-wl-product-color">Color: {{ item.color }}</div>
-            <div class="sk-wl-product-pricing">
-              <span class="sk-wl-discount-price">Rs. {{ item.discountPrice }}</span>
-              <span class="sk-wl-original-price">Rs. {{ item.originalPrice }}</span>
-              <span class="sk-wl-discount-percent">{{ item.discountPercent }}</span>
-            </div>
-          </div>
-        </a>
-        <div class="sk-wl-actions">
-          <button class="sk-wl-add-to-cart-btn" data-id="{{ item._id }}">Add to Cart</button>
-          <button class="sk-wl-share-product-btn" data-id="{{ item._id }}">
-            <i class="fas fa-share-alt"></i>
-          </button>
+  {% if wishlist_items %}
+  {% for item in wishlist_items %}
+  <div class="sk-wl-card" data-id="{{ item.product_id }}" data-category="{{ item.productCategory }}" data-price="{{ item.discountPrice }}">
+    <div class="sk-wl-card-header">
+      <input type="checkbox" class="sk-wl-checkbox">
+      <button class="sk-wl-remove-btn" data-id="{{ item.product_id }}" data-color="{{ item.selected_color }}">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <a href="{{ url_for('product_page', product_id=item.product_id) }}" class="sk-wl-product-link">
+      <div class="sk-wl-product-image">
+        <img src="{{ item.image }}" alt="{{ item.title }}">
+      </div>
+      <div class="sk-wl-product-info">
+        <div class="sk-wl-product-title">{{ item.title }}</div>
+        <div class="sk-wl-product-brand">Brand: {{ item.brand }}</div>
+        <div class="sk-wl-product-color">Color: {{ item.selected_color }}</div>
+        <div class="sk-wl-product-pricing">
+          <span class="sk-wl-discount-price">Rs. {{ item.discountPrice }}</span>
+          <span class="sk-wl-original-price">Rs. {{ item.originalPrice }}</span>
+          <span class="sk-wl-discount-percent">{{ item.discountPercent }}% Off</span>
         </div>
       </div>
-    {% endfor %}
-  {% else %}
-    <div id="sk-wl-empty" class="sk-wl-empty">
-      <i class="fas fa-heart-broken"></i>
-      <p>Your wishlist is empty! 💖 Start discovering and adding your favorite items by clicking the <b>heart</b> icon on product pages.</p>
+    </a>
+    <div class="sk-wl-actions">
+      <button class="sk-wl-add-to-cart-btn" data-id="{{ item.product_id }}">Add to Cart</button>
+      <button class="sk-wl-share-product-btn" data-id="{{ item.product_id }}">
+        <i class="fas fa-share-alt"></i>
+      </button>
     </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div id="sk-wl-empty" class="sk-wl-empty">
+    <i class="fas fa-heart-broken"></i>
+    <p>Your wishlist is empty! 💖 Start discovering and adding your favorite items by clicking the
+      <strong>heart</strong> icon on product pages.</p>
+  </div>
   {% endif %}
 </div>
 
@@ -84,10 +85,11 @@ ShopKhana - My Wishlist
     <button class="sk-wl-close-share">&times;</button>
     <h3>Share Your Wishlist</h3>
     <div class="sk-wl-social-icons">
-      <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-      <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-      <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-      <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+      <a href="https://www.facebook.com" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.twitter.com" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="https://www.instagram.com" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+      <a  href="https://wa.me/?text=Your%20message%20here" target="_blank"title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
     </div>
     <div class="sk-wl-share-link">
       <input type="text" id="sk-wl-link" readonly>
