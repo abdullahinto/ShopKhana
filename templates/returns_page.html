@@ -1,88 +1,80 @@
 {% extends 'index.html' %}
 
-
 {% block title %}
 ShopKhana - My Returns
 {% endblock title %}
 
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/returns_page.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/return_popup.css') }}">
-
 {% endblock extra_css %}
 
 {% block extra_js %}
-
 <script src="{{ url_for('static', filename='js/returns_page.js') }}"></script>
 <script src="{{ url_for('static', filename='js/return_popup.js') }}"></script>
-
 {% endblock extra_js %}
 
 {% block body %}
-
-
 <section id="search_returns-section" class="search_returns-section">
   <h2>My Returns</h2>
   <!-- New Return Button -->
   <div class="search_returns-new-btn-container">
-    <a href="#" id="search_returns-new-btn" style="text-decoration: none;" class="search_returns-new-btn">+ New
+    <a style="text-decoration: none;" href="#" id="search_returns-new-btn" class="search_returns-new-btn">+ New
       Return</a>
   </div>
   <div class="search_returns-cards-container">
-    <!-- Example Return Card -->
-    <div class="search_returns-card" data-status="pending">
+    {% if returns and returns|length > 0 %}
+    {% for ret in returns %}
+    <div class="search_returns-card" data-status="{{ ret.refund_status | lower }}">
       <div class="search_returns-card-summary">
         <div class="search_returns-summary-info">
-          <span class="search_returns-order-number">Order #12345</span>
-          <span class="search_returns-item-details">Leather Bag</span>
-          <span class="search_returns-request-date">Requested: 2025-03-10</span>
+          <span class="search_returns-order-number">Order #{{ ret.tracking_id }}</span>
+          <span class="search_returns-item-details">{{ ret.product_names | join(', ') }}</span>
+          <span class="search_returns-request-date">Requested: {{ ret.requested_at_formatted }}</span>
         </div>
-        <div class="search_returns-status-indicator pending">
-          Pending
+        <div class="search_returns-status-indicator {{ ret.refund_status | lower }}">
+          {{ ret.refund_status }}
         </div>
       </div>
       <div class="search_returns-card-actions">
-        <!-- <button class="search_returns-initiate-btn">Initiate Return</button> -->
-        <a href="#" class="search_returns-contact-support">Contact Support</a>
+        <a href="https://wa.me/923443680542" target="_blank" class="search_returns-contact-support">Contact Support</a>
       </div>
       <div class="search_returns-card-details">
-        <p><strong>Reason:</strong> The product did not match my expectations.</p>
-        <p><strong>Refund Status:</strong> Refund in process.</p>
-        <p><strong>Tracking Info:</strong> Tracking #XYZ123</p>
-        <p><strong>Correspondence:</strong> Customer service replied on 2025-03-11.</p>
+        <p><strong>Reason:</strong> {{ ret.return_reason }}</p>
+        <p><strong>Tracking Info:</strong> Tracking #{{ ret.tracking_id }}</p>
       </div>
     </div>
-    <!-- Additional return cards can be added here -->
-  </div>
-  <!-- Empty Message (shown if no return cards exist) -->
-  <div class="search_returns-empty-message" style="display: none;">
-    <i class="fas fa-info-circle"></i>
-    <span>No returns found.</span>
+    {% endfor %}
+    {% else %}
+    <div class="search_returns-empty-message" id="emptyReturns">
+      <i class="fas fa-info-circle"></i>
+      <span>No returns found.</span>
+    </div>
+    {% endif %}
   </div>
 </section>
-
 
 <!-- Return Item Popup Overlay -->
 <div id="returnItemPopup" class="return-item-overlay">
   <div class="return-item-container">
     <span class="close-popup-btn">&times;</span>
     <h2>Return Item</h2>
-    <p class="subheading">Please fill in the details below. Upload a minimum of 3 images and 1 video of the product,
-      provide your reason for
-      return, and enter your Order ID.</p>
-
+    <p class="subheading">
+      Please fill in the details below. Upload a minimum of 3 images and 1 video (at least 2–3 minutes recommended),
+      provide your reason for return, and enter your Order ID.
+    </p>
     <!-- Order ID Section -->
     <div class="order-id-section">
-      <label for="orderIdInput" class="order-id-label">Order ID<br>
-        <small>Click on your "Profile" &gt; "My orders" to see your order ID. The return will not be accepted without an
-          Order ID
+      <label for="orderIdInput" class="order-id-label">
+        Order ID<br>
+        <small>
+          Click on your "Profile" &gt; "My orders" to see your Order ID. The return will not be accepted without an
+          Order ID.
         </small>
       </label>
       <input type="text" id="orderIdInput" class="order-id-input" placeholder="Enter your Order ID" required>
       <div class="error-message" id="orderIdError"></div>
     </div>
-
     <!-- Reason Section -->
     <div class="reason-section">
       <label for="reasonInput" class="reason-label">Reason for Return <span>*</span></label>
@@ -90,24 +82,51 @@ ShopKhana - My Returns
         required></textarea>
       <div class="error-message" id="reasonError"></div>
     </div>
-
     <!-- Upload Section -->
     <div class="upload-section">
       <label for="imageUpload" class="upload-label">Upload Product Images (minimum 3) <span>*</span></label>
       <input type="file" id="imageUpload" class="image-upload" accept="image/*" multiple required>
       <div class="error-message" id="imageError"></div>
-
-      <label for="videoUpload" class="upload-label">Upload Product Video (mandatory) <span>*</span></label>
+      <label for="videoUpload" class="upload-label">Upload Product Video (mandatory, at least 2–3 minutes recommended)
+        <span>*</span></label>
       <input type="file" id="videoUpload" class="video-upload" accept="video/*" required>
       <div class="error-message" id="videoError"></div>
+    </div>
+
+    <!-- Confirmation Overlay for Return Submission -->
+    <div id="returnConfirmOverlay" class="dialog-overlay">
+      <div class="dialog-box">
+        <span class="close-dialog">&times;</span>
+        <h3>Confirm Return Request</h3>
+        <p>Are you sure you want to submit this return request?</p>
+        <div class="dialog-buttons">
+          <button id="returnConfirmYes" class="dialog-btn success">Yes</button>
+          <button id="returnConfirmNo" class="dialog-btn danger">No</button>
+        </div>
+      </div>
     </div>
 
     <button id="submitReturn" class="submit-btn">Submit Return</button>
   </div>
 </div>
 
-<!-- Success Toast -->
+<!-- Error Popup for Ineligible Return -->
+<div id="returnErrorPopup" class="dialog-overlay">
+  <div class="dialog-box">
+    <span class="close-dialog">&times;</span>
+    <h3>Return Not Allowed</h3>
+    <p id="returnErrorMsg"></p>
+  </div>
+</div>
+
+<!-- Success Toast Notification -->
 <div class="toast-notification success" id="successMessage"></div>
 
 
+<div id="return-loading-overlay" style="display: none;">
+  <div class="loader-wrapper">
+    <img src="{{ url_for('static', filename='img/mylogo.png') }}" alt="Logo" class="loader-logo">
+    <div class="loader"></div>
+  </div>
+</div>
 {% endblock body %}

@@ -5,7 +5,6 @@ Home - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/cat.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css') }}">
@@ -14,29 +13,25 @@ Home - ShopKhana
 {% endblock extra_css %}
 
 {% block extra_js %}
-
 <script src="{{ url_for('static', filename='js/banner.js') }}"></script>
 <script src="{{ url_for('static', filename='js/flash.js') }}"></script>
 <script src="{{ url_for('static', filename='js/just4u.js') }}"></script>
 <script src="{{ url_for('static', filename='js/footer.js') }}"></script>
 <script src="{{ url_for('static', filename='js/cat.js') }}"></script>
-
-
 {% endblock extra_js %}
 
 {% block body %}
-
-
 
 <!-- Product Promotion Section (Banner/Carousel) -->
 <section id="product-promotion">
   <div class="carousel-container">
     <div class="carousel">
-      <!-- Banner slide 1 -->
       {% for ban in banners %}
       <div class="banner">
         <a href="{{ url_for('show_banner_products', banner_id=ban._id) }}">
-          <img src="{{ ban.image }}" alt="{{ ban.bannerName }}">
+          <!-- Use Cloudinary URL from ban.image with transformation parameters -->
+          <img src="{{ ban.image.replace('/upload/', '/upload/w_auto,q_auto/') }}" alt="{{ ban.bannerName }}">
+
         </a>
       </div>
       {% endfor %}
@@ -63,21 +58,20 @@ Home - ShopKhana
     <div class="product-card">
       <a href="{{ url_for('product_page', product_id=prod._id) }}" style="text-decoration: none;">
         <div class="product-image">
-          <!-- First Image (Displayed by default) -->
-          <img src="{{ prod.images[0] if prod.images else '/static/img/placeholder.png' }}" alt="Product Image"
-            class="primary-image">
-          <!-- Second Image (Hidden by default, shown on hover) -->
+          <!-- Primary image -->
           <img
-            src="{{ (prod.images[1] if prod.images|length > 1 else prod.images[0])|default('path/to/default-image.jpg') }}"
+            src="{{ (prod.images[0].replace('/upload/', '/upload/w_auto,q_auto/')) if prod.images else '/static/img/placeholder.png' }}"
+            alt="Product Image" class="primary-image">
+
+
+          <!-- Secondary image -->
+          <img
+            src="{{ ((prod.images[1] if prod.images|length > 1 else prod.images[0]).replace('/upload/', '/upload/w_auto,q_auto/'))|default('/static/img/placeholder.png') }}"
             alt="Product Image" class="secondary-image">
+
         </div>
         <h3 class="product-title">{{ prod.title }}</h3>
         <div class="product-rating">
-          <!-- <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i> -->
           <span class="rating-text"><strong style="color: orange;">BRAND: </strong>{{ prod.brandName }}</span>
         </div>
         <div class="product-pricing">
@@ -86,17 +80,16 @@ Home - ShopKhana
           <span class="discount-percent">{{ prod.discountPercent }}%</span>
         </div>
       </a>
-      <button data-href="{{url_for('product_page',  product_id=prod._id)}}"   class="main-add-to-cart-btn  requires-auth">Add to Cart</button>
+      <button data-href="{{ url_for('product_page', product_id=prod._id) }}"
+        class="main-add-to-cart-btn requires-auth">Add to Cart</button>
     </div>
     {% endfor %}
   </div>
-
 
   <div class="mobile-btn-wrapper">
     <a href="{{ url_for('promotion_products', promo_category='Flash Sale') }}" class="explore-all-btn">Explore All</a>
   </div>
 </section>
-
 
 <section id="categories-section">
   <div class="flash-sale-header">
@@ -108,7 +101,9 @@ Home - ShopKhana
     <div class="category-card card-hidden">
       <a href="{{ url_for('category_products', sk_category=cat.name) }}">
         <div class="icon-box">
-          <img src="{{ cat.images[0] }}" alt="category image" class="category-image">
+          <!-- Category image -->
+          <img src="{{ cat.images[0] .replace('/upload/', '/upload/w_auto,q_auto/') }}" alt="category image"
+            class="category-image">
         </div>
         <p class="category-name">{{ cat.name }}</p>
       </a>
@@ -116,26 +111,17 @@ Home - ShopKhana
     {% endfor %}
   </div>
 
-  <!-- Single Load More Button for all screens -->
   <div class="cat-load-more-container">
     <a href="#" id="cat-load-more-categories" class="cat-load-more-btn">Load More</a>
   </div>
 </section>
 
-<!-- Full-Page Loading Overlay -->
 <div id="loading-overlay" style="display: none;">
   <div class="loader-wrapper">
     <img src="{{ url_for('static', filename='img/mylogo.png') }}" alt="Logo" class="loader-logo">
     <div class="loader"></div>
   </div>
 </div>
-
-
-
-
-
-
-
 
 <section id="just-for-you">
   <div class="just-for-you-header">
@@ -147,11 +133,14 @@ Home - ShopKhana
     <div class="product-card">
       <a href="{{ url_for('product_page', product_id=justprod._id) }}" style="text-decoration: none;">
         <div class="product-image">
-          <img src="{{ justprod.images[0] if justprod.images else '/static/img/placeholder.png' }}" alt="Product Image"
-            class="primary-image">
           <img
-            src="{{ (justprod.images[1] if justprod.images|length > 1 else justprod.images[0])|default('path/to/default-image.jpg') }}"
-            alt="Product Image" class="secondary-image">
+            src="{{ (justprod.images[0].replace('/upload/', '/upload/w_auto,q_auto/')) if justprod.images else '/static/img/placeholder.png' }}"
+            alt="Product Image" class="primary-image">
+          <img src="{{ justprod.images[1].replace('/upload/', '/upload/w_auto,q_auto/') 
+                     if justprod.images|length > 1 
+                     else justprod.images[0].replace('/upload/', '/upload/w_auto,q_auto/') 
+                     |default('/static/img/placeholder.png') }}" alt="Product Image" class="secondary-image">
+
         </div>
         <h3 class="product-title">{{ justprod.title }}</h3>
         <div class="product-rating">
@@ -163,7 +152,8 @@ Home - ShopKhana
           <span class="discount-percent">{{ justprod.discountPercent }}%</span>
         </div>
       </a>
-      <button data-href="{{url_for('product_page',  product_id=justprod._id)}}" class="main-add-to-cart-btn  requires-auth">Add to Cart</button>
+      <button data-href="{{ url_for('product_page', product_id=justprod._id) }}"
+        class="main-add-to-cart-btn requires-auth">Add to Cart</button>
     </div>
     {% endfor %}
   </div>
@@ -171,18 +161,10 @@ Home - ShopKhana
   <div class="load-more-container">
     <button class="load-more-btn">Load More</button>
   </div>
-
 </section>
 
-<!-- Full-Page Loading Overlay (hidden by default) -->
 <div id="loading-overlay" style="display: none;">
   <div class="loader"></div>
 </div>
-
-
-
-
-
-
 
 {% endblock body %}

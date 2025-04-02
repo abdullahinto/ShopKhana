@@ -164,7 +164,7 @@
         </a>
         <a href="{{ url_for('cart') }}" class="cart-icon requires-auth" title="Cart">
           <i class="fas fa-shopping-cart"></i>
-          <span class="cart-count">2</span>
+          <span class="cart-count"></span>
         </a>
 
 
@@ -337,6 +337,28 @@
     };
   </script>
 
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const cartCount = document.querySelector('.cart-count');
+      if (cartCount) {
+        const updateCartCount = async () => {
+          try {
+            const response = await fetch('/cart-count');
+            const data = await response.json();
+            cartCount.textContent = data.count > 0 ? data.count : '';
+          } catch (error) {
+            console.error('Error fetching cart count:', error);
+          }
+        };
+
+        // Update immediately on page load and then every 5 seconds
+        updateCartCount();
+        setInterval(updateCartCount, 5000);
+      }
+    });
+  </script>
 
   {% include 'wa-widget.html' %}
   {% block body %}

@@ -148,12 +148,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeReviewPopup = writeReviewPopup.querySelector(".close-popup");
 
   if (writeReviewTrigger) {
-    writeReviewTrigger.addEventListener("click", (e) => {
+    writeReviewTrigger.addEventListener("click", async (e) => {
       e.preventDefault();
-      // Global auth check assumed here
-      writeReviewPopup.style.display = "flex";
+      writeReviewPopup.style.display = "none"; // Force hide first
+
+      try {
+        const response = await fetch("/check-delivered-orders");
+        if (!response.ok) throw new Error("Network error");
+
+        const data = await response.json();
+
+        if (data.hasDelivered) {
+          writeReviewPopup.style.display = "flex";
+        } else {
+          showToast(
+            "Please purchase an item before writing a review.",
+            "error"
+          );
+        }
+      } catch (error) {
+        console.error("Error verifying order status:", error);
+        showToast("An error occurred. Please try again.", "error");
+      }
     });
   }
+
   if (closeReviewPopup) {
     closeReviewPopup.addEventListener("click", () => {
       writeReviewPopup.style.display = "none";

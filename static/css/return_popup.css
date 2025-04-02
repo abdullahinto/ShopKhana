@@ -6,16 +6,16 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
-  display: none; /* Hidden by default */
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: 9999;
 }
 
-/* Popup Container with Orange Border */
+/* Popup Container */
 .return-item-container {
   background-color: #fff;
-  border: 2px solid #ffa600; /* Orange border */
+  border: 2px solid #ffa600;
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
@@ -28,7 +28,6 @@
   text-align: center;
 }
 
-/* Slide/Fade In Keyframes */
 @keyframes slideFadeIn {
   to {
     opacity: 1;
@@ -36,7 +35,7 @@
   }
 }
 
-/* Close Button (X) */
+/* Close Button */
 .return-item-container .close-popup-btn {
   position: absolute;
   top: 10px;
@@ -46,7 +45,7 @@
   cursor: pointer;
 }
 
-/* Main Heading & Subheading */
+/* Headings & Subheadings */
 .return-item-container h2 {
   margin-bottom: 10px;
   font-size: 20px;
@@ -62,51 +61,15 @@
   font-weight: bold;
 }
 
-/* Order ID Section */
-.order-id-section {
-  margin-bottom: 15px;
-  text-align: left;
-}
-.order-id-label {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 5px;
-  display: block;
-  color: #333;
-}
-.order-id-input {
-  width: 100%;
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-/* Reason Section */
-.reason-section {
-  margin-bottom: 15px;
-  text-align: left;
-}
-.reason-label {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 5px;
-  display: block;
-  color: #333;
-}
-.reason-textarea {
-  width: 100%;
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-/* Upload Section */
+/* Form Sections */
+.order-id-section,
+.reason-section,
 .upload-section {
   margin-bottom: 15px;
   text-align: left;
 }
+.order-id-label,
+.reason-label,
 .upload-label {
   font-size: 14px;
   font-weight: 600;
@@ -114,10 +77,39 @@
   display: block;
   color: #333;
 }
+.order-id-input,
+.reason-textarea,
 .image-upload,
 .video-upload {
   width: 100%;
-  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+.error-message {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: none;
+  animation: shake 0.3s;
+}
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 /* Submit Button */
@@ -136,23 +128,56 @@
   transform: scale(1.03);
 }
 
-
-
-/* Error Messages */
-.error-message {
-  color: #dc3545;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
+/* Confirmation Overlay */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: none;
-  animation: shake 0.3s;
+  align-items: center;
+  justify-content: center;
+  z-index: 11000;
+}
+.dialog-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+}
+.close-dialog {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  font-size: 20px;
 }
 
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
+/* Dialog Buttons */
+.dialog-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+.dialog-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.dialog-btn.success {
+  background-color: #2ecc71;
+  color: #fff;
+}
+.dialog-btn.danger {
+  background-color: #e74c3c;
+  color: #fff;
 }
 
 /* Success Toast */
@@ -162,7 +187,7 @@
   right: 20px;
   padding: 1rem 1.5rem;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   max-width: 600px;
   opacity: 0;
   transition: opacity 0.3s, transform 0.3s;
@@ -172,7 +197,6 @@
   color: #155724;
   border: 1px solid #c3e6cb;
 }
-
 .toast-notification.show {
   opacity: 1;
   transform: translateY(0);

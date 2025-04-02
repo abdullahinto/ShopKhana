@@ -19,7 +19,7 @@ Order Placed - ShopKhana
 <!-- First Mini-Section: Order Placed -->
 <div class="sk-final-section sk-final-section1 animate-on-view">
   <p class="sk-final-order-placed">
-    Your order has been successfully placed.
+    Your order has been successfully placed.✨
   </p>
   <p class="sk-final-price">
     <span class="sk-final-rs-label">Rs.</span> <span id="skFinalTotalPrice">{{ order_details.payment_amount }}</span>
@@ -48,18 +48,22 @@ Order Placed - ShopKhana
         <p>{{ order_details.estimated_delivery }}</p>
       </div>
       <div class="sk-final-delivery-thumb">
-        <!-- Optionally, show a thumbnail of one of the products -->
-        {% if order_details['items'] and order_details['items'][0]['title'] %}
-        <img src="{{ url_for('static', filename='img/default_product.png') }}" alt="Product Thumbnail" />
+        <!-- Show a thumbnail of the actual product -->
+        {% set image_url = order_details['items'][0]['image_url'] %}
+        {% if image_url.startswith('http') %}
+        <img src="{{ image_url }}" alt="Product Thumbnail" />
         {% else %}
-        <img src="{{ url_for('static', filename='img/p2.webp') }}" alt="Product Thumbnail" />
+        <img src="{{ url_for('static', filename=image_url) }}" alt="Product Thumbnail" />
         {% endif %}
+
+
+
       </div>
     </div>
     <hr class="sk-final-grey-line" />
     <div class="sk-final-tracking-info">
       <p>
-        To track the delivery of your order, click on your <strong>profile &gt; My Orders</strong>
+        To track the delivery of your order, click on your <strong>Account &gt; My Orders</strong>
         or click the button below:
       </p>
       <button class="sk-final-view-order-btn">View Order</button>

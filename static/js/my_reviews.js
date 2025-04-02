@@ -1,116 +1,169 @@
 document.addEventListener("DOMContentLoaded", function () {
-  /* ----- Pagination (Placeholder) ----- */
-  const prevPageBtn = document.getElementById("prevPage");
-  const nextPageBtn = document.getElementById("nextPage");
-  const currentPageSpan = document.getElementById("currentPage");
-  let currentPage = 1;
-  prevPageBtn.addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      currentPageSpan.textContent = currentPage;
-      // Trigger backend pagination (placeholder)
-      alert("Loading previous page (placeholder).");
-    }
-  });
-  nextPageBtn.addEventListener("click", () => {
-    currentPage++;
-    currentPageSpan.textContent = currentPage;
-    // Trigger backend pagination (placeholder)
-    alert("Loading next page (placeholder).");
-  });
-
-  /* ----- Read More Toggle for Review Text ----- */
-  const readMoreLinks = document.querySelectorAll(".read-more");
-  readMoreLinks.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      const reviewText = e.target.parentElement;
-      reviewText.classList.toggle("expanded");
-      e.target.textContent = reviewText.classList.contains("expanded")
-        ? "Show Less"
-        : "Read More";
-    });
-  });
-
-  /* ----- Edit Review Modal ----- */
-  const editReviewBtns = document.querySelectorAll(".edit-review-btn");
+  // Variables for modal editing.
+  let currentReviewCard = null;
   const editReviewModal = document.getElementById("editReviewModal");
   const closeModalBtn = editReviewModal.querySelector(".close-modal");
-  let currentReviewCard = null;
+  const editReviewForm = document.getElementById("editReviewForm");
 
-  editReviewBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      // Identify the review card being edited
-      currentReviewCard = btn.closest(".review-card");
-      // Pre-fill modal with current review data
-      const currentRating =
-        currentReviewCard.querySelector(".rating-value").textContent;
-      const currentReviewText = currentReviewCard
-        .querySelector(".review-text")
-        .textContent.replace("Read More", "")
-        .replace("Show Less", "")
-        .trim();
-
-      document.getElementById("editRating").value = currentRating;
-      document.getElementById("editReviewText").value = currentReviewText;
-
-      editReviewModal.style.display = "flex";
-    });
-  });
-
-  closeModalBtn.addEventListener("click", () => {
-    editReviewModal.style.display = "none";
-  });
-
-  document.getElementById("editReviewForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    // Simulate saving changes: update review card with new values
-    const newRating = document.getElementById("editRating").value;
-    const newReviewText = document.getElementById("editReviewText").value;
-
-    if (currentReviewCard) {
-      currentReviewCard.querySelector(".rating-value").textContent = newRating;
-      let reviewTextEl = currentReviewCard.querySelector(".review-text");
-      reviewTextEl.textContent = newReviewText + " ";
-      // Append a read-more toggle again
-      const readMoreSpan = document.createElement("span");
-      readMoreSpan.className = "read-more";
-      readMoreSpan.textContent = "Read More";
-      reviewTextEl.appendChild(readMoreSpan);
-
-      // Re-attach the read-more event listener
-      readMoreSpan.addEventListener("click", (e) => {
-        reviewTextEl.classList.toggle("expanded");
-        readMoreSpan.textContent = reviewTextEl.classList.contains("expanded")
-          ? "Show Less"
-          : "Read More";
-      });
-    }
-
-    editReviewModal.style.display = "none";
-    alert("Review updated (placeholder).");
-  });
-
-  /* ----- Delete Review with Confirmation ----- */
-  const deleteReviewBtns = document.querySelectorAll(".delete-review-btn");
-  deleteReviewBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (confirm("Are you sure you want to delete this review?")) {
-        const reviewCard = btn.closest(".review-card");
-        reviewCard.remove();
-        if (document.querySelectorAll(".review-card").length === 0) {
-          document.getElementById("emptyReviews").style.display = "block";
-        }
+  // Read More Toggle.
+  document.querySelectorAll(".read-more").forEach((link) => {
+    link.addEventListener("click", function (e) {
+      const reviewTextEl = this.parentElement;
+      reviewTextEl.classList.toggle("expanded");
+      if (reviewTextEl.classList.contains("expanded")) {
+        this.textContent = "Show Less";
+        // Optionally, replace truncated text with full review text by reloading from a data attribute.
+      } else {
+        this.textContent = "Read More";
       }
     });
   });
 
-  /* ----- Sorting & Filtering (Placeholders) ----- */
-  document.getElementById("sortReviews").addEventListener("change", (e) => {
-    alert("Sorting by: " + e.target.value + " (placeholder)");
+  // Attach event listeners for edit buttons.
+  document.querySelectorAll(".edit-review-btn").forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      currentReviewCard = this.closest(".review-card");
+      // Get current rating and review text.
+      const currentRating =
+        currentReviewCard.querySelector(".rating-value").textContent;
+      // Assuming the review text is in the .review-text element (without the "Read More" text)
+      let currentReviewText =
+        currentReviewCard.querySelector(".review-text").textContent;
+      // Remove any "Read More" or "Show Less" text.
+      currentReviewText = currentReviewText
+        .replace("Read More", "")
+        .replace("Show Less", "")
+        .trim();
+      document.getElementById("editRating").value = currentRating;
+      document.getElementById("editReviewText").value = currentReviewText;
+      editReviewModal.style.display = "flex";
+    });
   });
-  document.getElementById("filterCategory").addEventListener("change", (e) => {
-    alert("Filtering by category: " + e.target.value + " (placeholder)");
+
+  // Close modal.
+  closeModalBtn.addEventListener("click", () => {
+    editReviewModal.style.display = "none";
   });
+
+  // Submit edit review form.
+  editReviewForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const reviewId = currentReviewCard.dataset.reviewId;
+    const newRating = document.getElementById("editRating").value;
+    const newReviewText = document.getElementById("editReviewText").value;
+    try {
+      const response = await fetch(`/edit-review/${reviewId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating: newRating, review: newReviewText }),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        currentReviewCard.querySelector(".rating-value").textContent =
+          newRating;
+        const reviewTextEl = currentReviewCard.querySelector(".review-text");
+        reviewTextEl.textContent = newReviewText + " ";
+        const readMoreSpan = document.createElement("span");
+        readMoreSpan.className = "read-more";
+        readMoreSpan.textContent = "Read More";
+        readMoreSpan.addEventListener("click", function () {
+          reviewTextEl.classList.toggle("expanded");
+          this.textContent = reviewTextEl.classList.contains("expanded")
+            ? "Show Less"
+            : "Read More";
+        });
+        reviewTextEl.appendChild(readMoreSpan);
+        showToast(result.message, "success");
+      } else {
+        showToast(result.message, "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Error updating review.", "error");
+    }
+    editReviewModal.style.display = "none";
+  });
+
+  // Attach event listeners for delete buttons.
+  document.querySelectorAll(".delete-review-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const reviewCard = btn.closest(".review-card");
+      const reviewId = reviewCard.dataset.reviewId;
+      styledConfirm(
+        "Are you sure you want to DELETE this review?",
+        async () => {
+          try {
+            const response = await fetch(`/delete-review/${reviewId}`, {
+              method: "DELETE",
+            });
+            const result = await response.json();
+            if (response.ok) {
+              reviewCard.remove();
+              if (document.querySelectorAll(".review-card").length === 0) {
+                document.getElementById("emptyReviews").style.display = "block";
+              }
+              showToast(result.message, "success");
+            } else {
+              showToast(result.message, "error");
+            }
+          } catch (err) {
+            console.error(err);
+            showToast("Error deleting review.", "error");
+          }
+        }
+      );
+    });
+  });
+
+  // --- Styled Confirmation Dialog Function ---
+  function styledConfirm(message, callback) {
+    const overlay = document.createElement("div");
+    overlay.className = "confirm-overlay";
+    const dialog = document.createElement("div");
+    dialog.className = "confirm-dialog";
+    dialog.innerHTML = `
+      <p>${message}</p>
+      <div class="confirm-buttons">
+        <button class="confirm-btn yes-btn">Yes</button>
+        <button class="confirm-btn no-btn">No</button>
+      </div>
+    `;
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    dialog.querySelector(".yes-btn").addEventListener("click", () => {
+      callback();
+      overlay.remove();
+    });
+    dialog.querySelector(".no-btn").addEventListener("click", () => {
+      overlay.remove();
+    });
+  }
+
+  // --- Elegant Toast Notification Function ---
+  function showToast(message, type) {
+    let container = document.getElementById("toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "toast-container";
+      container.style.position = "fixed";
+      container.style.top = "20px";
+      container.style.right = "20px";
+      container.style.zIndex = 10000;
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement("div");
+    toast.className = "custom-toast " + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    toast.classList.add("fade-in");
+    setTimeout(() => {
+      toast.classList.remove("fade-in");
+      toast.classList.add("fade-out");
+      toast.addEventListener("animationend", () => {
+        toast.remove();
+      });
+    }, 3000);
+  }
 });

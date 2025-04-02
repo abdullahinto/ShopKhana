@@ -1,28 +1,18 @@
 {% extends 'index.html' %}
 
 {% block title %}
-
 ShopKhana | Manage Account
-
 {% endblock title %}
 
 {% block extra_css %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage_account.css') }}">
-
-
 {% endblock extra_css %}
 
 {% block extra_js %}
-
 <script src="{{ url_for('static', filename='js/manage_account.js') }}"></script>
-
-
 {% endblock extra_js %}
 
-
 {% block body %}
-
 
 <section id="manage-account" class="manage-account-section">
   <!-- Tabs Navigation (Desktop) -->
@@ -30,7 +20,6 @@ ShopKhana | Manage Account
     <li class="active" data-tab="profileTab"><i class="fas fa-user"></i> Profile</li>
     <li data-tab="securityTab"><i class="fas fa-lock"></i> Security</li>
     <li data-tab="addressesTab"><i class="fas fa-map-marker-alt"></i> Addresses</li>
-    <li data-tab="paymentsTab"><i class="fas fa-credit-card"></i> Payment Methods</li>
     <li data-tab="preferencesTab"><i class="fas fa-cog"></i> Preferences</li>
   </ul>
 
@@ -40,7 +29,6 @@ ShopKhana | Manage Account
       <option value="profileTab">Profile</option>
       <option value="securityTab">Security</option>
       <option value="addressesTab">Addresses</option>
-      <option value="paymentsTab">Payment Methods</option>
       <option value="preferencesTab">Preferences</option>
     </select>
   </div>
@@ -51,17 +39,17 @@ ShopKhana | Manage Account
     <form id="profileForm" class="account-form">
       <div class="form-group">
         <label for="accountName">Name</label>
-        <input type="text" id="accountName" name="accountName" required>
+        <input type="text" id="accountName" name="accountName" value="{{ del_info.full_name or '' }}" required>
         <span class="error-message"></span>
       </div>
       <div class="form-group">
         <label for="accountEmail">Email</label>
-        <input type="email" id="accountEmail" name="accountEmail" required>
+        <input type="email" id="accountEmail" name="accountEmail" value="{{ del_info.contact_email or '' }}" required>
         <span class="error-message"></span>
       </div>
       <div class="form-group">
         <label for="accountPhone">Phone Number</label>
-        <input type="text" id="accountPhone" name="accountPhone" required>
+        <input type="text" id="accountPhone" name="accountPhone" value="{{ del_info.phone_number or '' }}" required>
         <span class="error-message"></span>
       </div>
       <button type="button" class="save-btn" id="saveProfileBtn">Save Changes</button>
@@ -75,7 +63,7 @@ ShopKhana | Manage Account
     <form id="securityForm" class="account-form">
       <div class="form-group">
         <label for="currentPassword">Current Password</label>
-        <input type="password" id="currentPassword" name="currentPassword" required>
+        <input type="password" id="currentPassword" name="currentPassword" placeholder="********" required>
         <span class="error-message"></span>
       </div>
       <div class="form-group">
@@ -88,20 +76,6 @@ ShopKhana | Manage Account
         <input type="password" id="confirmPassword" name="confirmPassword" required>
         <span class="error-message"></span>
       </div>
-      <div class="form-group toggle-group">
-        <label for="enable2FA">Enable Two-Factor Authentication</label>
-        <input type="checkbox" id="enable2FA" name="enable2FA">
-      </div>
-      <div class="form-group" id="twoFADiv" style="display: none;">
-        <p>Scan the QR code with your authenticator app or enter the OTP code.</p>
-        <!-- Placeholder QR Code -->
-        <img style="width: 200px; height: auto;" src="{{ url_for('static', filename='img/ShopKhana.pk.png') }}" alt="QR Code">
-        <div class="form-group">
-          <label for="otpCode">OTP Code</label>
-          <input type="text" id="otpCode" name="otpCode">
-          <span class="error-message"></span>
-        </div>
-      </div>
       <button type="button" class="save-btn" id="saveSecurityBtn">Save Changes</button>
       <span class="save-message" id="securitySaveMsg"></span>
     </form>
@@ -112,138 +86,114 @@ ShopKhana | Manage Account
     <h2 style="font-weight: 500;">Address Book</h2>
     <form id="addressForm" class="account-form">
       <div class="form-group">
-        <label for="addressLine1">Address Line 1</label>
-        <input type="text" id="addressLine1" name="addressLine1" required>
+        <label for="addressLine1">Address</label>
+        <input type="text" id="addressLine1" name="addressLine1" value="{{ del_info.addressLine1 or '' }}" required>
         <span class="error-message"></span>
       </div>
       <div class="form-group">
-        <label for="addressLine2">Address Line 2</label>
-        <input type="text" id="addressLine2" name="addressLine2">
+        <label for="area">Area</label>
+        <input type="text" id="area" name="area" value="{{ del_info.area or '' }}" required>
+        <span class="error-message"></span>
+      </div>
+      <div class="form-group">
+        <label for="colony">Colony</label>
+        <input type="text" id="colony" name="colony" value="{{ del_info.colony or '' }}" required>
         <span class="error-message"></span>
       </div>
       <div class="form-group">
         <label for="city">City</label>
-        <input type="text" id="city" name="city" required>
+        <input type="text" id="city" name="city" value="{{ del_info.city or '' }}" required>
+        <span class="error-message"></span>
+      </div>
+      <div class="form-group">
+        <label for="province">Province</label>
+        <input type="text" id="province" name="province" value="{{ del_info.province or '' }}" required>
         <span class="error-message"></span>
       </div>
       <div class="form-group">
         <label for="zip">ZIP/Postal Code</label>
-        <input type="text" id="zip" name="zip" required>
+        <input type="text" id="zip" name="zip" value="{{ del_info.zip or '' }}" required>
         <span class="error-message"></span>
       </div>
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label for="country">Country</label>
-        <input type="text" id="country" name="country" required>
+        <input type="text" id="country" name="country" value="{{ del_info.country or '' }}" required>
         <span class="error-message"></span>
-      </div>
+      </div> -->
       <button type="button" class="save-btn" id="saveAddressBtn">Save Changes</button>
       <span class="save-message" id="addressSaveMsg"></span>
     </form>
   </div>
 
-  <!-- Tab Content: Payment Methods -->
-  <div class="tab-content" id="paymentsTab">
-    <h2 style="font-weight: 500;">Payment Methods</h2>
-    <form id="paymentForm" class="account-form">
-      <div class="form-group">
-        <label for="jazzcash">JazzCash Number</label>
-        <input type="text" id="jazzcash" name="jazzcash">
-        <span class="error-message"></span>
-      </div>
-      <div class="form-group">
-        <label for="easypaisa">EasyPaisa Number</label>
-        <input type="text" id="easypaisa" name="easypaisa">
-        <span class="error-message"></span>
-      </div>
-      <div class="form-group">
-        <label for="visaCard">Visa Card Number</label>
-        <input type="text" id="visaCard" name="visaCard">
-        <span class="error-message"></span>
-      </div>
-      <div class="form-group">
-        <label for="bankAccount">Bank Account Number</label>
-        <input type="text" id="bankAccount" name="bankAccount">
-        <span class="error-message"></span>
-      </div>
-      <button type="button" class="save-btn" id="savePaymentBtn">Save Changes</button>
-      <span class="save-message" id="paymentSaveMsg"></span>
-    </form>
-  </div>
-
   <!-- Tab Content: Preferences -->
-<div class="tab-content" id="preferencesTab">
-  <h2 style="font-weight: 500;">Preferences</h2>
-  
-  <!-- Communication Preferences Section -->
-  <div class="pref-section">
-    <h3><i class="fas fa-envelope"></i> Communication Preferences</h3>
-    <form id="commPrefForm" class="account-form">
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="emailNotif" checked>
-          Email Notifications
-        </label>
-      </div>
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="smsNotif">
-          SMS Notifications
-        </label>
-      </div>
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="pushNotif">
-          Push Notifications
-        </label>
-      </div>
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="inAppNotif" checked>
-          In-App Notifications
-        </label>
-      </div>
-      <button type="button" class="save-btn" id="saveCommPrefBtn">Save Changes</button>
-      <span class="save-message" id="commPrefSaveMsg"></span>
-    </form>
-  </div>
+  <div class="tab-content" id="preferencesTab">
+    <h2 style="font-weight: 500;">Preferences</h2>
+    <!-- Communication Preferences (Left as-is for now) -->
+    <div class="pref-section">
+      <h3><i class="fas fa-envelope"></i> Communication Preferences</h3>
+      <form id="commPrefForm" class="account-form">
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="emailNotif" checked>
+            Email Notifications
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="smsNotif">
+            SMS Notifications
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="pushNotif">
+            Push Notifications
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="inAppNotif" checked>
+            In-App Notifications
+          </label>
+        </div>
+        <button type="button" class="save-btn" id="saveCommPrefBtn">Save Changes</button>
+        <span class="save-message" id="commPrefSaveMsg"></span>
+      </form>
+    </div>
 
-  <!-- Security Preferences Section -->
-  <div class="pref-section">
-    <h3 style="font-weight: 500;"><i class="fas fa-user-shield"></i> Security Preferences</h3>
-    <form id="privacyForm" class="account-form">
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="showEmail" checked>
-          Show my email to others
-        </label>
-      </div>
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="showPhone">
-          Show my phone number to others
-        </label>
-      </div>
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="showAddress">
-          Show my address to others
-        </label>
-      </div>
-      <div class="form-group">
-        <label>
-          <input type="checkbox" name="profilePublic">
-          Make my profile public
-        </label>
-      </div>
-      <button type="button" class="save-btn" id="savePrivacyBtn">Save Changes</button>
-      <span class="save-message" id="privacySaveMsg"></span>
-    </form>
+    <!-- Security Preferences (Left unchanged) -->
+    <div class="pref-section">
+      <h3 style="font-weight: 500;"><i class="fas fa-user-shield"></i> Security Preferences</h3>
+      <form id="privacyForm" class="account-form">
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="showEmail" checked>
+            Show my email to others
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="showPhone">
+            Show my phone number to others
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="showAddress">
+            Show my address to others
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="profilePublic">
+            Make my profile public
+          </label>
+        </div>
+        <button type="button" class="save-btn" id="savePrivacyBtn">Save Changes</button>
+        <span class="save-message" id="privacySaveMsg"></span>
+      </form>
+    </div>
   </div>
-</div>
-
 </section>
-
-
-
 
 {% endblock body %}

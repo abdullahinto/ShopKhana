@@ -226,6 +226,8 @@ header {
   display: inline-flex;
   align-items: center;
 }
+
+
 .cart-count {
   position: absolute;
   top: -6px;
@@ -234,13 +236,23 @@ header {
   color: white;
   font-size: 12px;
   font-weight: bold;
-  padding: 3px;
+  padding: 2px;
   border-radius: 100%;
-  /* display: flex; */
   align-items: center;
   justify-content: center;
+  display: flex; /* Ensure proper alignment */
+  animation: pulse 1.5s infinite; /* Add the animation */
 }
 
+/* Keyframes for the shrink-and-grow effect */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1); /* Normal size */
+  }
+  50% {
+    transform: scale(1.2); /* Slightly larger */
+  }
+}
 /* Categories (Desktop Only) */
 #categories {
   text-align: center;
@@ -440,3 +452,6 @@ header.compact #categories {
   background: #27ae60;
 }
   
+
+
+

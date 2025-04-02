@@ -1,4 +1,71 @@
-/* My Orders Section */
+/* Pagination Buttons */
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+.pagination .page-btn {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 8px 16px;
+  background: #3498db;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pagination .page-btn.disabled {
+  background: #ccc;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Toast Notification Styles */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+.custom-toast {
+  margin-bottom: 10px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #fff;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+.custom-toast.error {
+  background-color: #e74c3c;
+}
+.custom-toast.success {
+  background-color: #2ecc71;
+}
+.custom-toast.info {
+  background-color: #3498db;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+/* Order Card & Section Styles */
 #my-orders {
   padding: 20px 5%;
   background-color: #fdfbf6;
@@ -6,15 +73,12 @@
   color: #333;
   margin-top: 100px;
 }
-
 #my-orders h2 {
   font-size: 24px;
   margin-bottom: 15px;
   color: #333;
   font-weight: 500;
 }
-
-/* Filter Controls */
 .orders-filter {
   margin-bottom: 20px;
 }
@@ -27,15 +91,11 @@
   padding: 5px 10px;
   font-size: 14px;
 }
-
-/* Orders Container & Card Layout */
 .orders-container {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
-/* Order Card */
 .order-card {
   border: 1px solid #ffa500;
   border-radius: 6px;
@@ -47,8 +107,6 @@
 .order-card:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
-/* Order Summary */
 .order-summary {
   display: flex;
   justify-content: space-between;
@@ -69,8 +127,6 @@
   font-size: 14px;
   color: #333;
 }
-
-/* Status Badge */
 .order-status {
   padding: 5px 10px;
   border-radius: 20px;
@@ -90,8 +146,6 @@
   background-color: #f8d7da;
   color: #dc3545;
 }
-
-/* Order Actions */
 .order-actions {
   display: flex;
   flex-direction: column;
@@ -109,7 +163,7 @@
   transition: background 0.3s ease;
 }
 .order-actions button:hover {
-  background-color: #EC5800;
+  background-color: #ec5800;
 }
 .order-actions .invoice-link {
   font-size: 12px;
@@ -119,8 +173,6 @@
 .order-actions .invoice-link:hover {
   text-decoration: underline;
 }
-
-/* Order Details (Expandable) */
 .order-details {
   margin-top: 10px;
   padding-top: 10px;
@@ -130,35 +182,49 @@
   color: #555;
 }
 
-/* Load More Button */
-.load-more-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background:  linear-gradient(45deg, #ffde59, #ffd700);
-  color: black;
+/* Cancel Order & Not Allowed Popups */
+.cancel-order-overlay,
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 11000;
+  display: none;
+}
+.cancel-order-container,
+.dialog-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+}
+.close-popup-btn,
+.close-dialog {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Reason Buttons for Cancellation */
+.reasons-list .reason-btn {
+  margin: 4px;
+  padding: 6px 12px;
   border: none;
   border-radius: 4px;
+  background-color: #eee;
   cursor: pointer;
-  font-size: 14px;
-  transition: background 0.5s ease, transform 0.3s ease;
-
 }
-.load-more-btn:hover {
-  background: linear-gradient(45deg, #ffe066, #ffc700);
-  transform: scale(1.1);
-}
-
-/* Responsive Layout */
-@media (max-width: 768px) {
-  .order-summary {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .order-actions {
-    flex-direction: row;
-    gap: 10px;
-    justify-content: flex-end;
-    width: 100%;
-  }
+.reasons-list .reason-btn.selected {
+  background-color: #2ecc71;
+  color: #fff;
 }

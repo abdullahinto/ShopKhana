@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
   }
-  
+
   // --- Real-Time Order Summary Updates on Quantity Change ---
   const quantityInputs = document.querySelectorAll(
     "input[name='productQuantity']"
@@ -99,6 +99,28 @@ document.addEventListener("DOMContentLoaded", () => {
   quantityInputs.forEach((input) => {
     input.addEventListener("change", updateOrderSummary);
   });
+
+  function getSelectedProducts() {
+    // Get all elements that contain the product ID
+    const productIdElements = document.querySelectorAll(".productId");
+    const selectedProducts = [];
+    productIdElements.forEach((elem) => {
+      // Get product id from the hidden input's value
+      const prodId = elem.value;
+      // Find the closest product container and then the title element within it
+      // This assumes that the product title is inside the same parent as the hidden input.
+      // Adjust the selector if your structure is different.
+      const productContainer = elem.closest(".package-body");
+      const titleElem = productContainer
+        ? productContainer.querySelector(".product-title")
+        : null;
+      const prodTitle = titleElem ? titleElem.textContent.trim() : "N/A";
+      if (prodId) {
+        selectedProducts.push({ _id: prodId, title: prodTitle });
+      }
+    });
+    return selectedProducts;
+  }
 
   function updateOrderSummary() {
     let totalQuantity = 0; // Total quantity of all products
@@ -180,13 +202,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Get the current contact email (editable field)
     const user_email = document.getElementById("userEmail").value.trim();
 
-    // Send order summary and user email to backend to store in session
+    // Get the selected products from the page
+    const selected_ids = getSelectedProducts();
+
+    // Send order summary, user email, and selected_ids to backend to store in session
     fetch("/redirect_to_pay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         order_summary: order_summary,
         user_email: user_email,
+        selected_ids: selected_ids, // Now including multi-product data
       }),
     })
       .then((response) => response.json())

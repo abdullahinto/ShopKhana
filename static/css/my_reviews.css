@@ -1,3 +1,116 @@
+
+
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+
+/* Toast messages */
+.custom-toast {
+  margin-bottom: 10px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #fff;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+.custom-toast.error {
+  background-color: #e74c3c;
+}
+
+.custom-toast.success {
+  background-color: #2ecc71;
+}
+
+.custom-toast.info {
+  background-color: #3498db;
+}
+
+/* Fade out animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+
+
+/* Confirmation Dialog */
+.confirm-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11000;
+}
+
+.confirm-dialog {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.confirm-dialog p {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #333;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.confirm-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.yes-btn {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.no-btn {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+/* Review Text Expanded */
+.review-text.expanded {
+  white-space: normal;
+}
+
+.save-btn{
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color:orange;
+  color: white;
+}
+
+
 /* My Reviews Section */
 .reviews-section {
   padding: 20px 5%;

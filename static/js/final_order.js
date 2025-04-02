@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   viewOrderBtn.addEventListener("click", () => {
-    window.location.href = "/my_orders"; // Adjust URL as needed.
+    window.location.href = "/my-orders"; // Adjust URL as needed.
   });
 });
 

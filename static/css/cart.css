@@ -88,6 +88,8 @@ body {
   border-bottom: 1px solid #eee;
   padding: 10px 0;
   flex-wrap: wrap; /* Ensures content wraps on smaller screens */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+
 }
 
 .cart-item-checkbox {
@@ -113,10 +115,12 @@ body {
   font-size: clamp(12px, 3vw, 14px); /* Responsive font size */
   font-weight: 600;
   color: #333;
-  white-space: nowrap;
-  overflow: hidden;
+  /* white-space: nowrap;
+  overflow: hidden; */
   text-overflow: ellipsis; /* Truncates if too long */
-  max-width: 180px;
+  /* white-space: normal; */
+  word-break: break-word;
+  max-width: 180px; /* Consider using percentage widths or min/max widths for better responsiveness */
 }
 
 .cart-item-brand,

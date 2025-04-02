@@ -24,7 +24,6 @@
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
-  font-family: "Poppins", sans-serif;
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -49,7 +48,6 @@
   background-color: #fff;
   cursor: pointer;
   transition: box-shadow 0.3s ease;
-  overflow: hidden;
 }
 .search_returns-card:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -108,41 +106,21 @@
   gap: 10px;
   margin: 10px 0;
 }
-.search_returns-initiate-btn {
-  padding: 8px 12px;
-  background-color: rgb(255, 226, 41);
-  color: black;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.search_returns-initiate-btn:hover {
-  background-color: orange;
-}
 .search_returns-contact-support {
   font-size: 14px;
   color: #0077b6;
   text-decoration: none;
-  align-self: center;
   transition: color 0.3s;
 }
 .search_returns-contact-support:hover {
   color: #00508f;
 }
 
-/* Card Details (Hidden by Default) */
+/* Card Details */
 .search_returns-card-details {
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.4s ease;
-  overflow: hidden;
   margin-top: 10px;
-}
-.search_returns-card.expanded .search_returns-card-details {
-  opacity: 1;
-  max-height: 500px;
+  font-size: 14px;
+  color: #555;
 }
 
 /* Empty Message */
@@ -171,3 +149,57 @@
     justify-content: space-between;
   }
 }
+
+
+
+
+/* Loading Overlay */
+#return-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(237, 237, 237, 0.5); /* semi-transparent orange */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Loader Wrapper */
+.loader-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spinner Loader */
+.loader {
+  border: 6px solid #ffd700; /* yellow */
+  border-top: 6px solid #ff8c00; /* orange */
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  animation: spin 1s linear infinite;
+  position: absolute;
+}
+
+/* Logo in Loader Wrapper */
+.loader-logo {
+  width: 80px; /* Adjust size as needed */
+  height: auto;
+  z-index: 1;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
