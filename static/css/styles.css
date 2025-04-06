@@ -74,7 +74,7 @@ header {
   align-items: center;
   background: white;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 2px 10px;
   width: 60%;
   position: relative;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -138,7 +138,7 @@ header {
   border: none;
   color: black;
   text-decoration: none;
-  font-size: 24px;
+  font-size: 22px;
   display: inline-flex;
   align-items: center;
   cursor: pointer;
@@ -306,7 +306,7 @@ header {
   align-items: center;
   background: white;
   border-radius: 10px;
-  padding: 5px 10px;
+  padding: 1px 10px;
   margin: 10px 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   outline: 2px solid orange; /* Add orange outline */  

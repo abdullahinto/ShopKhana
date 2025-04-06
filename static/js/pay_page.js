@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let title = method.charAt(0).toUpperCase() + method.slice(1);
       let accountInfo = `
         <p><b>Account Title: Muhammad Akasha</b></p>
+        <p><b>Account Number: 03045696547</b></p>
         <p>Please make the payment and upload a screenshot for verification.</p>
         <input type="file" id="paymentScreenshot" accept="image/*" />
         <button id="uploadScreenshot">Upload & Verify</button>

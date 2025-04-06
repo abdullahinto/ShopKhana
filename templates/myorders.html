@@ -44,11 +44,12 @@ ShopKhana - My Orders
             disabled style="pointer-events: none; opacity: 0.5;" {% endif %}>
             Track Shipment
           </button>
-          {% if order.order_status | lower != "canceled" %}
+          {% if order.order_status | lower != "canceled" and order.order_status | lower != "delivered" %}
           <button class="cancel-order-btn" data-order-id="{{ order.order_id }}">Cancel Order</button>
           {% else %}
           <button class="cancel-order-btn" data-order-id="{{ order.order_id }}" disabled>Cancel Order</button>
           {% endif %}
+
           <a href="{{ url_for('download_invoice', order_id=order.order_id) }}" class="invoice-link" target="_blank" {%
             if order.order_status | lower=="canceled" %} style="pointer-events: none; opacity: 0.5;" {% endif %}>
             Download Invoice
@@ -120,7 +121,9 @@ ShopKhana - My Orders
   <div class="dialog-box">
     <span class="close-dialog">&times;</span>
     <h3>Cancellation Window Closed 🕒</h3>
-    <p id="cancelNotAllowedMsg">Order cancellations are available within the first <strong>2 hours</strong>. Since that time has passed, your order is being <strong>processed</strong> with care 🤗✨. We hope it brings you joy 😊💖, and we’re here if you need us! 💌</p>
+    <p id="cancelNotAllowedMsg">Order cancellations are available within the first <strong>2 hours</strong>. Since that
+      time has passed, your order is being <strong>processed</strong> with care 🤗✨. We hope it brings you joy 😊💖, and
+      we’re here if you need us! 💌</p>
   </div>
 </div>
 

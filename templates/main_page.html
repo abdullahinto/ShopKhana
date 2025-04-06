@@ -16,7 +16,7 @@ Home - ShopKhana
 <script src="{{ url_for('static', filename='js/banner.js') }}"></script>
 <script src="{{ url_for('static', filename='js/flash.js') }}"></script>
 <script src="{{ url_for('static', filename='js/just4u.js') }}"></script>
-<script src="{{ url_for('static', filename='js/footer.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename='js/footer.js') }}"></script> -->
 <script src="{{ url_for('static', filename='js/cat.js') }}"></script>
 {% endblock extra_js %}
 
@@ -80,8 +80,9 @@ Home - ShopKhana
           <span class="discount-percent">{{ prod.discountPercent }}%</span>
         </div>
       </a>
-      <button data-href="{{ url_for('product_page', product_id=prod._id) }}"
-        class="main-add-to-cart-btn requires-auth">Add to Cart</button>
+      <form action="{{ url_for('add_to_cart', product_id=prod._id) }}" method="POST" style="display:inline;">
+        <button class="main-add-to-cart-btn requires-auth">Add to Cart</button>
+      </form>      
     </div>
     {% endfor %}
   </div>
@@ -152,8 +153,10 @@ Home - ShopKhana
           <span class="discount-percent">{{ justprod.discountPercent }}%</span>
         </div>
       </a>
-      <button data-href="{{ url_for('product_page', product_id=justprod._id) }}"
-        class="main-add-to-cart-btn requires-auth">Add to Cart</button>
+      <form action="{{ url_for('add_to_cart', product_id=justprod._id) }}" method="POST" style="display:inline;">
+        <button class="main-add-to-cart-btn requires-auth">Add to Cart</button>
+      </form>
+      
     </div>
     {% endfor %}
   </div>

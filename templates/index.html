@@ -148,10 +148,6 @@
             <div class="dropdown-item" data-href="{{url_for('returns_page')}}">
               <i class="fas fa-undo-alt"></i> My Returns
             </div>
-            <div class="dropdown-item" data-href="{{url_for('cancel_page')}}">
-              <i class="fas fa-minus-circle"></i> My Cancellations
-
-            </div>
             <div class="dropdown-item" data-href="{{url_for('logout')}}">
               <i class="fas fa-sign-out-alt"></i> Logout
             </div>
@@ -403,8 +399,7 @@
     <div class="footer-column">
       <h3>About Us</h3>
       <p>
-        We are ShopKhana, your #1 source for all things eCommerce.
-        We strive to give you the best shopping experience with a wide range of products.
+        Your go-to for easy, fun, and reliable shopping. Wide choices, endless satisfaction!
       </p>
       <a href="#" class="read-more-btn">Read More</a>
     </div>
@@ -416,14 +411,14 @@
         <!-- Font Awesome Payment Icons -->
         <img src="{{ url_for('static', filename='img/jc.png') }}" class="jazz-cash-logo" alt="Jazz Cash"
           title="Jazz Cash">
-        <img src="{{ url_for('static', filename='img/bank.png') }}" class="epaisa-logo" alt="Easy Paisa"
-          title="Easy paisa">
+        <!-- <img src="{{ url_for('static', filename='img/bank.png') }}" class="epaisa-logo" alt="Easy Paisa"
+          title="Easy paisa"> -->
         <img src="{{ url_for('static', filename='img/nayapay.png') }}" class="epaisa-logo" alt="Easy Paisa"
           title="Easy paisa">
-        <img src="{{ url_for('static', filename='img/cod.png') }}" class="epaisa-logo" alt="Easy Paisa"
-          title="Easy paisa">
-        <img src="{{ url_for('static', filename='img/hbl.png') }}" class="epaisa-logo" alt="Easy Paisa"
-          title="Easy paisa">
+        <!-- <img src="{{ url_for('static', filename='img/cod.png') }}" class="epaisa-logo" alt="Easy Paisa"
+          title="Easy paisa"> -->
+        <!-- <img src="{{ url_for('static', filename='img/hbl.png') }}" class="epaisa-logo" alt="Easy Paisa"
+          title="Easy paisa"> -->
         <img src="{{ url_for('static', filename='img/sadapay.png') }}" class="epaisa-logo" alt="Easy Paisa"
           title="Easy paisa">
       </div>
@@ -433,10 +428,11 @@
     <div class="footer-column">
       <h3>Stay Connected</h3>
       <div class="social-icons-footer">
-        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.facebook.com/people/Shopkhana/100084983825281/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="mailto:info.shopkhana@gmail.com" title="Email" target="_blank">
+          <i class="fas fa-envelope"></i>
+        </a>        
+        <a href="https://instagram.com/shopk_hana/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
       </div>
     </div>
 

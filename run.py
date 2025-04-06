@@ -783,11 +783,11 @@ def search_results():
 
 
 
-import gridfs
+# import gridfs
 
 
-fs = gridfs.GridFS(mongo.db)
-# --- Helper Functions for the Main Website ---
+# fs = gridfs.GridFS(mongo.db)
+# # --- Helper Functions for the Main Website ---
 
 def allowed_file(filename):
     """Check if the file has one of the allowed extensions."""
@@ -1476,10 +1476,6 @@ def submit_return():
     return jsonify({"status": "success", "message": "Your return request has been submitted successfully!"})
 
 
-@app.route('/my-cancelled-orders')
-@login_required
-def cancel_page():
-    return render_template('cancel_page.html')
 
 
 # Helper: Validate Pakistani phone number
@@ -2539,4 +2535,4 @@ def cancel_order(order_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    app.run(debug=True)
