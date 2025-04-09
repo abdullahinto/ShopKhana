@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: shopkhana-website
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn application:application
+    envVars:
+      - key: FLASK_ENV
+        value: production
