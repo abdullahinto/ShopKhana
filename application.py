@@ -30,6 +30,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
+app = Flask(__name__)
+
+from dotenv import load_dotenv
+load_dotenv()  # Loads variables from .env into os.environ
 
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -39,8 +43,6 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-
-app = Flask(__name__)
 
 # Configure MongoDB
 app.config["MONGO_URI"] = os.getenv("MONGO_URI", "mongodb://localhost:27017/shopkhana")
@@ -858,8 +860,6 @@ import cloudinary.uploader
 import cloudinary.api
 
 
-from dotenv import load_dotenv
-load_dotenv()  # Loads variables from .env into os.environ
 
 
 # Configure Cloudinary credentials (set these as environment variables or directly)
