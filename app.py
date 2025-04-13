@@ -30,6 +30,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_caching import Cache
 
 
 
@@ -53,6 +54,17 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+
+cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
+cache.init_app(app)
+
+@app.route('/expensive')
+@cache.cached(timeout=60)
+def expensive_view():
+    # something slow
+    return "Cached response"
 
 
 
