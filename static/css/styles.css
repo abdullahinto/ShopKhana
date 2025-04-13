@@ -1,20 +1,36 @@
 @import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
 
+/* Global styles and resets */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Righteous', cursive, sans-serif;
+  line-height: 1.6;
+  background: #fff;
+  overflow-x: hidden;
+}
+
+/* Header - Fixed and responsive */
 header {
-  position: fixed; /* Ensure header stays fixed at the top */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(255, 251, 235, 0.5); /* Semi-transparent background */
+  background: rgba(255, 251, 235, 0.5);
   color: black;
   padding: 10px;
   z-index: 1000;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: top 0.3s ease-in-out;
-  backdrop-filter: blur(10px); /* Frosted glass effect */
-  -webkit-backdrop-filter: blur(10px); /* For Safari support */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-
 
 /* Navbar Container */
 .nav-container {
@@ -25,7 +41,7 @@ header {
   padding: 0 15px;
 }
 
-/* Hamburger Menu (hidden on desktop, shown on mobile) */
+/* Hamburger Menu (visible only on mobile) */
 .hamburger {
   display: none;
   background: none;
@@ -43,30 +59,22 @@ header {
 .logo {
   display: flex;
   align-items: center;
-  gap: 25px; /* Increased gap for better spacing */
+  gap: 25px;
 }
-
-/* Logo and Company Name */
 .logo a {
   text-decoration: none;
-  color: inherit; /* Inherits color from parent for flexibility */
+  color: inherit;
   display: flex;
   align-items: center;
 }
-
-
 .mylogo {
-  height: 45px; /* Maintain logo size */
-  width: auto; /* Ensure aspect ratio is preserved */
+  height: 45px;
+  width: auto;
 }
-
-
-.co-name{
-  height: 25px; /* Maintain logo size */
-  width: auto; /* Ensure aspect ratio is preserved */
-
+.co-name {
+  height: 25px;
+  width: auto;
 }
-
 
 /* Desktop Search Bar */
 .nav-container .search-box {
@@ -78,14 +86,12 @@ header {
   width: 60%;
   position: relative;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  outline: 2px solid orange; /* Add orange outline */
+  outline: 2px solid orange;
 }
-
 .nav-container .search-box:focus-within {
-  outline: 2px solid orange; /* Keep the orange outline when the search box is focused */
-  box-shadow: 0 0 5px orange; /* Optional: add a glow effect on focus */
+  outline: 2px solid orange;
+  box-shadow: 0 0 5px orange;
 }
-
 .nav-container .search-box input {
   border: none;
   outline: none;
@@ -149,31 +155,28 @@ header {
   transform: scale(1.1);
 }
 
-/* Dropdown Container */
+/* Dropdown Menu */
 .dropdown-container {
   position: relative;
 }
-
-/* Dropdown Menu */
 .dropdown-menu {
   display: none;
   position: absolute;
   top: 100%;
   right: 0;
-  background: rgba(255, 251, 235, 1); /* Semi-transparent background */
+  background: rgba(255, 251, 235, 1);
   color: #333;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px 0;
   z-index: 1000;
   min-width: 200px;
-  backdrop-filter: blur(50px); /* Frosted glass effect */
-  -webkit-backdrop-filter: blur(50px); /* For Safari support */
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
 }
 .dropdown-menu.active {
   display: block;
 }
-/* Dropdown Items */
 .dropdown-item {
   display: flex;
   align-items: center;
@@ -190,70 +193,7 @@ header {
   color: #ffa500;
 }
 
-/* Mobile Optimization */
-@media (max-width: 768px) {
-  /* Show hamburger menu on mobile */
-  .hamburger {
-    display: inline-flex;
-  }
-
-  /* Hide desktop search box */
-  .nav-container .search-box {
-    display: none;
-  }
-
-  /* Hide desktop categories (they appear in the mobile sidebar) */
-  #categories {
-    display: none;
-  }
-
-  /* Show mobile search toggle */
-  #mobile-search-toggle {
-    display: inline-flex;
-  }
-}
-@media (min-width: 769px) {
-  /* Hide mobile-specific elements on desktop */
-  #mobile-search,
-  #mobile-search-toggle {
-    display: none;
-  }
-}
-
-/* Cart Icon */
-.cart-icon {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
-
-
-.cart-count {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: red;
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-  padding: 2px;
-  border-radius: 100%;
-  align-items: center;
-  justify-content: center;
-  display: flex; /* Ensure proper alignment */
-  animation: pulse 1.5s infinite; /* Add the animation */
-}
-
-/* Keyframes for the shrink-and-grow effect */
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1); /* Normal size */
-  }
-  50% {
-    transform: scale(1.2); /* Slightly larger */
-  }
-}
-/* Categories (Desktop Only) */
+/* Desktop Categories */
 #categories {
   text-align: center;
   margin-top: 10px;
@@ -264,176 +204,209 @@ header {
   gap: 10px;
   justify-content: center;
 }
-/* Base styles for category buttons */
 .category-buttons button {
-  background: rgba(255, 251, 235, 0.8); /* Semi-transparent background */
-  color: black; /* Dark blue text */
-  border: 2px solid #ffc600; /* Border color */
-  padding: 8px 16px; /* Padding for better spacing */
-  border-radius: 10px; /* Rounded corners */
+  background: rgba(255, 251, 235, 0.8);
+  color: black;
+  border: 2px solid #ffc600;
+  padding: 8px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s, box-shadow 0.3s; /* Smooth transitions */
+  transition: background 0.3s, box-shadow 0.3s;
   font-size: 16px;
-  display: inline-flex; /* Align text and icon */
-  align-items: center; /* Center items vertically */
-  gap: 8px; /* Space between icon and text */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
-
-/* Hover effect */
 .category-buttons button:hover {
-  background: #ffc600; /* Slightly darker blue on hover */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow effect */
+  background: #ffc600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-/* Icon styling */
 .category-buttons button i {
-  font-size: 18px; /* Icon size */
-  color: black; /* Icon color matches text */
+  font-size: 18px;
+  color: black;
 }
 
-/* Mobile Search Bar (Animated) */
-.mobile-search {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-in-out;
+/* Mobile Specific Styles */
+@media (max-width: 768px) {
+  /* Mobile: Show hamburger menu, hide desktop search and categories */
+  .hamburger {
+    display: inline-flex;
+  }
+  .nav-container .search-box {
+    display: none;
+  }
+  #categories {
+    display: none;
+  }
+  
+  /* Mobile Search Toggle */
+  #mobile-search-toggle {
+    display: inline-flex;
+  }
+  
+  /* Mobile Search Bar (Animated) */
+  .mobile-search {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+  }
+  .mobile-search.active {
+    max-height: 80px; /* Adjust based on the actual height */
+  }
+  .mobile-search .search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 10px;
+    padding: 1px 10px;
+    margin: 10px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    outline: 2px solid orange;
+  }
+  .mobile-search .search-box input {
+    border: none;
+    outline: none;
+    padding: 8px;
+    flex: 1;
+    border-radius: 20px;
+    font-size: 14px;
+  }
+  .mobile-search .search-box .search-btn {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: black;
+  }
+  
+  /* Mobile Autocomplete */
+  #mobile-autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 15px;
+    right: 15px;
+    background: white;
+    list-style: none;
+    padding: 0;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    margin-top: 5px;
+    z-index: 1000;
+  }
+  #mobile-autocomplete-list li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  #mobile-autocomplete-list li:hover {
+    background: #f0f8ff;
+  }
+  
+  /* Mobile Menu (Sidebar) */
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100vh;
+    background: rgba(255, 251, 235, 0.8);
+    color: black;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: left 0.3s ease-in-out;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .mobile-menu.active {
+    left: 0;
+  }
+  .close-menu {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: black;
+    align-self: flex-end;
+    cursor: pointer;
+  }
+  .mobile-category-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  .mobile-category-buttons button {
+    background: rgba(255, 251, 235, 0.6);
+    color: black;
+    border: 2px solid #ffc600;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s, box-shadow 0.3s;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mobile-category-buttons button:hover {
+    background: #ffc600;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .mobile-category-buttons button i {
+    font-size: 18px;
+    color: black;
+  }
+}
 
+/* Desktop-specific: Hide mobile elements */
+@media (min-width: 769px) {
+  #mobile-search,
+  #mobile-search-toggle {
+    display: none;
+  }
 }
-.mobile-search.active {
-  max-height: 80px; /* Adjust based on your search box height */
+
+/* Cart Icon with Pulse Animation */
+.cart-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
-.mobile-search .search-box {
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px;
+  border-radius: 100%;
   display: flex;
   align-items: center;
-  background: white;
-  border-radius: 10px;
-  padding: 1px 10px;
-  margin: 10px 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  outline: 2px solid orange; /* Add orange outline */  
-
+  justify-content: center;
+  animation: pulse 1.5s infinite;
 }
-.mobile-search .search-box input {
-  border: none;
-  outline: none;
-  padding: 8px;
-  flex: 1;
-  border-radius: 20px;
-  font-size: 14px;
-}
-.mobile-search .search-box .search-btn {
-  background: none;
-  border: none;
-  padding: 5px;
-  cursor: pointer;
-  color: black;
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
 }
 
-/* Autocomplete for Mobile */
-#mobile-autocomplete-list {
-  position: absolute;
-  top: 100%;
-  left: 15px;
-  right: 15px;
-  background: white;
-  list-style: none;
-  padding: 0;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: none;
-  margin-top: 5px;
-  z-index: 1000;
-}
-#mobile-autocomplete-list li {
-  padding: 10px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-#mobile-autocomplete-list li:hover {
-  background: #f0f8ff;
-}
-
-/* Mobile Menu (Sidebar) */
-.mobile-menu {
-  position: fixed;
-  top: 0;
-  left: -250px;
-  width: 250px;
-  height: 100vh;
-  background: rgba(255, 251, 235, 0.8); /* Semi-transparent background */
-  color: white;
-  padding: 20px;
-  box-sizing: border-box;
-  transition: left 0.3s ease-in-out;
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  backdrop-filter: blur(5px); /* Frosted glass effect */
-  -webkit-backdrop-filter: blur(10px); /* For Safari support */
-}
-.mobile-menu.active {
-  left: 0;
-}
-.close-menu {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: black;
-  align-self: flex-end;
-  cursor: pointer;
-}
-.mobile-category-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 30px;
-}
-/* Base styles for mobile category buttons */
-.mobile-category-buttons button {
-  background: rgba(255, 251, 235, 0.6); /* Light blue background */
-  color: black; /* Dark blue text */
-  border: 2px solid #ffc600; /* Border color */
-  padding: 10px 15px; /* Padding for better spacing */
-  border-radius: 10px; /* Rounded corners */
-  cursor: pointer;
-  transition: background 0.3s, box-shadow 0.3s; /* Smooth transitions */
-  font-size: 16px;
-  display: inline-flex; /* Align text and icon */
-  align-items: center; /* Center items vertically */
-  gap: 8px; /* Space between icon and text */
-}
-
-/* Hover effect */
-.mobile-category-buttons button:hover {
-  background: #ffc600; /* Slightly darker blue on hover */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow effect */
-}
-
-/* Icon styling */
-.mobile-category-buttons button i {
-  font-size: 18px; /* Icon size */
-  color: black; /* Icon color matches text */
-}
-
-
-header.hidden {
-  top: -100px;  /* Adjust this value to match your header's height */
-}
-
-/* When header is compact, hide the categories navigation */
-header.compact #categories {
-  display: none;
-}
-
-
-
+/* Flash Messages */
 #flash-messages {
   position: fixed;
   top: 10px;
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Adjust for perfect centering */
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1100;
 }
-
 .flash-message {
   background: #333;
   color: #fff;
@@ -443,15 +416,17 @@ header.compact #categories {
   opacity: 0.9;
   transition: opacity 0.5s ease;
 }
-
 .flash-message.error {
   background: #e74c3c;
 }
-
 .flash-message.success {
   background: #27ae60;
 }
-  
 
-
-
+/* Header behavior for scroll or compact states */
+header.hidden {
+  top: -100px; /* Adjust to match header height */
+}
+header.compact #categories {
+  display: none;
+}
