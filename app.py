@@ -34,6 +34,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 app = Flask(__name__)
+app.config['SESSION_COOKIE_SECURE'] = True
+
 
 
 # Tell Flask to trust headers from NGINX
