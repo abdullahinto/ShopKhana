@@ -34,12 +34,15 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 app = Flask(__name__)
-app.config['SESSION_COOKIE_SECURE'] = True
+
 
 
 
 # Tell Flask to trust headers from NGINX
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+
+app.config['SESSION_COOKIE_SECURE'] = True
 
 load_dotenv()  # Loads variables from .env into os.environ
 
