@@ -28,12 +28,19 @@ import numpy as np
 from pytesseract import Output
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 
 
 app = Flask(__name__)
 
-from dotenv import load_dotenv
+
+# Tell Flask to trust headers from NGINX
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
 load_dotenv()  # Loads variables from .env into os.environ
+
 
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -2535,4 +2542,4 @@ def cancel_order(order_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
