@@ -2546,5 +2546,12 @@ def cancel_order(order_id):
 
 
 
+
+@app.route("/__debug__")
+def debug_route():
+    return f"Scheme: {request.scheme} | Remote addr: {request.remote_addr}"
+
+
+
 if __name__ == '__main__':
     app.run()
