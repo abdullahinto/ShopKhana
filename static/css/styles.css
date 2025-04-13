@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Righteous&display=swap");
 
-/* Global styles and resets */
+/* Global Reset & Base Styles */
 *,
 *::before,
 *::after {
@@ -16,7 +16,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Header - Fixed and responsive */
+/* Header - Fixed & Responsive */
 header {
   position: fixed;
   top: 0;
@@ -41,9 +41,9 @@ header {
   padding: 0 15px;
 }
 
-/* Hamburger Menu (visible only on mobile) */
+/* Hamburger Menu */
 .hamburger {
-  display: none;
+  display: none; /* Will show on mobile below */
   background: none;
   border: none;
   font-size: 24px;
@@ -55,7 +55,7 @@ header {
   transform: scale(1.2);
 }
 
-/* Logo and Company Name */
+/* Logo & Company Name */
 .logo {
   display: flex;
   align-items: center;
@@ -76,14 +76,14 @@ header {
   width: auto;
 }
 
-/* Desktop Search Bar */
+/* Desktop Search Box */
 .nav-container .search-box {
   display: flex;
   align-items: center;
   background: white;
   border-radius: 10px;
   padding: 2px 10px;
-  width: 60%;
+  width: 60%; /* Main difference will be in smaller breakpoints. */
   position: relative;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   outline: 2px solid orange;
@@ -226,9 +226,11 @@ header {
   color: black;
 }
 
-/* Mobile Specific Styles */
+/* =============== MEDIA QUERIES =============== */
+
+/* Tablet & Below */
 @media (max-width: 768px) {
-  /* Mobile: Show hamburger menu, hide desktop search and categories */
+  /* Show hamburger menu, hide desktop search & categories */
   .hamburger {
     display: inline-flex;
   }
@@ -238,7 +240,6 @@ header {
   #categories {
     display: none;
   }
-  
   /* Mobile Search Toggle */
   #mobile-search-toggle {
     display: inline-flex;
@@ -251,7 +252,7 @@ header {
     transition: max-height 0.3s ease-in-out;
   }
   .mobile-search.active {
-    max-height: 80px; /* Adjust based on the actual height */
+    max-height: 80px;
   }
   .mobile-search .search-box {
     display: flex;
@@ -361,6 +362,49 @@ header {
   }
 }
 
+/* For Very Small Screens (e.g., iPhone SE) */
+@media (max-width: 480px) {
+  header {
+    padding: 6px;
+  }
+
+  .nav-container {
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  /* Decrease logo and name sizes */
+  .mylogo {
+    height: 35px; /* Decreased from 45 */
+  }
+  .co-name {
+    height: 20px; /* Decreased from 25 */
+  }
+
+  .hamburger {
+    font-size: 20px; /* Slightly smaller hamburger icon */
+  }
+
+  /* Reduce nav icon size & gap */
+  .nav-icons {
+    gap: 5px;
+  }
+  .nav-icons a,
+  .nav-icons button {
+    font-size: 20px; /* Slightly smaller icons */
+  }
+
+  /* If the search box (in desktop view) were to appear, reduce spacing */
+  .nav-container .search-box {
+    padding: 2px 8px;
+    width: 50%;
+  }
+  .nav-container .search-box input {
+    padding: 6px;
+    font-size: 12px;
+  }
+}
+
 /* Desktop-specific: Hide mobile elements */
 @media (min-width: 769px) {
   #mobile-search,
@@ -423,9 +467,9 @@ header {
   background: #27ae60;
 }
 
-/* Header behavior for scroll or compact states */
+/* Header behavior for scroll/compact states */
 header.hidden {
-  top: -100px; /* Adjust to match header height */
+  top: -100px;
 }
 header.compact #categories {
   display: none;
