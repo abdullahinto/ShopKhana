@@ -1,4 +1,8 @@
-.just-for-you-header h2,
+.just-for-you-header h2{
+    font-family: Poppins, sans-serif;
+    color: #000;
+    font-weight: 400;
+}
 .product-title {
     font-family: Poppins, sans-serif;
     color: #000;
