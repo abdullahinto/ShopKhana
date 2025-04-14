@@ -148,17 +148,20 @@
     transition: background .3s, transform .3s;
     text-align: center;
     justify-content: center;
+}
+
+.main-add-to-cart-btn {
     background-color: #ffde59;
     border: none;
     border-radius: 5px;
     padding: 8px 12px;
     width: 100%;
     box-sizing: border-box;
+    text-align: center;
+    justify-content: center;
 }
 
-
-
-.main-add-to-cart-btn:hover {
+.add-to-cart-btn:hover {
     background-color: orange;
     transform: scale(1.03);
 }
