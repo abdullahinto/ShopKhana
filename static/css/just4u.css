@@ -157,6 +157,8 @@
     padding: 8px 12px;
     width: 100%;
     box-sizing: border-box;
+    text-align: center;
+    justify-content: center;
 }
 
 .add-to-cart-btn:hover {
