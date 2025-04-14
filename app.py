@@ -85,6 +85,12 @@ app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER", app.config["MAIL_USERNAME"])
 
+app.config.update(
+    TEMPLATES_AUTO_RELOAD=False,
+    SEND_FILE_MAX_AGE_DEFAULT=31536000  # cache static files for 1 year
+)
+
+
 
 # Configure file upload folder and allowed extensions (adjust as needed)
 # app.config["UPLOAD_FOLDER"] = os.path.join(os.getcwd(), "static", "uploads")
