@@ -1,1 +1,318 @@
-#deliveryForm label,.label-btn{font-size:14px;font-family:Poppins,sans-serif}#deliveryForm label,.delivery-info h2,.label-btn{font-family:Poppins,sans-serif}.delivery-info h2,.promotion-summary h2{font-size:20px;font-weight:500;color:#333}.delivery-promo-container{display:flex;flex-wrap:wrap;gap:20px;border:2px solid orange;border-radius:8px;padding:20px;margin:120px auto 20px;max-width:1200px;background-color:#fff;animation:.7s forwards slideFadeIn;opacity:0;transform:translateY(30px)}@keyframes slideFadeIn{to{opacity:1;transform:translateY(0)}}.delivery-info{flex:1 1 60%;min-width:280px}.delivery-info h2{margin-bottom:15px}#deliveryForm{display:flex;flex-direction:column;gap:15px}#deliveryForm label{color:#333;margin-bottom:5px}#deliveryForm input[type=text],#deliveryForm select{padding:10px;font-size:14px;border:1px solid #ccc;border-radius:4px;font-family:Poppins,sans-serif}.label-toggle{display:flex;gap:10px}.label-btn{background-color:#eee;border:1px solid #ccc;border-radius:25px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .3s,color .3s}.apply-btn,.pay-btn,.save-btn{cursor:pointer;transition:background .3s,transform .3s}.label-btn.active,.label-btn:hover{background-color:#ffde59;color:#333}.save-btn{background-color:orange;color:#fff;border:none;padding:12px;font-size:16px;border-radius:4px;width:120px;font-family:Poppins,sans-serif}#userEmail,.coupon-input input[type=text]{border:1px solid #ccc;font-family:Poppins,sans-serif}.pay-btn:hover,.save-btn:hover{background-color:#e69500;transform:scale(1.03)}.promotion-summary{flex:1 1 35%;min-width:280px;display:flex;flex-direction:column;gap:20px}.coupon-input,.invoice-contact{display:flex;gap:5px}.promotion-summary h2{font-family:Poppins,sans-serif;margin-bottom:10px}.coupon-area label{font-size:14px;color:#333;font-family:Poppins,sans-serif;margin-bottom:5px;display:block}.coupon-input input[type=text]{flex:1;padding:10px;font-size:14px;border-radius:4px}.apply-btn{background-color:#ffde59;color:#000;border:none;padding:10px 16px;font-size:14px;border-radius:4px;font-family:Poppins,sans-serif}.apply-btn:hover{background-color:orange;transform:scale(1.03)}.invoice-contact{flex-direction:column}.invoice-contact p{font-size:14px;margin:0;font-family:Poppins,sans-serif;color:#333}.edit-link{color:#0077b6;font-size:14px;margin-left:10px;cursor:pointer;text-decoration:underline}#userEmail{border-radius:4px;padding:8px;font-size:14px;width:100%;background-color:#f9f9f9;color:#555}.order-summary{border:1px solid #ccc;border-radius:6px;padding:15px;font-family:Poppins,sans-serif}.order-summary h3{margin-top:0;margin-bottom:10px;font-size:16px;color:#333}.order-summary p{margin:5px 0;font-size:14px;color:#555}.order-summary hr{margin:10px 0}.pay-btn{background-color:orange;color:#fff;border:none;padding:12px 20px;font-size:16px;border-radius:4px;margin-top:10px}@media (max-width:768px){.delivery-promo-container{flex-direction:column}.delivery-info,.promotion-summary{flex:1 1 100%}}
+/* Global font and base element settings */
+#deliveryForm label,
+.label-btn {
+    font-size: 14px;
+    font-family: Poppins, sans-serif;
+}
+
+#deliveryForm label,
+.delivery-info h2,
+.label-btn {
+    font-family: Poppins, sans-serif;
+}
+
+.delivery-info h2,
+.promotion-summary h2 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Main container */
+.delivery-promo-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    border: 2px solid orange;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 120px auto 20px;
+    max-width: 1200px;
+    background-color: #fff;
+    animation: 0.7s forwards slideFadeIn;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+@keyframes slideFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Section Flex Basis */
+.delivery-info {
+    flex: 1 1 60%;
+    min-width: 280px;
+}
+
+.delivery-info h2 {
+    margin-bottom: 15px;
+}
+
+.promotion-summary {
+    flex: 1 1 35%;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Form Styles */
+#deliveryForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#deliveryForm label {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+#deliveryForm input[type="text"],
+#deliveryForm select {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: Poppins, sans-serif;
+}
+
+/* Label Button and Toggle */
+.label-toggle {
+    display: flex;
+    gap: 10px;
+}
+
+.label-btn {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.label-btn.active,
+.label-btn:hover {
+    background-color: #ffde59;
+    color: #333;
+}
+
+/* Action Buttons */
+.apply-btn,
+.pay-btn,
+.save-btn {
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.save-btn {
+    background-color: orange;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    width: 120px;
+    font-family: Poppins, sans-serif;
+}
+
+.pay-btn:hover,
+.save-btn:hover {
+    background-color: #e69500;
+    transform: scale(1.03);
+}
+
+/* Email and Coupon Input */
+#userEmail,
+.coupon-input input[type="text"] {
+    border: 1px solid #ccc;
+    font-family: Poppins, sans-serif;
+}
+
+.promotion-summary h2 {
+    font-family: Poppins, sans-serif;
+    margin-bottom: 10px;
+}
+
+.coupon-area label {
+    font-size: 14px;
+    color: #333;
+    font-family: Poppins, sans-serif;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.coupon-input input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.apply-btn {
+    background-color: #ffde59;
+    color: #000;
+    border: none;
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    font-family: Poppins, sans-serif;
+}
+
+.apply-btn:hover {
+    background-color: orange;
+    transform: scale(1.03);
+}
+
+/* Invoice Contact */
+.invoice-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.invoice-contact p {
+    font-size: 14px;
+    margin: 0;
+    font-family: Poppins, sans-serif;
+    color: #333;
+}
+
+.edit-link {
+    color: #0077b6;
+    font-size: 14px;
+    margin-left: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#userEmail {
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+    width: 100%;
+    background-color: #f9f9f9;
+    color: #555;
+}
+
+/* Order Summary */
+.order-summary {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 15px;
+    font-family: Poppins, sans-serif;
+}
+
+.order-summary h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.order-summary p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.order-summary hr {
+    margin: 10px 0;
+}
+
+.pay-btn {
+    background-color: orange;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+/* Responsive Breakpoints */
+
+/* For medium devices and smaller, stack content vertically */
+@media (max-width: 768px) {
+    .delivery-promo-container {
+        flex-direction: column;
+        margin: 80px auto 20px;
+    }
+
+    .delivery-info,
+    .promotion-summary {
+        flex: 1 1 100%;
+    }
+}
+
+/* For small devices - adjust padding and font sizes */
+@media (max-width: 600px) {
+    .delivery-promo-container {
+        padding: 15px;
+        gap: 15px;
+        margin: 60px auto 15px;
+    }
+
+    #deliveryForm input[type="text"],
+    #deliveryForm select {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .label-btn {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    .save-btn,
+    .pay-btn,
+    .apply-btn {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+}
+
+/* Extra small devices (modern mobile screens) */
+@media (max-width: 480px) {
+    .delivery-promo-container {
+        margin: 40px auto 10px;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .delivery-info h2,
+    .promotion-summary h2 {
+        font-size: 18px;
+    }
+
+    #deliveryForm input[type="text"],
+    #deliveryForm select,
+    #userEmail,
+    .coupon-input input[type="text"] {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .label-btn {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .save-btn,
+    .pay-btn,
+    .apply-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .order-summary {
+        padding: 10px;
+    }
+}
