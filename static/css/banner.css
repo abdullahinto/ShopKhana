@@ -20,11 +20,11 @@
     transition: transform 0.3s ease-in-out;
   }
   
-  /* Banner Container: uses 3:1 aspect-ratio for 1200×400 images */
+  /* Banner Container: uses 2:1 aspect-ratio for 1200×600 images */
   .banner {
     flex: 0 0 100%;
     width: 100%;
-    aspect-ratio: 3 / 1; /* Maintains 3:1 shape as screen resizes */
+    aspect-ratio: 2 / 1; /* Maintains 3:1 shape as screen resizes */
     overflow: hidden;
   }
   
