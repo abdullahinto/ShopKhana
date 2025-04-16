@@ -111,7 +111,7 @@ Home - ShopKhana
         <div class="icon-box">
           <!-- Category image -->
           <img src="{{ cat.images[0] .replace('/upload/', '/upload/w_auto,q_auto/') }}" alt="category image"
-            class="category-image">
+            class="category-image" loading="lazy">
         </div>
         <p class="category-name">{{ cat.name }}</p>
       </a>
@@ -142,12 +142,19 @@ Home - ShopKhana
       <a href="{{ url_for('product_page', product_id=justprod._id) }}" style="text-decoration: none;">
         <div class="product-image">
           <img
-            src="{{ (justprod.images[0].replace('/upload/', '/upload/w_auto,q_auto/')) if justprod.images else '/static/img/placeholder.png' }}"
-            alt="Product Image" class="primary-image">
-          <img src="{{ justprod.images[1].replace('/upload/', '/upload/w_auto,q_auto/') 
-                     if justprod.images|length > 1 
-                     else justprod.images[0].replace('/upload/', '/upload/w_auto,q_auto/') 
-                     |default('/static/img/placeholder.png') }}" alt="Product Image" class="secondary-image">
+          src="{{ (justprod.images[0].replace('/upload/', '/upload/w_auto,q_auto/')) if justprod.images else '/static/img/placeholder.png' }}"
+          alt="Product Image" 
+          class="primary-image"
+          loading="lazy">
+        <img 
+          src="{{ justprod.images[1].replace('/upload/', '/upload/w_auto,q_auto/') 
+                 if justprod.images|length > 1 
+                 else justprod.images[0].replace('/upload/', '/upload/w_auto,q_auto/') 
+                 |default('/static/img/placeholder.png') }}" 
+          alt="Product Image" 
+          class="secondary-image"
+          loading="lazy">
+        
 
         </div>
         <h3 class="product-title">{{ justprod.title }}</h3>
