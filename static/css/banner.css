@@ -1,41 +1,40 @@
 /* Main Banner Component */
 #product-promotion {
     width: 100%;
-    padding: 20px 0;
+    padding: 20px 0;     /* You can adjust or remove these to minimize top/bottom spacing */
     position: relative;
     margin-top: 100px;
   }
   
+  /* Carousel Container */
   .carousel-container {
     position: relative;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1200px;   /* Allows banners to be centered on large screens */
     margin: 0 auto;
     overflow: hidden;
   }
   
-  /* Use a flex container for carousel items */
   .carousel {
     display: flex;
     transition: transform 0.3s ease-in-out;
   }
   
-  /* Banner container maintains a 3:1 aspect ratio */
+  /* Banner Container: uses 3:1 aspect-ratio for 1200×400 images */
   .banner {
     flex: 0 0 100%;
-    position: relative;
     width: 100%;
-    aspect-ratio: 3 / 1; /* 1200x400 ratio */
+    aspect-ratio: 3 / 1; /* Maintains 3:1 shape as screen resizes */
     overflow: hidden;
   }
   
-  /* Ensure the image fits inside without being cut */
+  /* Banner Image: fully visible, flush with edges */
   .banner img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Keeps entire image visible (letterbox may appear) */
+    object-fit: contain; 
     display: block;
-    border-radius: 10px;
+    border-radius: 10px; /* Remove or override to go fully edge-to-edge with no corner rounding */
   }
   
   /* Navigation Buttons */
@@ -65,7 +64,7 @@
     background-color: rgba(0, 0, 0, 0.8);
   }
   
-  /* Dots Navigation */
+  /* Dot Navigation */
   .dots {
     text-align: center;
     margin-top: 10px;
@@ -88,42 +87,48 @@
   
   /* Responsive Breakpoints */
   
-  /* Medium Devices: tablets & small desktops */
+  /* Tablets & Small Desktops */
   @media (max-width: 768px) {
     #product-promotion {
       padding: 10px 0;
       margin-top: 80px;
     }
-  
+    
     .nav-button {
       font-size: 18px;
       padding: 8px;
     }
-  
-    /* Optionally adjust aspect ratio if desired for smaller screens */
+    
+    /* Keep banner fully responsive; may reduce or remove radius here for full edge-to-edge */
     .banner {
       aspect-ratio: 3 / 1;
     }
   }
   
-  /* Small Devices: large mobile phones */
+  /* Large Mobiles */
   @media (max-width: 600px) {
     #product-promotion {
-      padding: 8px 0;
-      margin-top: 70px;
+      padding: 0;        /* Remove default padding on mobile for true edge-to-edge */
+      margin-top: 70px;  /* Adjust top space as needed */
     }
-    
+  
     .carousel-container {
-      padding: 0 10px;
+      max-width: 100%;   /* Remove the 1200px limit on mobile */
+      margin: 0;
+      padding: 0;
     }
   
     .nav-button {
       font-size: 16px;
       padding: 6px;
     }
-  
+    
     .banner {
       aspect-ratio: 3 / 1;
+    }
+  
+    .banner img {
+      border-radius: 0; /* Remove border radius on mobile if you want *no* spacing on edges */
     }
   
     .dot {
@@ -133,26 +138,32 @@
     }
   }
   
-  /* Extra Small Devices: modern mobile screens */
+  /* Extra Small Mobiles */
   @media (max-width: 480px) {
     #product-promotion {
-      padding: 6px 0;
+      padding: 0;        /* Ensures banner spans full width on very small screens */
       margin-top: 60px;
     }
-    
+  
     .carousel-container {
-      padding: 0 5px;
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
     }
-    
+  
     .nav-button {
       font-size: 14px;
       padding: 5px;
     }
-    
+  
     .banner {
       aspect-ratio: 3 / 1;
     }
-    
+  
+    .banner img {
+      border-radius: 0;
+    }
+  
     .dot {
       height: 7px;
       width: 7px;
