@@ -5,7 +5,7 @@ Home - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/banner.css' , v='1.5') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/live_testimonials.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/cat.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css' , v='1.0') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/just4u.css') }}">
@@ -13,7 +13,7 @@ Home - ShopKhana
 {% endblock extra_css %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/banner.js') }}"></script>
+<script src="{{ url_for('static', filename='js/live_testimonials.js') }}"></script>
 <script src="{{ url_for('static', filename='js/flash.js') }}"></script>
 <script src="{{ url_for('static', filename='js/just4u.js') }}"></script>
 <!-- <script src="{{ url_for('static', filename='js/footer.js') }}"></script> -->
@@ -22,30 +22,20 @@ Home - ShopKhana
 
 {% block body %}
 
-<!-- Product Promotion Section (Banner/Carousel) -->
-<section id="product-promotion">
-  <div class="carousel-container">
-    <div class="carousel">
-      {% for ban in banners %}
-      <div class="banner">
-        <a href="{{ url_for('show_banner_products', banner_id=ban._id) }}">
-          <!-- Use Cloudinary URL from ban.image with transformation parameters -->
-          <img src="{{ ban.image.replace('/upload/', '/upload/w_auto,q_auto/') }}" alt="{{ ban.bannerName }}">
 
-        </a>
-      </div>
-      {% endfor %}
-    </div>
+<!-- ▶️ Dynamic Live Sales & Testimonials Section -->
+<section id="live-dynamic-section">
 
-    <!-- Carousel Navigation Buttons -->
-    <button id="prevBtn" class="nav-button">
-      <span class="material-icons">chevron_left</span>
-    </button>
-    <button id="nextBtn" class="nav-button">
-      <span class="material-icons">chevron_right</span>
-    </button>
-  </div>
+  <!-- Live Sales Toast -->
+  <div id="live-toast"></div>
+
+  <!-- Rotating Testimonials -->
+  <section id="testimonials"></section>
+
 </section>
+
+
+
 
 <section id="flash-sale">
   <div class="flash-sale-header">

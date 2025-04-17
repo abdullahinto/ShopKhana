@@ -1,9 +1,6 @@
 import os
-import smtplib
-import json
-import base64
-import hmac
-import hashlib
+from datetime import datetime, timedelta
+import random
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify,session, send_file
 from flask_pymongo import PyMongo
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -125,8 +122,8 @@ def mask_email(email):
         local, domain = email.split("@")
         if len(local) <= 1:
             return email
-        # Show the first letter and mask the rest of the local part.
-        return local[0] + "*" * (len(local) - 1) + "@" + domain
+        # Show the first 3 letter and mask the rest of the local part.
+        return local[3] + "*" * (len(local) - 1) + "@" + domain
     except Exception:
         return email
 
@@ -134,22 +131,54 @@ app.jinja_env.filters["mask_email"] = mask_email
 
 
 
+def serialize_order(doc):
+    return {
+        "customer_name": doc.get("customer_name"),
+        "city": doc.get("province"),  # using 'province' field
+        "product_name": doc.get("product_names", [None])[0],
+        "payment_amount": doc.get("payment_amount"),
+        "transaction_date": doc.get("transaction_date"),
+        "order_arrival_date": doc.get("order_arrival_date")
+    }
+
+@app.route("/api/live-sales")
+def live_sales():
+    now = datetime.utcnow()
+    yesterday = now - timedelta(hours=24)
+    cursor = mongo.db.orders.find({
+        "order_status": "Delivered",
+        "order_arrival_date": {"$gte": yesterday, "$lte": now}
+    })
+    docs = list(cursor)
+    sample = random.sample(docs, min(len(docs), 10))
+    return jsonify([serialize_order(d) for d in sample])
+
+@app.route("/api/testimonials")
+def testimonials():
+    cursor = mongo.db.orders.find({
+        "order_status": "Delivered"
+    }).sort([("payment_amount", -1), ("transaction_date", -1)]).limit(5)
+    docs = list(cursor)
+    return jsonify([serialize_order(d) for d in docs])
+
+
+
 
 
  
 
-def get_banners(limit=5):
-    """
-    Fetch banners from the 'banners' collection.
-    Limit the number if needed (e.g., 5).
-    """
-    banners_cursor = mongo.db.banners.find().limit(limit)
-    banners = []
-    for ban in banners_cursor:
-        ban['_id'] = str(ban['_id'])
-        # Expecting that ban.image is now a Cloudinary URL.
-        banners.append(ban)
-    return banners
+# def get_banners(limit=5):
+#     """
+#     Fetch banners from the 'banners' collection.
+#     Limit the number if needed (e.g., 5).
+#     """
+#     banners_cursor = mongo.db.banners.find().limit(limit)
+#     banners = []
+#     for ban in banners_cursor:
+#         ban['_id'] = str(ban['_id'])
+#         # Expecting that ban.image is now a Cloudinary URL.
+#         banners.append(ban)
+#     return banners
 
 def get_flash_sale_products(limit=20):
     """
@@ -532,7 +561,7 @@ def main_page():
     - Categories
     - Just For You products
     """
-    banners = get_banners(limit=5)
+    # banners = get_banners(limit=5)
     flash_sale_products = get_flash_sale_products(limit=10)
     categories = get_categories()
     just_for_you_products = get_just_for_you_products(limit=40)
@@ -540,7 +569,7 @@ def main_page():
     # Pass the data to main_page.html (Jinja2 template)
     return render_template(
         'main_page.html',
-        banners=banners,
+        # banners=banners,
         flash_sale_products=flash_sale_products,
         categories=categories,
         just_for_you_products=just_for_you_products
@@ -548,38 +577,38 @@ def main_page():
 
 
 
-@app.route('/banner/<banner_id>')
-def show_banner_products(banner_id):
-    banner = mongo.db.banners.find_one({"_id": ObjectId(banner_id)})
-    if not banner:
-        return "Banner not found", 404
+# @app.route('/banner/<banner_id>')
+# def show_banner_products(banner_id):
+#     banner = mongo.db.banners.find_one({"_id": ObjectId(banner_id)})
+#     if not banner:
+#         return "Banner not found", 404
 
-    products = []
-    # Use a case‑insensitive regex to match exactly the banner's category value.
-    if banner.get("promotionCategory"):
-        products_cursor = mongo.db.products.find({
-            "promotionCategory": {
-                "$regex": f"^{banner['promotionCategory']}$", 
-                "$options": "i"
-            }
-        }).limit(40)
-        products = list(products_cursor)
-    elif banner.get("productCategory"):
-        products_cursor = mongo.db.products.find({
-            "productCategory": {
-                "$regex": f"^{banner['productCategory']}$", 
-                "$options": "i"
-            }
-        })
-        products = list(products_cursor)
+#     products = []
+#     # Use a case‑insensitive regex to match exactly the banner's category value.
+#     if banner.get("promotionCategory"):
+#         products_cursor = mongo.db.products.find({
+#             "promotionCategory": {
+#                 "$regex": f"^{banner['promotionCategory']}$", 
+#                 "$options": "i"
+#             }
+#         }).limit(40)
+#         products = list(products_cursor)
+#     elif banner.get("productCategory"):
+#         products_cursor = mongo.db.products.find({
+#             "productCategory": {
+#                 "$regex": f"^{banner['productCategory']}$", 
+#                 "$options": "i"
+#             }
+#         })
+#         products = list(products_cursor)
     
-    for p in products:
-        p["_id"] = str(p["_id"])
-    return render_template(
-        'banner_products.html',
-        banner=banner,
-        products=products
-    )
+#     for p in products:
+#         p["_id"] = str(p["_id"])
+#     return render_template(
+#         'banner_products.html',
+#         banner=banner,
+#         products=products
+#     )
 
 
 @app.route('/promotion/<promo_category>')
