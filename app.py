@@ -137,44 +137,25 @@ app.jinja_env.filters["mask_email"] = mask_email
 
 
 
-def serialize_order(doc):
-    pid = doc["product_ids"][0]
-    prod = mongo.db.products.find_one({"_id": ObjectId(pid)}, {"images":1, "average_rating":1}) or {}
-    # image
+def serialize_order_base(d):
+    """Common serialization for both endpoints."""
+    # product ID & image
+    pid = ObjectId(d["product_ids"][0])
+    prod = mongo.db.products.find_one({"_id": pid}, {"images": 1}) or {}
     img = (prod.get("images") or [None])[0]
     img_url = img.replace("/upload/", "/upload/w_auto,q_auto/") if img else "/static/img/placeholder.png"
-    # rating (use product average or random 4.5–5.0)
-    rating = prod.get("average_rating") or round(random.uniform(4.5, 5), 1)
-    # avatar via Gravatar
-    email = doc.get("user_email","").strip().lower().encode()
-    hash_ = hashlib.md5(email).hexdigest()
-    avatar_url = f"https://www.gravatar.com/avatar/{hash_}?d=identicon&s=60"
 
-    product_url = url_for('product_page', product_id=str(pid))
+    # review lookup
+    review_doc = mongo.db.reviews.find_one({
+        "product_id": str(pid),
+        "user_email": d.get("user_email", "")
+    }) or {}
+    review_text = review_doc.get("review", "")
+    # truncate to ~100 chars
+    if len(review_text) > 100:
+        review_text = review_text[:100].rsplit(" ",1)[0] + "…"
 
-
-    return {
-      "product_id": str(pid),
-      "product_image": img_url,
-      "product_name": doc["product_names"][0],
-      "customer_name": doc["customer_name"].title(),
-      "city": doc["province"],
-      "payment_amount": doc["payment_amount"],
-      "rating": rating,
-      "avatar_url": avatar_url,
-      "product_url": product_url 
-    }
-
-
-
-def serialize_order_base(d):
-    """Common fields for both live‐sales & testimonials."""
-    pid = ObjectId(d["product_ids"][0])
-    # Fetch product image (as you already do)
-    prod = mongo.db.products.find_one({"_id": pid}, {"images":1}) or {}
-    img = (prod.get("images") or [None])[0]
-    img_url = img.replace("/upload/", "/upload/w_auto,q_auto/") \
-              if img else "/static/img/placeholder.png"
+    rating = review_doc.get("rating") or d.get("payment_amount", 0) and round(random.uniform(4.5,5),1)
 
     return {
         "product_id": str(pid),
@@ -183,28 +164,29 @@ def serialize_order_base(d):
         "customer_name": d["customer_name"].title(),
         "city": d["province"],
         "payment_amount": d["payment_amount"],
-        # *** Add this line ***
+        "transaction_date": d["transaction_date"].isoformat(),
+        "review": review_text or "Great product, highly recommend!",
+        "rating": rating,
+        "avatar_url": f"https://www.gravatar.com/avatar/{hashlib.md5(d.get('user_email','').strip().lower().encode()).hexdigest()}?d=identicon&s=60",
         "product_url": url_for("product_page", product_id=str(pid))
     }
 
-@app.route("/api/live-sales")
-def live_sales():
-    five_days_ago = datetime.utcnow() - timedelta(days=5)
-    docs = list(mongo.db.orders
-        .find({"order_arrival_date": {"$gte": five_days_ago}})
-        .sort("order_arrival_date", DESCENDING)
-        .limit(10))
-    return jsonify([serialize_order_base(d) for d in docs])
-
-
 @app.route("/api/testimonials")
 def testimonials():
-    docs = list(mongo.db.orders
-        .find({"order_status": "Delivered"})
-        .sort("payment_amount", DESCENDING)
-        .limit(5))
+    """Top 5 highest‑value, Delivered orders with reviews."""
+    docs = list(mongo.db.orders.find(
+        {"order_status": "Delivered"}
+    ).sort([("payment_amount", DESCENDING), ("transaction_date", DESCENDING)]).limit(5))
     return jsonify([serialize_order_base(d) for d in docs])
 
+@app.route("/api/live-sales")
+def live_sales():
+    """Recent Delivered orders (last 5 days) for live feed."""
+    cutoff = datetime.utcnow() - timedelta(days=5)
+    docs = list(mongo.db.orders.find(
+        {"order_arrival_date": {"$gte": cutoff}}
+    ).sort("order_arrival_date", DESCENDING).limit(10))
+    return jsonify([serialize_order_base(d) for d in docs])
 
 
  

@@ -2,10 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const leftCol = document.querySelector(".social-proof-left");
   const rightList = document.querySelector(".live-feed-list");
 
-  // 1) Helper: build product page URL
+  // Build URL helper
   const buildProductUrl = (id) => `${window.location.origin}/product/${id}`;
 
-  // 2) IntersectionObserver for fade-in
+  // Observer for fade‑in
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -15,24 +15,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     },
-    {
-      rootMargin: "0px 0px -10% 0px",
-      threshold: 0.2,
-    }
+    { rootMargin: "0px 0px -10% 0px", threshold: 0.2 }
   );
 
-  // 3) Testimonial Cards (Top‑5)
+  // State
+  let testimonialCards = [],
+    currentTestimonial = 0,
+    touchStartX = 0;
+
+  // 1) Testimonials
   fetch("/api/testimonials")
-    .then((res) => res.json())
+    .then((r) => r.json())
     .then((data) => {
       data.forEach((o, i) => {
         const card = document.createElement("div");
         card.className = "testimonial-card fade-in";
 
-        // build star markup
-        const full = Math.floor(o.rating);
-        const half = o.rating % 1 >= 0.5;
-        const empty = 5 - full - (half ? 1 : 0);
+        // Stars
+        const full = Math.floor(o.rating),
+          half = o.rating % 1 >= 0.5,
+          empty = 5 - full - (half ? 1 : 0);
         let stars = '<div class="stars">';
         stars += '<span class="material-icons">star</span>'.repeat(full);
         if (half) stars += '<span class="material-icons">star_half</span>';
@@ -41,47 +43,86 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         stars += "</div>";
 
+        // Date
+        const date = new Date(o.transaction_date);
+        const opts = { year: "numeric", month: "long", day: "numeric" };
+        const formatted = date.toLocaleDateString(undefined, opts);
+
+        // Views
+        const views = Math.floor(50 + Math.random() * 200);
+
         card.innerHTML = `
-          <img class="avatar" src="${o.avatar_url}" alt="${o.customer_name}">
-          <div class="testimonial-content">
-            <p>${stars}
-              <span class="product">${o.product_name}</span>
-              purchased by <span class="city">${o.city}</span>
-            </p>
-            <strong>— ${o.customer_name}</strong>
-            <span class="badge">Top Selling</span>
-            <a href="${buildProductUrl(
-              o.product_id
-            )}" class="btn-buy">Buy Now</a>
-          </div>
-        `;
+        <img class="avatar" src="${o.avatar_url}" alt="${o.customer_name}">
+        <div class="testimonial-content">
+          ${stars}
+          <p class="review-text">“${o.review}”</p>
+          <p>
+            <span class="product">${o.product_name}</span>  
+            purchased by <span class="city">${o.customer_name}</span>
+          </p>
+          <p class="testimonial-date">📅 ${formatted} &ensp;👁️ ${views} viewed this</p>
+          <span class="badge">
+            <i class="fas fa-fire" style="color:#FFFF00;"></i> Top Selling
+          </span>
+          <a href="${buildProductUrl(o.product_id)}" class="btn-buy">Buy Now</a>
+        </div>
+      `;
 
         leftCol.appendChild(card);
         observer.observe(card);
+        testimonialCards.push(card);
+
+        // staggered reveal
+        setTimeout(() => card.classList.add("visible"), i * 600);
       });
 
-      // start rotating after initial fade‑ins
-      setTimeout(() => {
-        const cards = leftCol.querySelectorAll(".testimonial-card");
-        if (!cards.length) return;
-        let idx = 0;
-        cards[idx].classList.add("active");
-        setInterval(() => {
-          cards[idx].classList.remove("active");
-          idx = (idx + 1) % cards.length;
-          cards[idx].classList.add("active");
-          spawnStar(cards[idx]);
-        }, 6000);
-      }, 1000);
+      // Carousel init
+      setTimeout(initCarousel, data.length * 600 + 400);
     })
     .catch(console.error);
 
-  // 4) Live‑Sales Cards (Recent or Fallback)
+  function initCarousel() {
+    if (!testimonialCards.length) return;
+    testimonialCards[0].classList.add("active", "slide-in");
+    testimonialCards[0].addEventListener(
+      "animationend",
+      () => testimonialCards[0].classList.remove("slide-in"),
+      { once: true }
+    );
+
+    // Auto‑rotate
+    setInterval(() => rotateTestimonial(1), 6000);
+
+    // Swipe
+    leftCol.addEventListener(
+      "touchstart",
+      (e) => (touchStartX = e.changedTouches[0].clientX)
+    );
+    leftCol.addEventListener("touchend", (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) rotateTestimonial(dx < 0 ? 1 : -1);
+    });
+  }
+
+  function rotateTestimonial(dir) {
+    testimonialCards[currentTestimonial].classList.remove("active");
+    currentTestimonial =
+      (currentTestimonial + dir + testimonialCards.length) %
+      testimonialCards.length;
+    const next = testimonialCards[currentTestimonial];
+    next.classList.add("active", "slide-in");
+    next.addEventListener(
+      "animationend",
+      () => next.classList.remove("slide-in"),
+      { once: true }
+    );
+  }
+
+  // 2) Live Sales
   fetch("/api/live-sales")
-    .then((res) => res.json())
+    .then((r) => r.json())
     .then((orders) => {
-      // fallback if empty
-      if (!Array.isArray(orders) || orders.length === 0) {
+      if (!orders.length) {
         orders = [
           {
             product_id: "SBF001",
@@ -106,39 +147,30 @@ document.addEventListener("DOMContentLoaded", () => {
           },
         ];
       }
-
       rightList.innerHTML = "";
       orders.forEach((o) => {
         const card = document.createElement("div");
         card.className = "live-sale-card fade-in";
         card.innerHTML = `
-          <img src="${o.product_image}" alt="${o.product_name}">
-          <div class="live-info">
-            <span class="product">${o.product_name}</span><br>
-            <span class="city">${o.city}</span><br>
-            <span class="price">PKR ${o.payment_amount.toLocaleString()}</span>
-          </div>
-          <span class="badge">Fast Ship</span>
-          <a href="${buildProductUrl(o.product_id)}" class="btn-buy">Buy Now</a>
-        `;
+        <img src="${o.product_image}" alt="${o.product_name}">
+        <div class="live-info">
+          <span class="product">${o.product_name}</span><br>
+          <span class="city">Buying from ${o.city}</span><br>
+          <span class="price">PKR ${o.payment_amount.toLocaleString()}</span>
+        </div>
+        <span class="badge">
+          <i class="fas fa-shipping-fast" style="color: white;"></i> Fast Ship
+        </span>
+        <a href="${buildProductUrl(o.product_id)}" class="btn-buy">Buy Now</a>
+      `;
+
         rightList.appendChild(card);
         observer.observe(card);
       });
     })
     .catch(console.error);
 
-  // 5) Floating star effect on active testimonial
-  function spawnStar(container) {
-    const star = document.createElement("div");
-    star.className = "star material-icons";
-    star.textContent = "star";
-    star.style.left = `${10 + Math.random() * (container.clientWidth - 20)}px`;
-    star.style.top = "100%";
-    container.appendChild(star);
-    star.addEventListener("animationend", () => star.remove());
-  }
-
-  // 6) Confetti on Buy Now
+  // 3) Confetti
   document.body.addEventListener("click", (e) => {
     if (e.target.classList.contains("btn-buy") && window.confetti) {
       confetti({ spread: 60, origin: { y: 0.6 } });

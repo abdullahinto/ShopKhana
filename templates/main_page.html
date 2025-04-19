@@ -34,8 +34,7 @@ Home - ShopKhana
 
 <section id="flash-sale">
   <div class="flash-sale-header">
-    <h2>Flash Sale</h2>
-    <a href="{{ url_for('promotion_products', promo_category='Flash Sale') }}" class="explore-all-btn">Explore All</a>
+    <h2>Hey! don't miss this one</h2>
   </div>
 
 
@@ -80,14 +79,16 @@ Home - ShopKhana
 
 
 
-  <div class="mobile-btn-wrapper">
-    <a href="{{ url_for('promotion_products', promo_category='Flash Sale') }}" class="explore-all-btn">Explore All</a>
+  <!-- Wrapped button in a container -->
+  <div class="explore-all-btn-container">
+    <a href="{{ url_for('promotion_products', promo_category='Flash Sale') }}" class="explore-all-btn" style="text-decoration: none;" >Explore All</a>
   </div>
+
 </section>
 
 <section id="categories-section">
   <div class="flash-sale-header">
-    <h2>Categories</h2>
+    <h2>Looking for something specific?</h2>
   </div>
 
   <div class="categories-grid">
@@ -127,17 +128,11 @@ Home - ShopKhana
 
 
 
-<!-- ▶️ Social‑Proof Hero Section -->
 <section id="live-dynamic-section">
   <div class="sp-container">
-
-    <h2 class="sp-header">See Why ShopKhana Shoppers Love These</h2>
-
+    <h2 class="sp-header">Trending Now on ShopKhana</h2>
     <div class="social-proof-wrapper">
-      <!-- Left: Rotating Testimonials -->
       <div class="social-proof-left"></div>
-
-      <!-- Right: Live “Now Buying” Feed -->
       <div class="social-proof-right">
         <h3>🔥 What’s Hot Right Now</h3>
         <div class="live-feed-list"></div>
@@ -150,9 +145,10 @@ Home - ShopKhana
 
 
 
+
 <section id="just-for-you">
   <div class="just-for-you-header">
-    <h2>Just For You</h2>
+    <h2>Found these Just For You</h2>
   </div>
 
   <div class="just-for-you-products">

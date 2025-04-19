@@ -1,4 +1,4 @@
-.explore-all-btn,
+/* .explore-all-btn, */
 .flash-sale-header h2 {
   color: #000;
   font-family: Poppins, sans-serif;
@@ -14,8 +14,8 @@
 
 .flash-sale-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center; /* Centers items horizontally */
+  align-items: center; /* Centers items vertically */
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
@@ -23,16 +23,28 @@
 .flash-sale-header h2 {
   font-weight: 400;
   font-size: 24px;
-  margin-left: 10px;
+  margin: 0; /* Optional: Remove any additional margins */
 }
 
+
+/* Container to center the button */
+.explore-all-btn-container {
+  text-align: center;
+  margin-top: 50px; /* Moved from the button */
+}
+
+/* Adjust button to be inline-block */
 .explore-all-btn {
+  display: inline-block;
+  margin-top: 0; /* Remove previous margin */
+  /* Existing styles remain */
   background: linear-gradient(45deg, #ffde59, gold);
   padding: 10px 20px;
   text-decoration: none;
   border-radius: 25px;
   font-size: 14px;
   transition: background 0.3s, transform 0.3s;
+  color: #000;
 }
 
 .explore-all-btn:hover {
@@ -84,20 +96,20 @@
   .flash-sale-products {
     grid-template-columns: repeat(2, 1fr);
   }
-  .explore-all-btn-container {
+  /* .explore-all-btn-container {
     width: 100%;
     text-align: center;
     margin-top: 15px;
     order: 1;
-  }
+  } */
   .flash-sale-header .explore-all-btn {
     display: none;
   }
-  .mobile-btn-wrapper {
+  /* .mobile-btn-wrapper {
     display: flex;
     justify-content: center;
     margin-top: 15px;
-  }
+  } */
 }
 
 .product-card.card-hidden {

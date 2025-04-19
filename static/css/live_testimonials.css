@@ -1,12 +1,8 @@
-/*---------------------------------------
-  0. Brand Variables & Global Reset
- ---------------------------------------*/
- :root {
-  --brand-primary: #FFA000;
-  --brand-bg: #FFF3E0;
-  --text-dark: #333333;
-  --text-mid: #555555;
-  --text-light: #888888;
+:root {
+  --brand-primary: #ffa000;
+  --brand-bg: #fff3e0;
+  --text-dark: #333;
+  --text-mid: #555;
   --radius: 8px;
   --transition: 0.3s ease;
 }
@@ -17,21 +13,16 @@
   box-sizing: border-box;
 }
 
-/*---------------------------------------
-  1. Section & Container
- ---------------------------------------*/
 #live-dynamic-section {
   background: var(--brand-bg);
   padding: clamp(2rem, 5vw, 4rem) 0;
 }
-
 .sp-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
   font-family: Poppins, sans-serif;
 }
-
 .sp-header {
   font-size: clamp(1.75rem, 4vw, 2.25rem);
   color: var(--text-dark);
@@ -39,25 +30,17 @@
   margin-bottom: 2rem;
 }
 
-/*---------------------------------------
-  2. Grid Layout
- ---------------------------------------*/
 .social-proof-wrapper {
   display: grid;
   gap: 1.5rem;
-  /* single column by default */
   grid-template-columns: 1fr;
 }
-
 @media (min-width: 768px) {
   .social-proof-wrapper {
     grid-template-columns: 2fr 3fr;
   }
 }
 
-/*---------------------------------------
-  3. Shared Card Styles & Reveal
- ---------------------------------------*/
 .fade-in {
   opacity: 0;
   transform: translateY(20px);
@@ -68,31 +51,41 @@
   transform: translateY(0);
 }
 
-/*---------------------------------------
-  4. Testimonials Column
- ---------------------------------------*/
+/* Testimonials */
 .social-proof-left {
   position: relative;
   overflow: hidden;
   min-height: 20rem;
 }
-
 .testimonial-card {
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   gap: 1rem;
   background: #fff;
   padding: 1rem;
   border-radius: var(--radius);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border-left: 4px solid var(--brand-primary);
+  cursor: grab;
+  touch-action: pan-y;
+  /* scale-up hover */
+  transition: transform var(--transition);
+}
+.testimonial-card:hover {
+  transform: scale(1.02);
+}
+.testimonial-card.active {
+  z-index: 1;
 }
 
-.testimonial-card .avatar {
+.avatar {
   flex-shrink: 0;
-  width: 60px; height: 60px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -102,15 +95,6 @@
   display: flex;
   flex-direction: column;
 }
-
-.testimonial-content p {
-  font-size: 1rem;
-  color: var(--text-dark);
-  margin-bottom: 0.5rem;
-}
-.testimonial-content p .product { font-weight: 600; }
-.testimonial-content p .city    { font-style: italic; color: var(--text-mid); }
-
 .stars {
   display: flex;
   gap: 0.25rem;
@@ -120,14 +104,31 @@
   font-size: 1rem;
   color: var(--brand-primary);
 }
-.stars .empty { color: #ccc; }
-
-.testimonial-content strong {
-  font-size: 0.875rem;
+.stars .empty {
+  color: #ccc;
+}
+.review-text {
+  font-size: 0.9rem;
+  color: var(--text-mid);
+  margin-bottom: 0.5rem;
+}
+.testimonial-content p {
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin-bottom: 0.25rem;
+}
+.testimonial-content p .product {
+  font-weight: 600;
+}
+.testimonial-content p .city {
+  font-style: italic;
+  color: var(--text-mid);
+}
+.testimonial-date {
+  font-size: 0.75rem;
   color: var(--text-mid);
   margin-bottom: 0.75rem;
 }
-
 .badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
@@ -136,50 +137,46 @@
   color: #fff;
   border-radius: var(--radius);
   margin-bottom: 0.75rem;
+  background-color: #2a9d8f;
 }
-
 .btn-buy {
   margin-top: auto;
   align-self: flex-start;
   background: var(--brand-primary);
-  color: #fff;
+  color: black;
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: var(--radius);
   font-size: 0.875rem;
   transition: background var(--transition), transform var(--transition);
+  background-color: #ffde59;
 }
 .btn-buy:hover {
-  background: #e69500;
+  background-color: orange;
   transform: scale(1.05);
 }
 
-/*---------------------------------------
-  5. Live‑Feed Column
- ---------------------------------------*/
+/* Live Feed */
 .social-proof-right {
   background: #fff;
   border-radius: var(--radius);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   padding: 1rem;
   display: flex;
   flex-direction: column;
 }
-
 .social-proof-right h3 {
   font-size: 1.25rem;
   color: var(--text-dark);
   margin-bottom: 1rem;
   text-align: center;
 }
-
 .live-feed-list {
   display: grid;
   row-gap: 1rem;
   overflow-y: auto;
   max-height: 20rem;
 }
-
 .live-sale-card {
   display: flex;
   align-items: center;
@@ -187,43 +184,44 @@
   background: #fff;
   padding: 0.75rem;
   border-radius: var(--radius);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: transform var(--transition);
 }
-
 .live-sale-card:hover {
   transform: scale(1.02);
 }
-
 .live-sale-card img {
-  width: 50px; height: 50px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
   border-radius: 6px;
-  flex-shrink: 0;
 }
-
 .live-info {
   flex: 1;
   font-size: 0.875rem;
   color: var(--text-dark);
 }
-.live-info .product { font-weight: 600; }
-.live-info .city    { font-style: italic; color: var(--text-mid); }
-.live-info .price   {
-  color: var(--brand-primary);
+.live-info .product {
   font-weight: 600;
+}
+.live-info .city {
+  font-style: italic;
+  color: var(--text-mid);
+}
+.live-info .price {
   display: block;
   margin: 0.25rem 0;
+  color: var(--brand-primary);
+  font-weight: 600;
 }
-
 .live-sale-card .badge {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
-  background: var(--brand-primary);
+  /* background: var(--brand-primary); */
+  background-color: green;
   color: #fff;
   border-radius: var(--radius);
 }
-
 .live-sale-card .btn-buy {
   background: var(--brand-primary);
   color: #fff;
@@ -238,10 +236,23 @@
   transform: scale(1.05);
 }
 
-/*---------------------------------------
-  6. Subtle Floating Stars Animation
- ---------------------------------------*/
-.testimonial-card .star {
+/* Sliding‑in animation */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.testimonial-card.slide-in {
+  animation: slide-in 0.6s ease both;
+}
+
+/* Floating stars */
+.star {
   position: absolute;
   font-size: 1.25rem;
   color: var(--brand-primary);
@@ -249,13 +260,13 @@
   animation: starFloat 1.6s ease-out forwards;
 }
 @keyframes starFloat {
-  0%   { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-50px) scale(1.4); opacity: 0; }
+  to {
+    transform: translateY(-50px) scale(1.4);
+    opacity: 0;
+  }
 }
 
-/*---------------------------------------
-  7. Responsive Tweaks
- ---------------------------------------*/
+/* Responsive tweaks */
 @media (max-width: 992px) {
   .social-proof-wrapper {
     grid-template-columns: 1fr;
@@ -264,14 +275,27 @@
     max-height: 16rem;
   }
 }
-
 @media (max-width: 480px) {
-  .sp-header  { font-size: 1.75rem; }
-  .testimonial-card { flex-direction: column; text-align: center; }
-  .testimonial-card .avatar { margin: 0 auto 1rem; }
-  .testimonial-content { align-items: center; }
-  .btn-buy { width: 100%; text-align: center; }
-  .social-proof-right h3 { font-size: 1.125rem; }
-  .live-sale-card { flex-direction: column; text-align: center; }
-  .live-sale-card .btn-buy { width: 100%; margin-top: 0.5rem; }
+  .sp-header {
+    font-size: 1.75rem;
+  }
+  .testimonial-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .avatar {
+    margin-bottom: 1rem;
+  }
+  .btn-buy {
+    width: 100%;
+    text-align: center;
+  }
+  .live-sale-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .live-sale-card .btn-buy {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
 }
