@@ -1,160 +1,129 @@
-/* flash.css - Responsive, modern styling for Flash Sale section */
-
-:root {
-  /* Color palette */
-  --color-primary: #ffde59;
-  --color-primary-dark: #e6c74f;
-  --color-accent: gold;
-  --color-text: #000;
-  --color-bg: #fdfbf6;
-
-  /* Spacing scale */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-
-  /* Border radius */
-  --radius: 0.5rem;
-
-  /* Typography */
-  --font-base: "Poppins", sans-serif;
+/* .explore-all-btn, */
+.flash-sale-header h2 {
+  color: #000;
+  font-family: Poppins, sans-serif;
+  text-align: center;
 }
 
-/* Section wrapper */
 #flash-sale {
   width: 100%;
-  padding: var(--space-lg) var(--space-md);
-  background-color: var(--color-bg);
+  padding: 5px;
+  /* background-color: #fdfbf6; */
   box-sizing: border-box;
-  margin-top: 7.5rem;
+  margin-top: 120px;
 }
 
-/* Header */
 .flash-sale-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: center; /* Centers items horizontally */
+  align-items: center; /* Centers items vertically */
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
+  text-align: center;
 }
 
 .flash-sale-header h2 {
-  font-family: var(--font-base);
   font-weight: 400;
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  color: var(--color-text);
-  margin: 0;
+  font-size: 24px;
+  margin: 0; /* Optional: Remove any additional margins */
 }
 
-/* Explore All Button */
+
+/* Container to center the button */
+.explore-all-btn-container {
+  text-align: center;
+  margin-top: 50px; /* Moved from the button */
+}
+
+/* Adjust button to be inline-block */
 .explore-all-btn {
-  background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
-  padding: clamp(0.5rem, 1vw, 1rem) clamp(1rem, 2vw, 1.5rem);
-  text-decoration: none;
-  border-radius: var(--radius);
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  font-family: var(--font-base);
-  color: var(--color-text);
-  transition: background 0.3s ease, transform 0.3s ease;
   display: inline-block;
+  margin-top: 0; /* Remove previous margin */
+  /* Existing styles remain */
+  background: linear-gradient(45deg, #ffde59, gold);
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 14px;
+  transition: background 0.3s, transform 0.3s;
+  color: black;
 }
 
 .explore-all-btn:hover {
   transform: scale(1.05);
-  background: var(--color-primary-dark);
+  background-color: orange;
 }
 
-/* Mobile-only Explore button wrapper */
-.mobile-btn-wrapper {
-  display: none;
-  width: 100%;
-  text-align: center;
-  margin-top: var(--space-md);
-}
-
-/* Products grid */
 .flash-sale-products {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-md);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
 }
 
-/* Card styles */
 .product-card {
   background-color: #fff;
-  border-radius: var(--radius);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: var(--space-md);
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  transition: box-shadow 0.3s, transform 0.3s;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
+
+
+
 
 .product-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
 }
 
-.product-card img {
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius) var(--radius) 0 0;
-  object-fit: cover;
+.mobile-btn-wrapper {
+  display: none;
 }
 
-.product-card .product-info {
-  margin-top: var(--space-sm);
-  flex-grow: 1;
+@media (max-width: 992px) {
+  .flash-sale-products {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.product-card .product-title {
-  font-family: var(--font-base);
-  font-size: clamp(1rem, 2.5vw, 1.125rem);
-  margin: var(--space-sm) 0;
-  color: var(--color-text);
+@media (max-width: 576px) {
+  .flash-sale-header {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: center;
+  }
+  .flash-sale-products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* .explore-all-btn-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 15px;
+    order: 1;
+  } */
+  .flash-sale-header .explore-all-btn {
+    display: none;
+   
+  }
+  /* .mobile-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  } */
 }
 
-.product-card .product-price {
-  font-family: var(--font-base);
-  font-weight: 600;
-  font-size: clamp(0.875rem, 2vw, 1rem);
-  color: var(--color-accent);
-}
-
-/* Animation for reveal */
 .product-card.card-hidden {
   opacity: 0;
-  transform: translateY(2rem);
+  transform: translateY(30px);
 }
 
 .product-card.card-visible {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.9s ease, transform 0.9s ease;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  #flash-sale {
-    padding: var(--space-md);
-  }
-  .flash-sale-header {
-    justify-content: center;
-  }
-  .mobile-btn-wrapper {
-    display: block;
-  }
-  .flash-sale-header .explore-all-btn {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .flash-sale-products {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
+  transition: opacity 0.9s, transform 0.9s;
 }
