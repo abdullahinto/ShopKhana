@@ -11,7 +11,7 @@ body {
     font-family: 'Righteous', cursive, sans-serif;
     line-height: 1.6;
    
-
+    /* overflow-x: hidden; */
 }
 
 /* Header Styles */
