@@ -1,33 +1,36 @@
-import os
-from datetime import datetime, timedelta
-import random
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify,session, send_file
-from flask_pymongo import PyMongo
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
-from flask_mail import Mail, Message
-from flask_dance.contrib.google import make_google_blueprint, google
-from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
-from bson.objectid import ObjectId
-import logging
-import random
-from urllib.parse import parse_qs, urlencode
-import re
-import pytesseract
-from PIL import Image, ImageEnhance, ImageOps
-import datetime
-from bson import Binary
+# Standard libraries
+import hashlib
 import io
-import cv2
-import numpy as np
-from pytesseract import Output
+import logging
+import os
+import random
+import re
+from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from urllib.parse import parse_qs, urlencode
+
+# Third-party libraries
+import cv2
+import numpy as np
+import pytesseract
+from bson import Binary, ObjectId
 from dotenv import load_dotenv
-from werkzeug.middleware.proxy_fix import ProxyFix
+from flask import Flask, jsonify, redirect, render_template, request, send_file, session, url_for, flash
 from flask_caching import Cache
+from flask_dance.contrib.facebook import facebook, make_facebook_blueprint
+from flask_dance.contrib.google import google, make_google_blueprint
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_mail import Mail, Message
+from flask_pymongo import PyMongo
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+from PIL import Image, ImageEnhance, ImageOps
+from pymongo import DESCENDING
+from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+from pytesseract import Output
+
 
 
 
@@ -131,37 +134,76 @@ app.jinja_env.filters["mask_email"] = mask_email
 
 
 
+
+
+
 def serialize_order(doc):
+    pid = doc["product_ids"][0]
+    prod = mongo.db.products.find_one({"_id": ObjectId(pid)}, {"images":1, "average_rating":1}) or {}
+    # image
+    img = (prod.get("images") or [None])[0]
+    img_url = img.replace("/upload/", "/upload/w_auto,q_auto/") if img else "/static/img/placeholder.png"
+    # rating (use product average or random 4.5–5.0)
+    rating = prod.get("average_rating") or round(random.uniform(4.5, 5), 1)
+    # avatar via Gravatar
+    email = doc.get("user_email","").strip().lower().encode()
+    hash_ = hashlib.md5(email).hexdigest()
+    avatar_url = f"https://www.gravatar.com/avatar/{hash_}?d=identicon&s=60"
+
+    product_url = url_for('product_page', product_id=str(pid))
+
+
     return {
-        "customer_name": doc.get("customer_name"),
-        "city": doc.get("province"),  # using 'province' field
-        "product_name": doc.get("product_names", [None])[0],
-        "payment_amount": doc.get("payment_amount"),
-        "transaction_date": doc.get("transaction_date"),
-        "order_arrival_date": doc.get("order_arrival_date")
+      "product_id": str(pid),
+      "product_image": img_url,
+      "product_name": doc["product_names"][0],
+      "customer_name": doc["customer_name"].title(),
+      "city": doc["province"],
+      "payment_amount": doc["payment_amount"],
+      "rating": rating,
+      "avatar_url": avatar_url,
+      "product_url": product_url 
+    }
+
+
+
+def serialize_order_base(d):
+    """Common fields for both live‐sales & testimonials."""
+    pid = ObjectId(d["product_ids"][0])
+    # Fetch product image (as you already do)
+    prod = mongo.db.products.find_one({"_id": pid}, {"images":1}) or {}
+    img = (prod.get("images") or [None])[0]
+    img_url = img.replace("/upload/", "/upload/w_auto,q_auto/") \
+              if img else "/static/img/placeholder.png"
+
+    return {
+        "product_id": str(pid),
+        "product_image": img_url,
+        "product_name": d["product_names"][0],
+        "customer_name": d["customer_name"].title(),
+        "city": d["province"],
+        "payment_amount": d["payment_amount"],
+        # *** Add this line ***
+        "product_url": url_for("product_page", product_id=str(pid))
     }
 
 @app.route("/api/live-sales")
 def live_sales():
-    now = datetime.utcnow()
-    yesterday = now - timedelta(hours=24)
-    cursor = mongo.db.orders.find({
-        "order_status": "Delivered",
-        "order_arrival_date": {"$gte": yesterday, "$lte": now}
-    })
-    docs = list(cursor)
-    sample = random.sample(docs, min(len(docs), 10))
-    return jsonify([serialize_order(d) for d in sample])
+    five_days_ago = datetime.utcnow() - timedelta(days=5)
+    docs = list(mongo.db.orders
+        .find({"order_arrival_date": {"$gte": five_days_ago}})
+        .sort("order_arrival_date", DESCENDING)
+        .limit(10))
+    return jsonify([serialize_order_base(d) for d in docs])
+
 
 @app.route("/api/testimonials")
 def testimonials():
-    cursor = mongo.db.orders.find({
-        "order_status": "Delivered"
-    }).sort([("payment_amount", -1), ("transaction_date", -1)]).limit(5)
-    docs = list(cursor)
-    return jsonify([serialize_order(d) for d in docs])
-
-
+    docs = list(mongo.db.orders
+        .find({"order_status": "Delivered"})
+        .sort("payment_amount", DESCENDING)
+        .limit(5))
+    return jsonify([serialize_order_base(d) for d in docs])
 
 
 

@@ -13,6 +13,11 @@ Home - ShopKhana
 {% endblock extra_css %}
 
 {% block extra_js %}
+<!-- pattern will literally contain "__ID__" as placeholder -->
+<script>
+  window.productPageUrlPattern = "{{ url_for('product_page', product_id='__ID__') }}";
+</script>
+
 <script src="{{ url_for('static', filename='js/live_testimonials.js' , v='1.0') }}"></script>
 <script src="{{ url_for('static', filename='js/flash.js') }}"></script>
 <script src="{{ url_for('static', filename='js/just4u.js') }}"></script>
@@ -21,7 +26,6 @@ Home - ShopKhana
 {% endblock extra_js %}
 
 {% block body %}
-
 
 
 
@@ -113,7 +117,7 @@ Home - ShopKhana
 
 <div id="loading-overlay" style="display: none;">
   <div class="loader-wrapper">
-    <img src="{{ url_for('static', filename='img/mylogo.png') }}" alt="Logo" class="loader-logo">
+    <img src="{{ url_for('static', filename='img/mylogo.webp') }}" alt="Logo" class="loader-logo">
     <div class="loader"></div>
   </div>
 </div>
@@ -122,15 +126,24 @@ Home - ShopKhana
 
 
 
-<!-- ▶️ Dynamic Live Sales & Testimonials Section (Joy Mode always ON) -->
+
+<!-- ▶️ Social‑Proof Hero Section -->
 <section id="live-dynamic-section">
+  <div class="sp-container">
 
-  <!-- Live Sales Toast -->
-  <div id="live-toast"></div>
+    <h2 class="sp-header">See Why ShopKhana Shoppers Love These</h2>
 
-  <!-- Rotating Testimonials -->
-  <section id="testimonials"></section>
+    <div class="social-proof-wrapper">
+      <!-- Left: Rotating Testimonials -->
+      <div class="social-proof-left"></div>
 
+      <!-- Right: Live “Now Buying” Feed -->
+      <div class="social-proof-right">
+        <h3>🔥 What’s Hot Right Now</h3>
+        <div class="live-feed-list"></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 

@@ -1,126 +1,277 @@
-/* ============ Live Sales Toast ============ */
-#live-toast {
-  position: fixed;
-  bottom: 20px; left: 20px;
-  background: rgba(255,255,255,0.95);
-  padding: 14px 18px;
-  border-left: 4px solid #FFA000;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  font-size: 14px;
+/*---------------------------------------
+  0. Brand Variables & Global Reset
+ ---------------------------------------*/
+ :root {
+  --brand-primary: #FFA000;
+  --brand-bg: #FFF3E0;
+  --text-dark: #333333;
+  --text-mid: #555555;
+  --text-light: #888888;
+  --radius: 8px;
+  --transition: 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*---------------------------------------
+  1. Section & Container
+ ---------------------------------------*/
+#live-dynamic-section {
+  background: var(--brand-bg);
+  padding: clamp(2rem, 5vw, 4rem) 0;
+}
+
+.sp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
   font-family: Poppins, sans-serif;
-  color: #333;
+}
+
+.sp-header {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/*---------------------------------------
+  2. Grid Layout
+ ---------------------------------------*/
+.social-proof-wrapper {
+  display: grid;
+  gap: 1.5rem;
+  /* single column by default */
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .social-proof-wrapper {
+    grid-template-columns: 2fr 3fr;
+  }
+}
+
+/*---------------------------------------
+  3. Shared Card Styles & Reveal
+ ---------------------------------------*/
+.fade-in {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  z-index: 1000;
+  transition: opacity var(--transition), transform var(--transition);
 }
-#live-toast.show {
+.fade-in.visible {
   opacity: 1;
   transform: translateY(0);
-  animation: slideIn 0.5s ease-out;
-}
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Emoji Heart Float */
-#live-toast .heart {
-  position: absolute;
-  font-size: 16px;
-  opacity: 0.8;
-  animation: heartFloat 1.5s ease-out forwards;
-}
-@keyframes heartFloat {
-  0%   { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-40px) scale(1.4); opacity: 0; }
-}
-
-/* ============ Rotating Testimonials ============ */
-#testimonials {
+/*---------------------------------------
+  4. Testimonials Column
+ ---------------------------------------*/
+.social-proof-left {
   position: relative;
-  max-width: 600px;
-  margin: 24px auto;
-  padding: 24px;
-  text-align: center;
-  font-family: Poppins, sans-serif;
   overflow: hidden;
-  min-height: 140px;
-  background: linear-gradient(90deg, rgba(255,234,179,0.3), rgba(255,255,255,0));
-  border-left: 4px solid #FFA000;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  min-height: 20rem;
 }
-.testimonial {
+
+.testimonial-card {
   position: absolute;
   top: 0; left: 0; right: 0;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-.testimonial.active {
-  opacity: 1;
-  animation: floatUp 6s ease-in-out infinite;
-  box-shadow: inset 0 0 8px rgba(255,160,0,0.5); /* Glow always ON */
-}
-@keyframes floatUp {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-4px); }
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-left: 4px solid var(--brand-primary);
 }
 
-.testimonial p {
-  font-size: 16px;
-  line-height: 1.4;
-  margin-bottom: 8px;
-  color: #333;
+.testimonial-card .avatar {
+  flex-shrink: 0;
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
 }
-.testimonial p .product {
-  font-weight: bold;
+
+.testimonial-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
-.testimonial p .city {
-  font-style: italic;
+
+.testimonial-content p {
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
 }
-.testimonial strong {
-  font-size: 14px;
-  color: #555;
-  display: block;
-  margin-top: 4px;
+.testimonial-content p .product { font-weight: 600; }
+.testimonial-content p .city    { font-style: italic; color: var(--text-mid); }
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
 }
-.verified-badge {
+.stars .material-icons {
+  font-size: 1rem;
+  color: var(--brand-primary);
+}
+.stars .empty { color: #ccc; }
+
+.testimonial-content strong {
+  font-size: 0.875rem;
+  color: var(--text-mid);
+  margin-bottom: 0.75rem;
+}
+
+.badge {
   display: inline-block;
-  margin-left: 6px;
-  font-size: 12px;
-  color: #FFA000;
-  animation: badgePop 0.6s ease-out;
-}
-@keyframes badgePop {
-  0%   { transform: scale(0); }
-  80%  { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  background: var(--brand-primary);
+  color: #fff;
+  border-radius: var(--radius);
+  margin-bottom: 0.75rem;
 }
 
-/* ============ Responsive ============ */
-@media (max-width: 768px) {
-  #live-toast {
-    bottom: 16px; left: 16px;
-    padding: 12px 16px; font-size: 13px;
-  }
-  #testimonials {
-    margin: 20px 16px;
-    padding: 20px; min-height: 120px;
-  }
-  .testimonial p { font-size: 15px; }
-  .testimonial strong { font-size: 13px; }
+.btn-buy {
+  margin-top: auto;
+  align-self: flex-start;
+  background: var(--brand-primary);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  transition: background var(--transition), transform var(--transition);
 }
+.btn-buy:hover {
+  background: #e69500;
+  transform: scale(1.05);
+}
+
+/*---------------------------------------
+  5. Live‑Feed Column
+ ---------------------------------------*/
+.social-proof-right {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.social-proof-right h3 {
+  font-size: 1.25rem;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.live-feed-list {
+  display: grid;
+  row-gap: 1rem;
+  overflow-y: auto;
+  max-height: 20rem;
+}
+
+.live-sale-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fff;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: transform var(--transition);
+}
+
+.live-sale-card:hover {
+  transform: scale(1.02);
+}
+
+.live-sale-card img {
+  width: 50px; height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.live-info {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-dark);
+}
+.live-info .product { font-weight: 600; }
+.live-info .city    { font-style: italic; color: var(--text-mid); }
+.live-info .price   {
+  color: var(--brand-primary);
+  font-weight: 600;
+  display: block;
+  margin: 0.25rem 0;
+}
+
+.live-sale-card .badge {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  background: var(--brand-primary);
+  color: #fff;
+  border-radius: var(--radius);
+}
+
+.live-sale-card .btn-buy {
+  background: var(--brand-primary);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: var(--radius);
+  transition: background var(--transition), transform var(--transition);
+}
+.live-sale-card .btn-buy:hover {
+  background: #e69500;
+  transform: scale(1.05);
+}
+
+/*---------------------------------------
+  6. Subtle Floating Stars Animation
+ ---------------------------------------*/
+.testimonial-card .star {
+  position: absolute;
+  font-size: 1.25rem;
+  color: var(--brand-primary);
+  opacity: 0.8;
+  animation: starFloat 1.6s ease-out forwards;
+}
+@keyframes starFloat {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-50px) scale(1.4); opacity: 0; }
+}
+
+/*---------------------------------------
+  7. Responsive Tweaks
+ ---------------------------------------*/
+@media (max-width: 992px) {
+  .social-proof-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .live-feed-list {
+    max-height: 16rem;
+  }
+}
+
 @media (max-width: 480px) {
-  #live-toast {
-    bottom: 12px; left: 12px;
-    padding: 10px 14px; font-size: 12px;
-  }
-  #testimonials {
-    margin: 16px 10px;
-    padding: 16px; min-height: 100px;
-  }
-  .testimonial p { font-size: 14px; }
-  .testimonial strong { font-size: 12px; }
+  .sp-header  { font-size: 1.75rem; }
+  .testimonial-card { flex-direction: column; text-align: center; }
+  .testimonial-card .avatar { margin: 0 auto 1rem; }
+  .testimonial-content { align-items: center; }
+  .btn-buy { width: 100%; text-align: center; }
+  .social-proof-right h3 { font-size: 1.125rem; }
+  .live-sale-card { flex-direction: column; text-align: center; }
+  .live-sale-card .btn-buy { width: 100%; margin-top: 0.5rem; }
 }
