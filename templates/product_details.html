@@ -85,7 +85,7 @@
 
       <div class="status-rating">
         <span class="rating">
-          <span class="rating-number"><strong style="color: orange;">Brand:</strong> {{ product.brandName }}</span>
+          <span class="rating-number"><strong style="color: orange;"><i>By</i>:</strong> {{ product.brandName }}</span>
         </span>
       </div>
 
@@ -383,7 +383,7 @@
         </div>
         <h3 class="product-title">{{ recprod.title }}</h3>
         <div class="product-rating">
-          <span class="rating-text"><strong style="color: orange;">Brand: </strong>{{ recprod.brandName }}</span>
+          <span class="rating-text"><strong style="color: orange;"><i>By</i>: </strong>{{ recprod.brandName }}</span>
         </div>
         <div class="product-pricing">
           <span class="discount-price">Rs.{{ recprod.discountedPrice }}</span>
@@ -409,7 +409,7 @@
 <!-- Full-Page Loading Overlay -->
 <div id="loading-overlay" style="display: none;">
   <div class="loader-wrapper">
-    <img src="{{ url_for('static', filename='img/mylogo.png') }}" alt="Logo" class="loader-logo">
+    <img src="{{ url_for('static', filename='img/mylogo.webp') }}" alt="Logo" class="loader-logo">
     <div class="loader"></div>
   </div>
 </div>

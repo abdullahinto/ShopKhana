@@ -18,6 +18,8 @@
 #live-dynamic-section {
   background: var(--brand-bg);
   padding: clamp(2rem, 5vw, 4rem) 0;
+  margin-top: 50px;
+
 }
 
 /* Center container */

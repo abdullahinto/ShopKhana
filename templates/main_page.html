@@ -5,10 +5,10 @@ Home - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/live_testimonials.css', v='1.1') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/live_testimonials.css', v='1.2') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/cat.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css' , v='1.0') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/just4u.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css' , v='1.1') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/just4u.css', v='1.2') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
 {% endblock extra_css %}
 
@@ -55,7 +55,7 @@ Home - ShopKhana
         </div>
         <h3 class="product-title">{{ prod.title }}</h3>
         <div class="product-rating">
-          <span class="rating-text"><strong style="color: orange;">BRAND: </strong>{{ prod.brandName }}</span>
+          <span class="rating-text"><strong style="color: orange;"><i>By</i>: </strong>{{ prod.brandName }}</span>
         </div>
         <div class="product-pricing">
           <span class="discount-price">Rs.{{ prod.discountedPrice }}</span>
@@ -169,7 +169,7 @@ Home - ShopKhana
         </div>
         <h3 class="product-title">{{ justprod.title }}</h3>
         <div class="product-rating">
-          <span class="rating-text"><strong style="color: orange;">Brand: </strong>{{ justprod.brandName }}</span>
+          <span class="rating-text"><strong style="color: orange;"><i>By</i>: </strong>{{ justprod.brandName }}</span>
         </div>
         <div class="product-pricing">
           <span class="discount-price">Rs.{{ justprod.discountedPrice }}</span>
