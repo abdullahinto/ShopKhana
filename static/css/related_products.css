@@ -139,19 +139,28 @@
 }
 .discount-price {
   color: orange;
-  font-weight: 600;
   font-size: clamp(1rem, 2vw, 1.125rem);
+  font-family: "Montserrat", serif;
+  font-optical-sizing: auto;
+  font-weight: 650;
+  font-style: italic;
+  letter-spacing: 0.5px;
 }
 .original-price {
   color: grey;
-  font-weight: 700;
   text-decoration: line-through;
   font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: italic;
 }
 .discount-percent {
   color: #2a9d8f;
-  font-weight: 700;
   font-size: clamp(0.875rem, 1.5vw, 1rem);
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
   font-style: italic;
 }
 

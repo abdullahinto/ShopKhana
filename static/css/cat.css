@@ -1,1 +1,133 @@
-.category-card,.icon-box{overflow:hidden;border-radius:8px}.cat-load-more-btn,.category-name{font-size:14px;font-family:Poppins,sans-serif}.cat-load-more-btn,.category-name,.flash-sale-header h2{font-family:Poppins,sans-serif}#categories-section{width:100%;padding:5px;box-sizing:border-box;margin-top:30px}.flash-sale-header h2{font-weight:500;color:#333;font-size:24px;margin-bottom:25px}.categories-grid{display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:auto;gap:15px;margin-bottom:30px}.category-card{background-color:#fff;box-shadow:0 2px 5px rgba(0,0,0,.1);transition:transform .3s,box-shadow .3s;text-align:center}.category-card:hover{transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,.15)}.category-card a{display:block;text-decoration:none;color:#333;padding:15px}.icon-box{width:80px;height:80px;margin:0 auto 10px}.category-image{width:100%;height:100%;object-fit:cover;border-radius:inherit;transition:transform .3s}.category-card:hover .category-image{transform:scale(1.05)}.category-name{font-weight:400;margin:0}.cat-load-more-container{display:flex;justify-content:center;margin-top:20px}.cat-load-more-btn{background:linear-gradient(45deg,#ffde59,gold);color:#333;padding:10px 20px;text-decoration:none;border-radius:25px;transition:background .3s,transform .3s}.cat-load-more-btn:hover{background-color:orange;transform:scale(1.05)}.category-card.card-hidden{opacity:0;transform:translateY(30px)}.category-card.card-visible{opacity:1;transform:translateY(0);transition:opacity .6s,transform .6s}@media (max-width:992px){.categories-grid{grid-template-columns:repeat(4,1fr)}}@media (max-width:576px){.categories-grid{grid-template-columns:repeat(2,1fr)}}
+/* Category Card and Icon Box */
+.category-card,
+.icon-box {
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.cat-load-more-btn,
+.category-name {
+  font-size: 14px;
+  font-family: Poppins, sans-serif;
+}
+
+.cat-load-more-btn,
+.category-name,
+.flash-sale-header h2 {
+  font-family: Poppins, sans-serif;
+}
+
+/* Categories Section */
+#categories-section {
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  margin-top: 30px;
+}
+
+/* Flash Sale Header */
+.flash-sale-header h2 {
+  font-weight: 500;
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+/* Categories Grid Layout */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: auto;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+/* Category Card Styling */
+.category-card {
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+}
+
+.category-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.category-card a {
+  display: block;
+  text-decoration: none;
+  color: #333;
+  padding: 15px;
+}
+
+/* Icon Box Styling */
+.icon-box {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px;
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  transition: transform 0.3s;
+}
+
+.category-card:hover .category-image {
+  transform: scale(1.05);
+}
+
+.category-name {
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Load More Button */
+.cat-load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cat-load-more-btn {
+  background: linear-gradient(45deg, #ffde59, gold);
+  color: #333;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 25px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.cat-load-more-btn:hover {
+  background-color: orange;
+  transform: scale(1.05);
+}
+
+/* Animation for Category Cards */
+.category-card.card-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.category-card.card-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s, transform 0.6s;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
