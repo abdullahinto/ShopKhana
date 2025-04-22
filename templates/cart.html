@@ -52,25 +52,25 @@ ShopKhana - Shopping Cart
     <div id="orderSummaryContainer" class="order-summary-container">
         <h2>Order Summary</h2>
         <div class="summary-row">
-            <span>Subtotal (<span id="itemCount">0</span> item(s))</span>
-            <span>Rs. <span id="subTotal">0</span></span>
+            <span>Subtotal (<span id="itemCount">{{ item_count | default(0) | int }}</span> item(s))</span>
+            <span>Rs. <span id="subTotal">{{ "{:,.0f}".format(sub_total | default(0) | int) }}</span></span>
         </div>
         <div class="summary-row">
             <span>Shipping Fee</span>
-            <span>Rs. <span id="shippingFee">0</span></span>
+            <span>Rs. <span id="shippingFee">{{ "{:,.0f}".format(shipping_fee | default(0) | int) }}</span></span>
         </div>
         <div class="coupon-row">
             <input type="text" id="couponInput" placeholder="Enter ShopKhana/Coupon code" />
             <button id="applyCouponBtn" class="apply-coupon-btn">APPLY</button>
-
         </div>
         <div class="summary-row total-row">
             <span>Total</span>
-            <span>Rs. <span id="grandTotal">0</span></span>
+            <span>Rs. <span id="grandTotal">{{ "{:,.0f}".format(grand_total | default(0) | int) }}</span></span>
         </div>
         <button id="proceedCheckoutBtn" class="proceed-checkout-btn">
-            PROCEED TO CHECKOUT(<span id="proceedCount">0</span>)
+            PROCEED TO CHECKOUT(<span id="proceedCount">{{ proceed_count | default(0) | int }}</span>)
         </button>
     </div>
+
 </div>
 {% endblock body %}

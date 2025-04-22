@@ -90,16 +90,20 @@ Delivery Information - ShopKhana
       <p>Invoice and Contact Info <span id="editEmailLink" class="edit-link">EDIT</span></p>
       <!-- Use current user's email if delivery_info.contact_email is empty -->
       <input placeholder="e.g; youremail@gmail.com" type="text" id="userEmail" name="contact_email"
-      value="{{ delivery_info.contact_email|default(current_user.email)|trim if delivery_info else current_user.email }}">
+        value="{{ delivery_info.contact_email|default(current_user.email)|trim if delivery_info else current_user.email }}">
     </div>
 
     <div class="order-summary">
       <h3>Order Summary</h3>
-      <p><strong>Quantity: </strong><span id="itemQuantity">{{ quantity }}</span> item(s)</p>
-      <p><strong>Item(s) Total:</strong> Rs. <span id="itemCost">{{ item_total }}</span></p>
-      <p><strong>Delivery Fee:</strong> Rs. <span id="deliveryFee">{{ delivery_fee }}</span></p>
+      <p><strong>Quantity: </strong><span id="itemQuantity">{{ quantity | default(0) | int }}</span> item(s)</p>
+      <p><strong>Item(s) Total:</strong> Rs. <span id="itemCost">{{ "{:,.0f}".format(item_total | default(0) | int)
+          }}</span></p>
+      <p><strong>Delivery Fee:</strong> Rs. <span id="deliveryFee">{{ "{:,.0f}".format(delivery_fee | default(0) | int)
+          }}</span></p>
       <hr>
-      <p><strong>Total:</strong> Rs. <span id="grandTotal">{{ grand_total }}</span></p>
+      <p><strong>Total:</strong> Rs. <span id="grandTotal">{{ "{:,.0f}".format(grand_total | default(0) | int) }}</span>
+      </p>
+
       <small>VAT included where applicable</small>
       <button type="button" id="proceedPay" class="pay-btn">Proceed to Pay</button>
     </div>
@@ -113,7 +117,9 @@ Delivery Information - ShopKhana
   <div class="package-header">
     <h3>Package {{ loop.index }} of {{ products|length }}</h3>
     <div class="delivery-option">
-      <p><strong>Delivery Option:</strong> Standard Delivery (Rs. {{ delivery_fee or 145 }})</p>
+      <p><strong>Delivery Option:</strong> Standard Delivery (Rs. {{ "{:,.0f}".format(delivery_fee | default(145) | int)
+        }})</p>
+
       <p><strong>Guaranteed by:</strong> {{ product.guaranteed_date or "3-7 days" }}</p>
     </div>
   </div>
@@ -129,8 +135,8 @@ Delivery Information - ShopKhana
       <p>Category: <strong>{{ product.productCategory or "Uncategorized" }}</strong></p>
       <p>Color-Family: {{ product.selected_color }}</p>
       <div class="product-pricing">
-        <span class="discounted-price">Rs.{{ product.price }}</span>
-        <span class="original-price">Rs.{{ product.originalprice }}</span>
+        <span class="discounted-price">Rs. {{ "{:,.0f}".format(product.price | default(0) | int) }}</span>
+        <span class="original-price">Rs. {{ "{:,.0f}".format(product.originalprice | default(0) | int) }}</span>
         <span class="discount-percent">{{ product.discountpercent }}%</span>
       </div>
     </div>

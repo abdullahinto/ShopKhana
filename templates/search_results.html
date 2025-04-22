@@ -96,8 +96,10 @@ ShopKhana - Search Results
                         product.brandName }}</span>
                 </div>
                 <div class="sk-search-results-product-pricing">
-                    <span class="sk-search-results-discount-price">Rs.{{ product.discountedPrice }}</span>
-                    <span class="sk-search-results-original-price">Rs.{{ product.originalPrice }}</span>
+                    <span class="sk-search-results-discount-price">Rs. {{ "{:,.0f}".format(product.discountedPrice |
+                        default(0) | int) }}</span>
+                    <span class="sk-search-results-original-price">Rs. {{ "{:,.0f}".format(product.originalPrice |
+                        default(0) | int) }}</span>
                     <span class="sk-search-results-discount-percent">{{ product.discountPercent }}%</span>
                 </div>
             </a>

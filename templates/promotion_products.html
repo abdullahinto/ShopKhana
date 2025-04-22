@@ -43,8 +43,9 @@
                         promotionprod.brandName }}</span>
                 </div>
                 <div class="promotion-product-pricing">
-                    <span class="promotion-discount-price">Rs.{{ promotionprod.discountedPrice }}</span>
-                    <span class="promotion-original-price">Rs.{{ promotionprod.originalPrice }}</span>
+                    <span class="discount-price">Rs.{{ "{:,.0f}".format(promotionprod.discountedPrice | default(0) | int) }}</span>
+                    <span class="original-price">Rs.{{ "{:,.0f}".format(promotionprod.originalPrice | default(0) | int) }}</span>
+                    
                     <span class="promotion-discount-percent">{{ promotionprod.discountPercent }}%</span>
                 </div>
             </a>

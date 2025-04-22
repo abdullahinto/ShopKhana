@@ -78,8 +78,9 @@
     <!-- RIGHT COLUMN: DETAILS -->
     <div class="product-info">
       <div class="price-section">
-        <span id="discount-price" class="pro-details-discount-price">Rs.{{product.discountedPrice }}</span>
-        <span id="original-price" class="pro-details-original-price">Rs.{{ product.originalPrice or 3000 }}</span>
+        <span class="discount-price">Rs.{{ "{:,.0f}".format(product.discountedPrice | default(0) | int) }}</span>
+        <span class="original-price">Rs.{{ "{:,.0f}".format(product.originalPrice | default(0) | int) }}</span>
+
         <span id="discount-badge" class="pro-details-discount-badge">{{ product.discountPercent or 56 }}% OFF</span>
       </div>
 
@@ -386,8 +387,9 @@
           <span class="rating-text"><strong style="color: orange;"><i>By</i>: </strong>{{ recprod.brandName }}</span>
         </div>
         <div class="product-pricing">
-          <span class="discount-price">Rs.{{ recprod.discountedPrice }}</span>
-          <span class="original-price">Rs.{{ recprod.originalPrice }}</span>
+          <span class="discount-price">Rs.{{ "{:,.0f}".format(recprod.discountedPrice | default(0) | int) }}</span>
+          <span class="original-price">Rs.{{ "{:,.0f}".format(recprod.originalPrice | default(0) | int) }}</span>
+
           <span class="discount-percent">{{ recprod.discountPercent }}%</span>
         </div>
       </a>

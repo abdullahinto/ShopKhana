@@ -36,7 +36,8 @@ ShopKhana - My Orders
         <div class="order-info">
           <span class="order-number">Order #{{ order.display_order_number }}</span>
           <span class="order-date">{{ order.transaction_date_formatted }}</span>
-          <span class="order-total">Total: Rs. {{ order.payment_amount }}</span>
+          <span class="order-total">Total: Rs. {{ "{:,.0f}".format(order.payment_amount | default(0) | int) }}</span>
+
         </div>
         <div class="order-status {{ order.order_status | lower }}">{{ order.order_status }}</div>
         <div class="order-actions">

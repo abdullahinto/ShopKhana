@@ -73,13 +73,20 @@ Payment Methods - ShopKhana
         <div class="sk-pay-summary-container">
             <h3>Order Summary</h3>
             <p>Subtotal (Items and shipping fee included)</p>
-            <p class="sk-pay-subtotal">Rs. <span id="skPaySubtotal">{{ order_summary.grand_total or 0 }}</span></p>
+            <p class="sk-pay-subtotal">Rs. <span id="skPaySubtotal">{{ "{:,.0f}".format(order_summary.grand_total |
+                    default(0) | int) }}</span></p>
+
             <p>Cash Payment Fee</p>
-            <p class="sk-pay-cod-fee">Rs. <span id="skPayCODFee">{{codfee or 0}}</span></p>
+            <p class="sk-pay-cod-fee">Rs. <span id="skPayCODFee">{{ "{:,.0f}".format(codfee | default(0) | int)
+                    }}</span></p>
+
             <hr>
+
             <p>Total Amount</p>
-            <p class="sk-pay-total">Rs. <span id="skPayTotal">{{ order_summary.grand_total or 0 }}</span></p>
+            <p class="sk-pay-total">Rs. <span id="skPayTotal">{{ "{:,.0f}".format(order_summary.grand_total | default(0)
+                    | int) }}</span></p>
         </div>
+
     </div>
 
 </div>

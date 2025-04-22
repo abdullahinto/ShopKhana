@@ -58,8 +58,9 @@ Home - ShopKhana
           <span class="rating-text"><strong style="color: orange;"><i>By</i>: </strong>{{ prod.brandName }}</span>
         </div>
         <div class="product-pricing">
-          <span class="discount-price">Rs.{{ prod.discountedPrice }}</span>
-          <span class="original-price">Rs.{{ prod.originalPrice }}</span>
+          <span class="discount-price">Rs.{{ "{:,.0f}".format(prod.discountedPrice | default(0) | int) }}</span>
+          <span class="original-price">Rs.{{ "{:,.0f}".format(prod.originalPrice | default(0) | int) }}</span>
+
           <span class="discount-percent">{{ prod.discountPercent }}%</span>
         </div>
       </a>
@@ -81,7 +82,8 @@ Home - ShopKhana
 
   <!-- Wrapped button in a container -->
   <div class="explore-all-btn-container">
-    <a href="{{ url_for('promotion_products', promo_category='Flash Sale') }}" class="explore-all-btn" style="text-decoration: none;" >Explore All</a>
+    <a href="{{ url_for('promotion_products', promo_category='Flash Sale') }}" class="explore-all-btn"
+      style="text-decoration: none;">Explore All</a>
   </div>
 
 </section>
@@ -172,8 +174,9 @@ Home - ShopKhana
           <span class="rating-text"><strong style="color: orange;"><i>By</i>: </strong>{{ justprod.brandName }}</span>
         </div>
         <div class="product-pricing">
-          <span class="discount-price">Rs.{{ justprod.discountedPrice }}</span>
-          <span class="original-price">Rs.{{ justprod.originalPrice }}</span>
+          <span class="discount-price">Rs.{{ "{:,.0f}".format(justprod.discountedPrice | default(0) | int) }}</span>
+          <span class="original-price">Rs.{{ "{:,.0f}".format(justprod.originalPrice | default(0) | int) }}</span>
+
           <span class="discount-percent">{{ justprod.discountPercent }}%</span>
         </div>
       </a>

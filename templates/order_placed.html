@@ -22,7 +22,9 @@ Order Placed - ShopKhana
     Your order has been successfully placed.✨
   </p>
   <p class="sk-final-price">
-    <span class="sk-final-rs-label">Rs.</span> <span id="skFinalTotalPrice">{{ order_details.payment_amount }}</span>
+    <span class="sk-final-rs-label">Rs.</span>
+    <span id="skFinalTotalPrice">{{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}</span>
+
   </p>
   <p class="sk-final-order-number">
     Your order number is <strong id="skFinalOrderNum">{{ order_details.order_id }}</strong>
@@ -38,7 +40,8 @@ Order Placed - ShopKhana
     Please have this amount ready on delivery day.
   </p>
   <p class="sk-final-reminder-price">
-    <span class="sk-final-rs-label">Rs.</span> <span id="skFinalRemindPrice">{{ order_details.payment_amount }}</span>
+    <span class="sk-final-rs-label">Rs.</span>
+    <span id="skFinalRemindPrice">{{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}</span>
   </p>
 
   <!-- Delivery Info Container -->
@@ -91,11 +94,12 @@ Order Placed - ShopKhana
     <div id="skFinalSummaryContent" class="sk-final-summary-content">
       <ul>
         {% for item in order_details['items'] %}
-        <li>{{ item['title'] }}: Rs. {{ item['price'] }}</li>
+        <li>{{ item['title'] }}: Rs. {{ "{:,.0f}".format(item['price'] | default(0) | int) }}</li>
         {% endfor %}
         <hr />
-        <li><strong>Total: Rs. {{ order_details.payment_amount }}</strong></li>
+        <li><strong>Total: Rs. {{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}</strong></li>
       </ul>
+
     </div>
   </div>
 
