@@ -199,30 +199,32 @@ body {
   /* Product Title, Rating, and Pricing */
   .sk-search-results-product-title {
     font-family: Poppins, sans-serif;
-    font-weight: 500;
-    font-size: 16px;
-    color: #000;
-    margin: 10px 0;
+    color: black;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-weight: 400;
+    margin: clamp(0.5rem, 2vw, 1rem) 0;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
   }
   
   .sk-search-results-product-rating {
     display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 10px;
-    color: #ffc107;
-    font-size: 14px;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  color: #ffc107;
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
+   
   }
   
   .sk-search-results-rating-text {
     color: #000;
-    font-weight: 500;
+    font-family: "Cinzel Decorative", serif;
+    font-weight: 550;
+    font-style: italic;
   }
   
   .sk-search-results-product-pricing {
@@ -233,23 +235,33 @@ body {
   }
   
   .sk-search-results-discount-price {
-    color: orange;
-    font-weight: 600;
-    font-size: 18px;
+    color: orange; /* Restoring the solid color */
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    font-family: "Montserrat", serif;
+    font-optical-sizing: auto;
+    font-weight: 650;
+    font-style: italic;
+    letter-spacing: 0.5px;
   }
   
   .sk-search-results-original-price {
     color: grey;
-    font-weight: 700;
+    /* font-weight: 700; */
     text-decoration: line-through;
-    font-size: 12px;
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: italic;
   }
   
   .sk-search-results-discount-percent {
     color: #2a9d8f;
-    font-weight: 700;
-    font-size: 16px;
-    font-style: italic;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: italic;
   }
   
   /* Add to Cart Button */

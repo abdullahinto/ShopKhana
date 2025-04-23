@@ -54,9 +54,10 @@ Order Placed - ShopKhana
         <!-- Show a thumbnail of the actual product -->
         {% set image_url = order_details['items'][0]['image_url'] %}
         {% if image_url.startswith('http') %}
-        <img src="{{ image_url }}" alt="Product Thumbnail" />
+        <img src="{{ image_url }}" alt="Product Thumbnail"
+          onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/1.webp') }}';" />
         {% else %}
-        <img src="{{ url_for('static', filename=image_url) }}" alt="Product Thumbnail" />
+        <img src="{{ url_for('static', filename='img/1.webp') }}" alt="Product Thumbnail" />
         {% endif %}
 
 

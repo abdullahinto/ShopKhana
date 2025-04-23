@@ -1,206 +1,220 @@
 .promotion-header h2,
 .promotion-product-title {
-    font-family: Poppins, sans-serif;
-    color: #000;
-    font-weight: 400;
+  font-family: Poppins, sans-serif;
+  color: #000;
+  font-weight: 400;
 }
 
 #sk-promotion-product-page {
-    width: 100%;
-    max-width: 1200px;
-    padding: 5px;
-    /* background-color: #fdfbf6; */
-    box-sizing: border-box;
-    margin-top: 100px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 5px;
+  /* background-color: #fdfbf6; */
+  box-sizing: border-box;
+  margin-top: 100px;
 }
 
 .promotion-header {
-    margin-bottom: 25px;
+  margin-bottom: 25px;
 }
 
 .promotion-header h2 {
-    font-size: 24px;
-    margin: 0;
+  font-size: 24px;
+  margin: 0;
 }
 
 .promotion-products {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 5px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
 }
 
 .promotion-product-card {
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    transition: box-shadow 0.3s, transform 0.3s;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .promotion-product-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
 }
 
 .promotion-product-image {
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    margin-bottom: 10px;
-    width: 100%;
-    aspect-ratio: 1/1;
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  width: 100%;
+  aspect-ratio: 1/1;
 }
 
 .promotion-product-image img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    transition: opacity 0.5s, transform 0.3s;
-    position: absolute;
-    top: 0;
-    left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: opacity 0.5s, transform 0.3s;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .promotion-product-card:hover .promotion-secondary-image,
 .promotion-product-image .promotion-primary-image {
-    opacity: 1;
+  opacity: 1;
 }
 
 .promotion-product-card:hover .promotion-primary-image,
 .promotion-product-image .promotion-secondary-image {
-    opacity: 0;
+  opacity: 0;
 }
 
 .promotion-product-card:hover .promotion-product-image img {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .promotion-product-title {
-    font-size: 16px;
-    margin: 10px 0;
+    font-family: Poppins, sans-serif;
+    color: black;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    font-weight: 400;
+    margin: clamp(0.5rem, 2vw, 1rem) 0;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
 }
 
 .promotion-product-rating {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 10px;
-    color: #ffc107;
-    font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+  color: #ffc107;
+  font-size: 14px;
 }
 
 .promotion-rating-text {
-    color: #000;
-    font-weight: 500;
+  color: #000;
+  font-family: "Cinzel Decorative", serif;
+  font-weight: 550;
+  font-style: italic;
 }
 
 .promotion-product-pricing {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
 }
 
 .promotion-discount-price {
-    color: orange;
-    font-weight: 600;
-    font-size: 18px;
+    color: orange; /* Restoring the solid color */
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    font-family: "Montserrat", serif;
+    font-optical-sizing: auto;
+    font-weight: 650;
+    font-style: italic;
+    letter-spacing: 0.5px;
 }
 
 .promotion-original-price {
     color: grey;
-    font-weight: 700;
+    /* font-weight: 700; */
     text-decoration: line-through;
-    font-size: 12px;
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: italic;
 }
 
 .promotion-discount-percent {
     color: #2a9d8f;
-    font-weight: 700;
-    font-size: 16px;
+    font-size: clamp(0.875rem, 1.5vw, 1rem);
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
     font-style: italic;
 }
 
 .promotion-add-to-cart-btn,
 .promotion-load-more-btn {
-    color: #000;
-    font-size: 14px;
-    font-family: Poppins, sans-serif;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-    justify-content: center;
-    text-align: center;
+  color: #000;
+  font-size: 14px;
+  font-family: Poppins, sans-serif;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  justify-content: center;
+  text-align: center;
 }
 
 .promotion-add-to-cart-btn {
-    background-color: #ffde59;
-    border: none;
-    border-radius: 15px;
-    padding: 8px 12px;
+  background-color: #ffde59;
+  border: none;
+  border-radius: 15px;
+  padding: 8px 12px;
 }
 
 .promotion-add-to-cart-btn:hover {
-    background-color: orange;
-    transform: scale(1.03);
+  background-color: orange;
+  transform: scale(1.03);
 }
 
 .promotion-load-more-container {
-    text-align: center;
-    margin-top: 20px;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .promotion-load-more-btn {
-    background: linear-gradient(45deg, #ffde59, gold);
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
+  background: linear-gradient(45deg, #ffde59, gold);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
 }
 
 .promotion-load-more-btn:hover {
-    transform: scale(1.05);
-    background-color: orange;
+  transform: scale(1.05);
+  background-color: orange;
 }
 
 /* Responsive Design */
 @media (max-width: 992px) {
-    .promotion-products {
-        grid-template-columns: repeat(3, 1fr);
-    }
+  .promotion-products {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 576px) {
-    .promotion-products {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .promotion-products {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .breadcrumbs {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.875rem;
-    padding: 1rem 5%;
-    color: #555;
-    margin-top: 100px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  padding: 1rem 5%;
+  color: #555;
+  margin-top: 100px;
 }
 
 .breadcrumbs a {
-    text-decoration: none;
-    color: #0077b6;
-    transition: color 0.3s;
+  text-decoration: none;
+  color: #0077b6;
+  transition: color 0.3s;
 }
 
 .breadcrumbs a:hover {
-    color: #00508f;
+  color: #00508f;
 }

@@ -4,11 +4,14 @@ import io
 import logging
 import os
 import random
+import datetime
 import re
 from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from urllib.parse import parse_qs, urlencode
+
+
 
 # Third-party libraries
 import cv2
@@ -191,18 +194,18 @@ def live_sales():
 
  
 
-# def get_banners(limit=5):
-#     """
-#     Fetch banners from the 'banners' collection.
-#     Limit the number if needed (e.g., 5).
-#     """
-#     banners_cursor = mongo.db.banners.find().limit(limit)
-#     banners = []
-#     for ban in banners_cursor:
-#         ban['_id'] = str(ban['_id'])
-#         # Expecting that ban.image is now a Cloudinary URL.
-#         banners.append(ban)
-#     return banners
+def get_banners(limit=5):
+    """
+    Fetch banners from the 'banners' collection.
+    Limit the number if needed (e.g., 5).
+    """
+    banners_cursor = mongo.db.banners.find().limit(limit)
+    banners = []
+    for ban in banners_cursor:
+        ban['_id'] = str(ban['_id'])
+        # Expecting that ban.image is now a Cloudinary URL.
+        banners.append(ban)
+    return banners
 
 def get_flash_sale_products(limit=20):
     """
@@ -585,7 +588,7 @@ def main_page():
     - Categories
     - Just For You products
     """
-    # banners = get_banners(limit=5)
+    banners = get_banners(limit=5)
     flash_sale_products = get_flash_sale_products(limit=10)
     categories = get_categories()
     just_for_you_products = get_just_for_you_products(limit=40)
@@ -593,7 +596,7 @@ def main_page():
     # Pass the data to main_page.html (Jinja2 template)
     return render_template(
         'main_page.html',
-        # banners=banners,
+        banners=banners,
         flash_sale_products=flash_sale_products,
         categories=categories,
         just_for_you_products=just_for_you_products
@@ -601,38 +604,38 @@ def main_page():
 
 
 
-# @app.route('/banner/<banner_id>')
-# def show_banner_products(banner_id):
-#     banner = mongo.db.banners.find_one({"_id": ObjectId(banner_id)})
-#     if not banner:
-#         return "Banner not found", 404
+@app.route('/banner/<banner_id>')
+def show_banner_products(banner_id):
+    banner = mongo.db.banners.find_one({"_id": ObjectId(banner_id)})
+    if not banner:
+        return "Banner not found", 404
 
-#     products = []
-#     # Use a case‑insensitive regex to match exactly the banner's category value.
-#     if banner.get("promotionCategory"):
-#         products_cursor = mongo.db.products.find({
-#             "promotionCategory": {
-#                 "$regex": f"^{banner['promotionCategory']}$", 
-#                 "$options": "i"
-#             }
-#         }).limit(40)
-#         products = list(products_cursor)
-#     elif banner.get("productCategory"):
-#         products_cursor = mongo.db.products.find({
-#             "productCategory": {
-#                 "$regex": f"^{banner['productCategory']}$", 
-#                 "$options": "i"
-#             }
-#         })
-#         products = list(products_cursor)
+    products = []
+    # Use a case‑insensitive regex to match exactly the banner's category value.
+    if banner.get("promotionCategory"):
+        products_cursor = mongo.db.products.find({
+            "promotionCategory": {
+                "$regex": f"^{banner['promotionCategory']}$", 
+                "$options": "i"
+            }
+        }).limit(40)
+        products = list(products_cursor)
+    elif banner.get("productCategory"):
+        products_cursor = mongo.db.products.find({
+            "productCategory": {
+                "$regex": f"^{banner['productCategory']}$", 
+                "$options": "i"
+            }
+        })
+        products = list(products_cursor)
     
-#     for p in products:
-#         p["_id"] = str(p["_id"])
-#     return render_template(
-#         'banner_products.html',
-#         banner=banner,
-#         products=products
-#     )
+    for p in products:
+        p["_id"] = str(p["_id"])
+    return render_template(
+        'banner_products.html',
+        banner=banner,
+        products=products
+    )
 
 
 @app.route('/promotion/<promo_category>')
@@ -2011,6 +2014,10 @@ def process_payment():
     
     user_email = session.get("user_email")
     order_summary = session.get("order_summary", {})
+    if not order_summary:
+        app.logger.error("Missing order summary for user: %s", user_email)
+        return jsonify({"status": "error", "message": "Order details missing. Please try again."}), 400
+
 
     # Updated helper function for product data to support multiple items.
     def get_current_product_data(user_email):
