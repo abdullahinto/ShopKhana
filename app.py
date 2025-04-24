@@ -6,7 +6,6 @@ import os
 import random
 import datetime
 import re
-from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from urllib.parse import parse_qs, urlencode
@@ -185,7 +184,7 @@ def testimonials():
 @app.route("/api/live-sales")
 def live_sales():
     """Recent Delivered orders (last 5 days) for live feed."""
-    cutoff = datetime.utcnow() - timedelta(days=5)
+    cutoff = datetime.datetime.utcnow() - datetime.timedelta(days=5)
     docs = list(mongo.db.orders.find(
         {"order_arrival_date": {"$gte": cutoff}}
     ).sort("order_arrival_date", DESCENDING).limit(10))
@@ -1487,6 +1486,7 @@ def check_return_eligibility(order_id):
         return jsonify({"eligible": False, "message": "Order arrival date is unknown."})
     
     today = datetime.datetime.utcnow().date()
+
     arrival_date = order_arrival_date.date() if isinstance(order_arrival_date, datetime.datetime) else order_arrival_date
     
     if (today - arrival_date).days > 3:
@@ -2412,6 +2412,9 @@ def order_placed():
     }
 
     # --- Send Email Notification to Admins ---
+
+    print(datetime, type(datetime))
+
     transaction_datetime = datetime.datetime.utcnow()
     admin_emails = ["contact.mrnow285@gmail.com"]
     msg = Message(
