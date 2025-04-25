@@ -122,11 +122,32 @@ ShopKhana - My Orders
   <div class="dialog-box">
     <span class="close-dialog">&times;</span>
     <h3>Cancellation Window Closed 🕒</h3>
-    <p id="cancelNotAllowedMsg">Order cancellations are available within the first <strong>2 hours</strong>. Since that
+    <p id="cancelNotAllowedMsg">
+      Order cancellations are available within the first <strong>2 hours</strong>. Since that
       time has passed, your order is being <strong>processed</strong> with care 🤗✨. We hope it brings you joy 😊💖, and
-      we’re here if you need us! 💌</p>
+      we’re here if you need us! 💌
+    </p>
+    <!-- Contact Support Button with inline styling -->
+    <a href="https://wa.me/923098245609" target="_blank" role="button" style="
+        display: inline-block;
+        margin-top: 1.25rem;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        background-color: #25D366;
+        color: #fff;
+        border-radius: 0.375rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';"
+      onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+      onmousedown="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+      onmouseup="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';">
+      Contact Support
+    </a>
   </div>
 </div>
+
 
 <!-- Toast Notification Container -->
 <div id="toast-container"></div>

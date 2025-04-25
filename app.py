@@ -12,6 +12,7 @@ from urllib.parse import parse_qs, urlencode
 
 
 
+
 # Third-party libraries
 import cv2
 import numpy as np
@@ -2331,202 +2332,221 @@ def cart_count():
 @login_required
 def order_placed():
     """
-    Fetches the most recent order record for the current user,
-    builds an order_details dictionary containing:
-      - order_id
-      - payment_amount (total)
-      - items: a list of {title, price} for each product
-      - estimated_delivery (current date + 3-7 days)
-      - user_email
-    Then, sends an email notification to admins with full order details,
-    and renders the order_placed.html template with these details.
+    1) Fetch most recent order for current_user
+    2) Build order_details dict
+    3) Send styled HTML+text emails to Admin & Customer
+    4) Render confirmation page
     """
+    # ─── 1) Load user & most recent order ───────────────────────────────────────
     user_email = current_user.email
+    now = datetime.datetime.utcnow()
 
-    # Query orders collection for the most recent order by transaction_date
-    order_cursor = mongo.db.orders.find({"user_email": user_email}).sort("transaction_date", -1).limit(1)
-    order_list = list(order_cursor)
-
-    if not order_list:
+    recent = (mongo.db.orders
+              .find({"user_email": user_email})
+              .sort("transaction_date", -1)
+              .limit(1))
+    orders = list(recent)
+    if not orders:
         return "No order found", 404
+    order = orders[0]
 
-    order = order_list[0]
+    # ─── 2) Extract & prepare data ──────────────────────────────────────────────
+    order_id          = order.get("order_id", "N/A")
+    payment_amount    = order.get("payment_amount", 0)
+    shipping_address  = order.get("address", "N/A").replace("\n", "<br>")
+    order_status      = order.get("order_status", "Processing")
 
-    order_id = order.get("order_id", "N/A")
-    payment_amount = order.get("payment_amount", 0)
+    # Build items list
+    items   = []
+    p_ids   = order.get("product_ids", "")
+    p_names = order.get("product_names", "")
 
-    # Retrieve product details.
-    # Handle both array and string cases for product_ids and product_names.
-    product_ids_value = order.get("product_ids", "")
-    product_names_value = order.get("product_names", "")
-    
-    items = []
+    def fetch_item(pid, pname):
+        prod = mongo.db.products.find_one(
+            {"_id": ObjectId(pid)},
+            {"discountedPrice": 1, "images": 1}
+        )
+        price     = prod.get("discountedPrice", "N/A") if prod else "N/A"
+        imgs      = prod.get("images", []) if prod else []
+        image_url = imgs[0] if imgs else "img/1.jpg"
+        return {"title": pname, "price": price, "image_url": image_url}
 
-    if isinstance(product_ids_value, list):
-        # If the product IDs are stored as a list, assume product_names is also a list.
-        product_ids = product_ids_value
-        product_names = product_names_value if isinstance(product_names_value, list) else []
-        for pid, pname in zip(product_ids, product_names):
-            prod = mongo.db.products.find_one({"_id": ObjectId(pid)}, {"discountedPrice": 1})
-            price = prod.get("discountedPrice", "N/A") if prod else "N/A"
-            images = prod.get("images", [])  # Retrieve the list of images
-            image_url = images[0] if images else "img/1.jpg"
-            items.append({"title": pname, "price": price, "image_url": image_url})
+    if isinstance(p_ids, list):
+        names = p_names if isinstance(p_names, list) else []
+        for pid, pname in zip(p_ids, names):
+            items.append(fetch_item(pid, pname))
     else:
-        # Else, assume they are strings (possibly comma separated).
-        product_ids_str = product_ids_value.strip()
-        product_names_str = product_names_value.strip()
-        if product_ids_str and ("," in product_ids_str):
-            product_ids = [pid.strip() for pid in product_ids_str.split(",")]
-            product_names = [pname.strip() for pname in product_names_str.split(",")]
-            for pid, pname in zip(product_ids, product_names):
-                prod = mongo.db.products.find_one({"_id": ObjectId(pid)}, {"discountedPrice": 1})
-                price = prod.get("discountedPrice", "N/A") if prod else "N/A"
-                image_url = images[0] if images else "img/1.jpg"
-                image_url = images[0] if images else "N/A"  # Access the first image
+        s_ids   = str(p_ids).strip()
+        s_names = str(p_names).strip()
+        if s_ids and "," in s_ids:
+            id_list   = [x.strip() for x in s_ids.split(",")]
+            name_list = [x.strip() for x in s_names.split(",")]
+            for pid, pname in zip(id_list, name_list):
+                items.append(fetch_item(pid, pname))
+        elif s_ids:
+            items.append(fetch_item(s_ids, s_names or "N/A"))
 
-                items.append({"title": pname, "price": price, "image_url": image_url})
-        elif product_ids_str:
-            pid = product_ids_str
-            pname = product_names_str if product_names_str else "N/A"
-            prod = mongo.db.products.find_one({"_id": ObjectId(pid)}, {"discountedPrice": 1})
-            price = prod.get("discountedPrice", "N/A") if prod else "N/A"
-            images = prod.get("images", [])  # Retrieve the list of images
-            image_url = images[0] if images else "img/1.jpg"
-            items.append({"title": pname, "price": price, "image_url": image_url})
-        else:
-            items = []  # Fallback if no product info found
-
-    # Compute an estimated delivery date range: current date + between 3 and 7 days.
+    # Estimated delivery window
     today = datetime.date.today()
-    delivery_start = today + datetime.timedelta(days=random.randint(3, 5))
-    delivery_end = today + datetime.timedelta(days=random.randint(6, 7))
-    estimated_delivery = f"Est. {delivery_start.strftime('%d %b')} - {delivery_end.strftime('%d %b')}"
+    start = today + datetime.timedelta(days=random.randint(3, 5))
+    end   = today + datetime.timedelta(days=random.randint(6, 7))
+    estimated_delivery = f"Est. {start.strftime('%d %b')} – {end.strftime('%d %b')}"
+
+    # Shared display variables
+    product_list_txt  = ', '.join(i['title'] for i in items) or 'N/A'
+    product_list_html = '<br>'.join(i['title'] for i in items) or 'N/A'
+    wa_text           = f"Hello ShopKhana, I would like to track my order (Order ID: {order_id})."
+    wa_url            = "https://wa.me/92098245609?" + urlencode({'text': wa_text})
 
     order_details = {
-        "order_id": order_id,
-        "payment_amount": payment_amount,
-        "items": items,
+        "order_id":          order_id,
+        "payment_amount":    payment_amount,
+        "items":             items,
         "estimated_delivery": estimated_delivery,
-        "user_email": user_email
+        "user_email":        user_email,
+        "shipping_address":  shipping_address.replace("<br>", "\n"),
+        "order_status":      order_status,
     }
 
-    # --- Send Email Notification to Admins ---
-
-    print(datetime, type(datetime))
-
-    transaction_datetime = datetime.datetime.utcnow()
-    admin_emails = ["contact.mrnow285@gmail.com"]
-    msg = Message(
+    # ─── 3A) Send Styled Email → Admin ─────────────────────────────────────────
+    admin_msg = Message(
         subject="🚨 Payment Alert - ShopKhana",
-        sender=app.config.get("MAIL_DEFAULT_SENDER"),
-        recipients=admin_emails
+        sender=app.config["MAIL_DEFAULT_SENDER"],
+        recipients=["contact.mrnow285@gmail.com"]
     )
+    admin_msg.body = f"""Dear Admin,
 
-    # Build a plain text email
-    msg.body = f"""Dear Admin,
+A new order has been placed on ShopKhana.
 
-A new transaction has been successfully completed on ShopKhana. Details are as follows:
+Order ID: {order_id}
+User Email: {user_email}
+Payment Method: {order.get('payment_method', 'N/A')}
+Payment Amount: Rs. {payment_amount}
+Transaction Date: {now.strftime('%d-%m-%Y')}
+Transaction Time: {now.strftime('%I:%M %p')}
 
-Payment Details:
-- User Email: {user_email}
-- Payment Method: {order.get("payment_method", "N/A")}
-- Payment Amount: Rs. {payment_amount}
-- Transaction Date: {transaction_datetime.strftime("%d-%m-%Y")}
-- Transaction Time: {transaction_datetime.strftime("%I:%M %p")}
+Products: {product_list_txt}
 
-Order Details:
-- Order ID: {order_id}
-- Products: {', '.join([item['title'] for item in items]) if items else 'N/A'}
-
-Please ensure that the order is processed and dispatched at the earliest convenience.
+Please process and dispatch ASAP.
 
 Thank you,
 ShopKhana Team
 """
+    admin_msg.html = f"""<html><body style="font-family:Arial,sans-serif; background:#f7f7f7; margin:0; padding:20px;">
+  <table align="center" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border:2px solid #FFA726; border-radius:8px; border-collapse:collapse;">
+    <tr>
+      <td style="background:#FFF3E0; padding:20px; text-align:center; border-top-left-radius:8px; border-top-right-radius:8px;">
+        <h2 style="margin:0; color:#FB8C00;">🚨 New Order Alert</h2>
+      </td>
+    </tr>
+    <tr><td style="padding:20px; font-size:16px; color:#333;">
+      Dear Admin,<br><br>
+      A new order has just been placed. Details below:
+    </td></tr>
+    <tr><td style="padding:0 20px 20px 20px;">
+      <table width="100%" cellpadding="8" cellspacing="0" style="border:1px solid #FFECB3; border-radius:4px; border-collapse:collapse;">
+        <tr style="background:#FFF8E1; color:#E65100; font-weight:bold;">
+          <td>Order ID</td><td>Email</td><td>Amount</td><td>Method</td><td>Date</td><td>Time</td>
+        </tr>
+        <tr>
+          <td>{order_id}</td>
+          <td>{user_email}</td>
+          <td>Rs. {payment_amount}</td>
+          <td>{order.get('payment_method','N/A')}</td>
+          <td>{now.strftime('%d-%m-%Y')}</td>
+          <td>{now.strftime('%I:%M %p')}</td>
+        </tr>
+      </table>
+    </td></tr>
+    <tr><td style="padding:0 20px 20px 20px;">
+      <table width="100%" cellpadding="8" cellspacing="0" style="border:1px solid #FFECB3; border-radius:4px; border-collapse:collapse;">
+        <tr style="background:#FFF8E1; color:#E65100; font-weight:bold;">
+          <td>Products</td>
+        </tr>
+        <tr><td style="color:#333;">{product_list_html}</td></tr>
+      </table>
+    </td></tr>
+    <tr><td style="padding:20px; font-size:16px; color:#333;">
+      Please process and dispatch ASAP.<br><br>
+      Thank you,<br>
+      <span style="color:#FB8C00; font-weight:bold;">ShopKhana Team</span>
+    </td></tr>
+  </table>
+</body></html>"""
+    admin_msg.content_subtype = "html"
+    mail.send(admin_msg)
 
-    msg.html = f"""
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
-  <body style="font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 20px;">
-    <table width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px; margin:auto; background-color: #ffffff; border:1px solid #dddddd; border-collapse: collapse;">
+    # ─── 3B) Send Engaging Email → Customer ──────────────────────────────────────
+    cust_msg = Message(
+        subject="🛒 Your ShopKhana Order Confirmation",
+        sender=app.config["MAIL_DEFAULT_SENDER"],
+        recipients=[user_email]
+    )
+    cust_msg.body = f"""Dear {current_user.name or user_email},
+
+Thank you for shopping with ShopKhana!
+
+Order ID: {order_id}
+Status: {order_status}
+Products: {product_list_txt}
+Total Amount: Rs. {payment_amount}
+Payment Method: {order.get('payment_method','N/A')}
+Estimated Delivery: {estimated_delivery}
+
+Shipping Address:
+{order_details['shipping_address']}
+
+View Order: https://shopkhana.pk/my-orders
+Track via WhatsApp: {wa_url}
+
+We’ll update you once it ships!
+
+Warm regards,
+ShopKhana Team
+"""
+    cust_msg.html = f"""<html>
+  <body style="font-family:Segoe UI, sans-serif; background:#fffbe6; margin:0; padding:20px;">
+    <table align="center" width="600" style="background:#ffffff; border:2px solid #FFA726; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
       <tr>
-        <td colspan="2" style="text-align: center; font-size: 24px; font-weight: bold; padding: 20px 10px; background-color: #f2f2f2;">
-          🚨 Payment Alert - ShopKhana
+        <td style="background:#FFF3E0; text-align:center; padding:25px; border-top-left-radius:8px; border-top-right-radius:8px;">
+          <h2 style="margin:0; font-size:24px; color:#FB8C00;">🛒 Your ShopKhana Order Confirmation</h2>
         </td>
       </tr>
-      <tr>
-        <td colspan="2" style="padding: 15px 10px; font-size: 16px;">
-          Dear Admin,<br><br>
-          A new transaction has been successfully completed on ShopKhana. Details are as follows:
-        </td>
-      </tr>
-      <!-- Payment Details Section -->
-      <tr style="background-color: #f9f9f9;">
-        <td colspan="2" style="padding: 10px; font-weight: bold; font-size: 16px; border-bottom: 1px solid #dddddd;">
-          Payment Details:
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd; font-weight: bold;">User Email:</td>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd;">{user_email}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd; font-weight: bold;">Payment Method:</td>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd;">{order.get("payment_method", "N/A")}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd; font-weight: bold;">Payment Amount:</td>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd;">Rs. {payment_amount}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd; font-weight: bold;">Transaction Date:</td>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd;">{transaction_datetime.strftime("%d-%m-%Y")}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd; font-weight: bold;">Transaction Time:</td>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd;">{transaction_datetime.strftime("%I:%M %p")}</td>
-      </tr>
-      <!-- Order Details Section -->
-      <tr style="background-color: #f9f9f9;">
-        <td colspan="2" style="padding: 10px; font-weight: bold; font-size: 16px; border-bottom: 1px solid #dddddd;">
-          Order Details:
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd; font-weight: bold;">Order ID:</td>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd;">{order_id}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd; font-weight: bold;">Products:</td>
-        <td style="padding: 8px; border-bottom: 1px solid #dddddd;">{', '.join([item['title'] for item in items]) if items else 'N/A'}</td>
-      </tr>
-      <tr>
-        <td colspan="2" style="padding: 15px 10px; font-size: 16px;">
-          Please ensure that the order is processed and dispatched at the earliest convenience.<br><br>
-          Thank you,<br>
-          ShopKhana Team
-        </td>
-      </tr>
+      <tr><td style="padding:20px; font-size:16px; color:#333;">
+        Dear {current_user.name or user_email},<br><br>
+        Thank you for shopping with <strong>ShopKhana</strong>! Your order has been placed successfully.
+      </td></tr>
+      <tr><td style="padding:10px 20px; font-weight:bold; background:#FFF8E1; color:#E65100;">Order Summary:</td></tr>
+      <tr><td style="padding:10px 20px; border-bottom:1px solid #FFECB3; color:#333;">
+        <strong>Order ID:</strong> {order_id}<br>
+        <strong>Products:</strong><br>{product_list_html}<br>
+        <strong>Total Amount:</strong> Rs. {payment_amount}<br>
+        <strong>Payment Method:</strong> {order.get('payment_method','N/A')}<br>
+        <strong>Estimated Delivery:</strong> {estimated_delivery}
+      </td></tr>
+      <tr><td style="padding:10px 20px; font-weight:bold; background:#FFF8E1; color:#E65100;">Shipping Address:</td></tr>
+      <tr><td style="padding:10px 20px; border-bottom:1px solid #FFECB3; color:#333;">{shipping_address}</td></tr>
+      <tr><td style="padding:30px 20px; text-align:center;">
+        <a href="https://shopkhana.pk/my-orders" style="display:inline-block; padding:14px 28px; background:linear-gradient(135deg,#FFA726,#FFB300); color:#fff; text-decoration:none; border-radius:6px; font-weight:bold; font-size:16px; margin:0 5px;">
+          📄 View Order
+        </a><br><br>
+        <a href="{wa_url}" style="display:inline-block; padding:14px 28px; background:linear-gradient(135deg,#FDD835,#FBC02D); color:#333; text-decoration:none; border-radius:6px; font-weight:bold; font-size:16px; margin:0 5px;">
+          📲 Track Status via WhatsApp
+        </a>
+      </td></tr>
+      <tr><td style="padding:20px; font-size:16px; color:#444;">
+        You’ll receive another email once your order ships.<br><br>
+        If you have any questions, just reply to this email.<br><br>
+        Thanks for choosing <strong>ShopKhana</strong>!<br><br>
+        <span style="color:#FB8C00; font-weight:bold;">ShopKhana Team</span>
+      </td></tr>
     </table>
   </body>
-</html>
-"""
+</html>"""
+    mail.send(cust_msg)
 
-    try:
-        mail.send(msg)
-    except Exception as e:
-        app.logger.error("Failed to send email notification: %s", str(e))
-
+    # ─── 4) Render confirmation page ────────────────────────────────────────────
     return render_template("order_placed.html", order_details=order_details)
-
-
-
-import io
-
 
 
 

@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const orderId = btn.getAttribute("data-order-id");
       const message = `Order ${orderId}: You can track your order status on WhatsApp!`;
       window.open(
-        `https://wa.me/+923443680542?text=${encodeURIComponent(message)}`,
+        `https://wa.me/+923098245609?text=${encodeURIComponent(message)}`,
         "_blank"
       );
     });

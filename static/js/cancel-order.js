@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ? otherReasonText.value.trim()
         : selectedReason;
 
-    confirmMessage.textContent = `Are you sure you want to cancel the order?\nReason: ${finalReason}`;
+    confirmMessage.textContent = `Are you sure you want to cancel the order?\nReason: ${finalReason} *This action cannot be undone.`;
     confirmDialog.style.display = "flex";
   });
 
