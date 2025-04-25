@@ -417,6 +417,11 @@ header.compact #categories {
         cursor: pointer;
     }
 
+
+    .hamburger {
+        display: block;
+      }
+
     /* Mobile Category Buttons */
     .mobile-category-buttons {
         display: flex;
