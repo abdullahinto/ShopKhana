@@ -21,10 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const originalPriceEl = document.getElementById("original-price");
   const discountBadgeEl = document.getElementById("discount-badge");
 
- 
   // let originalPrice = {{ product.originalPrice or 3000 }};
   // let discountPrice = {{ product.discountedPrice }};
-  
 
   // if (discountPriceEl) {
   //   discountPriceEl.textContent = `Rs. ${discountPrice.toFixed(2)}`;

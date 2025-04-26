@@ -25,7 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Payment method selection.
   document.querySelectorAll(".sk-pay-method").forEach((elem) => {
     elem.addEventListener("click", () => {
-      document.querySelectorAll(".sk-pay-method").forEach((m) => m.classList.remove("active"));
+      document
+        .querySelectorAll(".sk-pay-method")
+        .forEach((m) => m.classList.remove("active"));
       elem.classList.add("active");
       window.paymentVerified = false;
       const method = elem.getAttribute("data-method");
@@ -39,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("skPayTotal").textContent = total;
       } else {
         document.getElementById("skPayCODFee").textContent = 0;
-        document.getElementById("skPayTotal").textContent = window.orderSummary.grand_total;
+        document.getElementById("skPayTotal").textContent =
+          window.orderSummary.grand_total;
       }
     });
   });
@@ -57,7 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <p id="paymentStatus" style="color: red;"></p>
       `;
       infoContainer.innerHTML = `<h4>${title} Payment</h4>` + accountInfo;
-      document.getElementById("uploadScreenshot").addEventListener("click", processPayment);
+      document
+        .getElementById("uploadScreenshot")
+        .addEventListener("click", processPayment);
     } else if (method === "direct_bank") {
       infoContainer.innerHTML = `
         <h4>Direct Bank Transfer</h4>
@@ -68,11 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
         </select>
         <div id="bankDetailsContainer"></div>
       `;
-      document.getElementById("bankSelection").addEventListener("change", function () {
-        const bank = this.value;
-        let detailsHtml = "";
-        if (bank === "ubl") {
-          detailsHtml = `
+      document
+        .getElementById("bankSelection")
+        .addEventListener("change", function () {
+          const bank = this.value;
+          let detailsHtml = "";
+          if (bank === "ubl") {
+            detailsHtml = `
             <p><b>Account Title:</b> Muhammad Akasha</p>
             <p><b>Account No:</b> 0560313944004</p>
             <p><b>IBAN:</b> PK27UNIL0109000313944004</p>
@@ -81,8 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <button id="uploadScreenshot">Upload & Verify</button>
             <p id="paymentStatus" style="color: red;"></p>
           `;
-        } else if (bank === "meezan") {
-          detailsHtml = `
+          } else if (bank === "meezan") {
+            detailsHtml = `
             <p><b>Account Title:</b> MUHAMMAD AKASHA</p>
             <p><b>Account Number:</b> 02520107240994</p>
             <p><b>IBAN:</b> PK47MEZN0002520107240994</p>
@@ -91,12 +98,15 @@ document.addEventListener("DOMContentLoaded", () => {
             <button id="uploadScreenshot">Upload & Verify</button>
             <p id="paymentStatus" style="color: red;"></p>
           `;
-        }
-        document.getElementById("bankDetailsContainer").innerHTML = detailsHtml;
-        if (document.getElementById("uploadScreenshot")) {
-          document.getElementById("uploadScreenshot").addEventListener("click", processPayment);
-        }
-      });
+          }
+          document.getElementById("bankDetailsContainer").innerHTML =
+            detailsHtml;
+          if (document.getElementById("uploadScreenshot")) {
+            document
+              .getElementById("uploadScreenshot")
+              .addEventListener("click", processPayment);
+          }
+        });
     } else if (method === "hbl") {
       infoContainer.innerHTML = `<p>Hold on buddy, we're just coming soon!🔥</p>`;
     } else if (method === "cod") {
@@ -142,13 +152,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     infoContainer.innerHTML = `
       <h4>Verifying Payment...</h4>
-      <p class="loading-text">Grab a snack, while we verify your payment</p>
+      <p class="loading-text">Grab a snack, our team is analyzing ur payment.</p>
       <div class="loader"></div>
     `;
     const phrases = [
       "Relax, we're processing your payment...",
+      "It may take a while...",
       "Almost there...",
-      "Just a moment..."
+      "Just a moment...",
     ];
     let phraseIndex = 0;
     const textElem = document.querySelector(".loading-text");
@@ -180,20 +191,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmOrderBtn = document.getElementById("skPayConfirmOrder");
   if (confirmOrderBtn) {
     confirmOrderBtn.addEventListener("click", () => {
-      const selectedMethodElem = document.querySelector(".sk-pay-method.active");
+      const selectedMethodElem = document.querySelector(
+        ".sk-pay-method.active"
+      );
       if (!selectedMethodElem) {
-        showToast("Please select a payment method before confirming your order.", "error");
+        showToast(
+          "Please select a payment method before confirming your order.",
+          "error"
+        );
         return;
       }
       const method = selectedMethodElem.getAttribute("data-method");
-      
+
       // If COD, trigger AJAX call to process payment for COD.
       if (method === "cod") {
         const formData = new FormData();
         formData.append("payment_method", "cod");
         fetch("/process_payment", { method: "POST", body: formData })
-          .then(response => response.json())
-          .then(data => {
+          .then((response) => response.json())
+          .then((data) => {
             if (data.status === "success") {
               window.paymentVerified = true;
               window.location.href = "/order_placed";
@@ -201,14 +217,17 @@ document.addEventListener("DOMContentLoaded", () => {
               showToast(data.message, "error");
             }
           })
-          .catch(err => {
+          .catch((err) => {
             console.error(err);
             showToast("Error processing COD payment.", "error");
           });
       } else {
         // For digital payments, require that the screenshot has been verified.
         if (!window.paymentVerified) {
-          showToast("Please verify your payment by uploading a screenshot.", "error");
+          showToast(
+            "Please verify your payment by uploading a screenshot.",
+            "error"
+          );
           return;
         }
         window.location.href = "/order_placed";
@@ -226,7 +245,8 @@ document.addEventListener("DOMContentLoaded", () => {
     toast.style.position = "fixed";
     toast.style.top = "20px";
     toast.style.right = "20px";
-    toast.style.backgroundColor = type === "error" ? "#e74c3c" : type === "success" ? "#2ecc71" : "#3498db";
+    toast.style.backgroundColor =
+      type === "error" ? "#e74c3c" : type === "success" ? "#2ecc71" : "#3498db";
     toast.style.color = "#fff";
     toast.style.padding = "10px 20px";
     toast.style.borderRadius = "5px";
@@ -245,7 +265,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 });
-
-
-
-

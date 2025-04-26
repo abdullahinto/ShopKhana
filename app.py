@@ -139,7 +139,6 @@ app.jinja_env.filters["mask_email"] = mask_email
 
 
 
-
 def serialize_order_base(d):
     """Common serialization for both endpoints."""
     # product ID & image
@@ -154,11 +153,10 @@ def serialize_order_base(d):
         "user_email": d.get("user_email", "")
     }) or {}
     review_text = review_doc.get("review", "")
-    # truncate to ~100 chars
     if len(review_text) > 100:
-        review_text = review_text[:100].rsplit(" ",1)[0] + "…"
+        review_text = review_text[:100].rsplit(" ", 1)[0] + "…"
 
-    rating = review_doc.get("rating") or d.get("payment_amount", 0) and round(random.uniform(4.5,5),1)
+    rating = review_doc.get("rating") or (d.get("payment_amount", 0) and round(random.uniform(4.5, 5), 1))
 
     return {
         "product_id": str(pid),
@@ -176,21 +174,25 @@ def serialize_order_base(d):
 
 @app.route("/api/testimonials")
 def testimonials():
-    """Top 5 highest‑value, Delivered orders with reviews."""
-    docs = list(mongo.db.orders.find(
-        {"order_status": "Delivered"}
-    ).sort([("payment_amount", DESCENDING), ("transaction_date", DESCENDING)]).limit(5))
+    """Top 5 highest-value, Delivered orders with reviews."""
+    docs = list(
+        mongo.db.orders.find({"order_status": "Delivered"})
+        .sort([("payment_amount", DESCENDING), ("transaction_date", DESCENDING)])
+        .limit(5)
+    )
     return jsonify([serialize_order_base(d) for d in docs])
 
 @app.route("/api/live-sales")
 def live_sales():
     """Recent Delivered orders (last 5 days) for live feed."""
-    cutoff = datetime.datetime.utcnow() - datetime.timedelta(days=5)
-    docs = list(mongo.db.orders.find(
-        {"order_arrival_date": {"$gte": cutoff}}
-    ).sort("order_arrival_date", DESCENDING).limit(10))
+    # datetime is the module, so datetime.datetime & datetime.timedelta work:
+    cutoff = datetime.datetime.utcnow() - datetime.timedelta(days=10)
+    docs = list(
+        mongo.db.orders.find({"order_arrival_date": {"$gte": cutoff}})
+        .sort("order_arrival_date", DESCENDING)
+        .limit(10)
+    )
     return jsonify([serialize_order_base(d) for d in docs])
-
 
  
 
@@ -2002,7 +2004,6 @@ def get_current_product_data(user_email):
     return current_product_ids, current_product_names
 
 
-
 @app.route("/process_payment", methods=["POST"])
 @login_required
 def process_payment():
@@ -2012,61 +2013,62 @@ def process_payment():
     payment_method = request.form.get("payment_method", "").lower()
     if not payment_method:
         return jsonify({"status": "error", "message": "Payment method not provided."})
-    
+
     user_email = session.get("user_email")
     order_summary = session.get("order_summary", {})
     if not order_summary:
         app.logger.error("Missing order summary for user: %s", user_email)
         return jsonify({"status": "error", "message": "Order details missing. Please try again."}), 400
 
-
-    # Updated helper function for product data to support multiple items.
+    # --- Helper: fetch current product(s) ---
     def get_current_product_data(user_email):
-        # Check for multi-product selection in session.
+        # Multi-product scenario (Cart or Bulk Buy)
         selected_products = session.get("selected_ids")
         if selected_products:
-            current_product_ids = []
-            current_product_names = []
+            ids, names = [], []
             for item in selected_products:
-                prod_id = item.get("_id")
-                prod_title = item.get("title", "N/A")
-                if prod_id:
-                    current_product_ids.append(prod_id)
-                    current_product_names.append(prod_title)
-            return current_product_ids, current_product_names
+                pid = item.get("_id")
+                title = item.get("title", "N/A")
+                if pid:
+                    ids.append(pid)
+                    names.append(title)
+            return ids, names
 
-        # Fallback: If session has a single product (Buy Now scenario).
+        # Single-product “Buy Now”
         product_id = session.get("product_id")
         if product_id:
-            product_doc = mongo.db.products.find_one({"_id": ObjectId(product_id)}, {"title": 1})
-            current_product_ids = [product_id]
-            current_product_names = [product_doc["title"] if product_doc and "title" in product_doc else "N/A"]
-            return current_product_ids, current_product_names
+            prod = mongo.db.products.find_one(
+                {"_id": ObjectId(product_id)},
+                {"title": 1}
+            )
+            return [product_id], [prod["title"] if prod and "title" in prod else "N/A"]
 
-        # Fallback: Retrieve all products from the user's cart.
-        cart_doc = mongo.db.cart.find_one({"user_email": user_email})
-        current_product_ids = []
-        current_product_names = []
-        if cart_doc:
-            products_list = cart_doc.get("products", [])
-            for product in products_list:
-                prod_id = product.get("product_id")
-                if prod_id:
-                    prod_doc = mongo.db.products.find_one({"_id": ObjectId(prod_id)}, {"title": 1})
-                    if prod_doc:
-                        current_product_ids.append(prod_id)
-                        current_product_names.append(prod_doc.get("title", "N/A"))
-        return current_product_ids, current_product_names
+        # Fallback: all items in cart
+        cart = mongo.db.cart.find_one({"user_email": user_email})
+        if cart:
+            ids, names = [], []
+            for entry in cart.get("products", []):
+                pid = entry.get("product_id")
+                if pid:
+                    doc = mongo.db.products.find_one({"_id": ObjectId(pid)}, {"title": 1})
+                    if doc:
+                        ids.append(pid)
+                        names.append(doc.get("title", "N/A"))
+            return ids, names
 
-    # --- Handle Cash on Delivery (COD) ---
+        # Nothing found
+        return [], []
+
+    # --- COD branch ---
     if payment_method == "cod":
         cod_record = mongo.db.main_details.find_one({}, {"codfee": 1})
         cod_fee = cod_record.get("codfee", 50) if cod_record else 50
-        quantity = order_summary.get("quantity", 1)
-        grand_total = order_summary.get("grand_total", 0)
-        total_payment = float(grand_total) + (cod_fee * quantity)
-        
-        # Insert payment record for COD.
+
+        qty = order_summary.get("quantity", 1)
+        grand_total = float(order_summary.get("grand_total", 0))
+        total_payment = grand_total + (cod_fee * qty)
+
+        # Record COD payment
         payment_data = {
             "user_email": user_email,
             "payment_method": "COD",
@@ -2077,144 +2079,133 @@ def process_payment():
             "screenshot": None
         }
         mongo.db.payments.insert_one(payment_data)
-        
-        # --- Create Order Record for COD ---
-        current_product_ids, current_product_names = get_current_product_data(user_email)
-        
-        customer_info = mongo.db.del_info.find_one(
+
+        # Create order
+        ids, names = get_current_product_data(user_email)
+        customer = mongo.db.del_info.find_one(
             {"user_email": user_email},
             {"full_name": 1, "address": 1, "province": 1, "phone_number": 1}
-        )
-        customer_name = customer_info.get("full_name", "N/A") if customer_info else "N/A"
-        address = customer_info.get("address", "N/A") if customer_info else "N/A"
-        province = customer_info.get("province", "N/A") if customer_info else "N/A"
-        phone_number = customer_info.get("phone_number", "N/A") if customer_info else "N/A"
-        
+        ) or {}
         order_data = {
             "order_id": str(ObjectId()),
             "user_email": user_email,
-            "product_ids": current_product_ids,     # Stored as an array
-            "product_names": current_product_names,   # Stored as an array
-            "customer_name": customer_name,
-            "address": address,
-            "province": province,
+            "product_ids": ids,
+            "product_names": names,
+            "customer_name": customer.get("full_name", "N/A"),
+            "address": customer.get("address", "N/A"),
+            "province": customer.get("province", "N/A"),
             "payment_method": "COD",
             "payment_amount": total_payment,
             "order_status": "Pending",
             "transaction_date": datetime.datetime.utcnow(),
-            "phone_number": phone_number
+            "phone_number": customer.get("phone_number", "N/A")
         }
         mongo.db.orders.insert_one(order_data)
 
+        # Clear session keys
+        for key in ("selected_ids", "order_summary", "product_id"):
+            session.pop(key, None)
 
-
-        # Clear order-related session variables so they don't persist for the next order.
-        session.pop("selected_ids", None)
-        session.pop("order_summary", None)
-        session.pop("product_id", None)
-        
         return jsonify({
             "status": "success",
             "message": f"Cash on Delivery selected. Please be ready with Rs. {total_payment} at delivery."
         })
-    
-    # --- For Digital Payment Methods ---
-    if payment_method != "cod" and "payment_screenshot" not in request.files:
+
+    # --- Digital payment: require screenshot file ---
+    if "payment_screenshot" not in request.files:
         return jsonify({"status": "error", "message": "No file uploaded."})
-    if payment_method != "cod":
-        file = request.files["payment_screenshot"]
-        if file.filename == "":
-            return jsonify({"status": "error", "message": "Invalid file name."})
-        file_bytes = file.read()
-    else:
-        file_bytes = None
+    file = request.files["payment_screenshot"]
+    if file.filename == "":
+        return jsonify({"status": "error", "message": "Invalid file name."})
+    file_bytes = file.read()
 
+    # Image preprocessing
     try:
-        original_image = Image.open(io.BytesIO(file_bytes)) if file_bytes else None
-        if payment_method == "sadapay" and original_image:
-            processed_image = preprocess_white_text_on_orange(original_image)
-        elif original_image:
-            processed_image = preprocess_image_for_ocr(original_image)
+        original = Image.open(io.BytesIO(file_bytes))
+        if payment_method == "sadapay":
+            processed = preprocess_white_text_on_orange(original)
         else:
-            processed_image = None
+            processed = preprocess_image_for_ocr(original)
     except Exception as e:
-        return jsonify({"status": "error", "message": f"Error processing image: {str(e)}"})
+        return jsonify({"status": "error", "message": f"Error processing image: {e}"})
 
-    extracted_amount_str = get_prominent_amount(processed_image) if processed_image else ""
+    # OCR extraction
+    extracted_amount_str = get_prominent_amount(processed) or ""
     app.logger.info("Extracted prominent amount: %s", extracted_amount_str)
     expected_amount = order_summary.get("grand_total", 0)
-    
-    def normalize_amount(text):
-        return re.sub(r'[^0-9.]', '', text)
-    normalized_extracted = normalize_amount(str(extracted_amount_str)) if extracted_amount_str else ""
-    normalized_expected = normalize_amount(str(expected_amount))
-    
+
+    # --- Normalize & drop decimals ---
+    def normalize_amount(txt):
+        return re.sub(r'[^0-9.]', '', txt)
+
+    norm_ext = normalize_amount(extracted_amount_str)
+    norm_exp = normalize_amount(str(expected_amount))
+    int_ext = norm_ext.split('.', 1)[0] if '.' in norm_ext else norm_ext
+    int_exp = norm_exp.split('.', 1)[0] if '.' in norm_exp else norm_exp
+
+    # Verify account name + amount
     errors = []
     expected_name = "Muhammad Akasha"
-    full_extracted_text = pytesseract.image_to_string(
-        processed_image, config='--oem 3 --psm 6'
-    ) if processed_image else ""
-    if expected_name not in full_extracted_text:
+    full_text = pytesseract.image_to_string(processed, config='--oem 3 --psm 6')
+    if expected_name not in full_text:
         errors.append("Account name mismatch.")
-    if normalized_extracted != normalized_expected:
-        errors.append(f"Amount mismatch. Expected: Rs.{normalized_expected} Found: Rs.{normalized_extracted}")
-    
+    if int_ext != int_exp:
+        errors.append(f"Amount mismatch. Expected: Rs.{int_exp} Found: Rs.{int_ext}")
+
+    # On failure: record & return
     if errors:
-        payment_data = {
+        pay_record = {
             "user_email": user_email,
-            "payment_method": (payment_method.capitalize() if payment_method != "direct_bank" else get_direct_bank_label()),
+            "payment_method": (get_direct_bank_label()
+                               if payment_method == "direct_bank"
+                               else payment_method.capitalize()),
             "amount": 0,
             "status": "Verification Failed: " + " ".join(errors),
             "COD": "N/A",
             "pay_date": datetime.datetime.utcnow(),
-            "screenshot": Binary(file_bytes) if file_bytes else None
+            "screenshot": Binary(file_bytes)
         }
-        mongo.db.payments.insert_one(payment_data)
+        mongo.db.payments.insert_one(pay_record)
         return jsonify({"status": "error", "message": " ".join(errors)})
-    
-    verified_status = "Paid"
-    method_label = (get_direct_bank_label() if payment_method == "direct_bank" else payment_method.capitalize())
-    payment_data = {
+
+    # On success: record payment
+    method_label = (get_direct_bank_label()
+                    if payment_method == "direct_bank"
+                    else payment_method.capitalize())
+    success_record = {
         "user_email": user_email,
         "payment_method": method_label,
         "amount": expected_amount,
-        "status": verified_status,
+        "status": "Paid",
         "COD": "N/A",
         "pay_date": datetime.datetime.utcnow(),
-        "screenshot": Binary(file_bytes) if file_bytes else None
+        "screenshot": Binary(file_bytes)
     }
-    mongo.db.payments.insert_one(payment_data)
-    
-    # --- Create Order Record for Digital Payments ---
-    current_product_ids, current_product_names = get_current_product_data(user_email)
-    
-    customer_info = mongo.db.del_info.find_one(
+    mongo.db.payments.insert_one(success_record)
+
+    # Create digital order
+    ids, names = get_current_product_data(user_email)
+    customer = mongo.db.del_info.find_one(
         {"user_email": user_email},
         {"full_name": 1, "address": 1, "province": 1, "phone_number": 1}
-    )
-    customer_name = customer_info.get("full_name", "N/A") if customer_info else "N/A"
-    address = customer_info.get("address", "N/A") if customer_info else "N/A"
-    province = customer_info.get("province", "N/A") if customer_info else "N/A"
-    phone_number = customer_info.get("phone_number", "N/A") if customer_info else "N/A"
-    
-    order_data = {
+    ) or {}
+    order = {
         "order_id": str(ObjectId()),
         "user_email": user_email,
-        "product_ids": current_product_ids,     # Array of product IDs
-        "product_names": current_product_names,   # Array of product names
-        "customer_name": customer_name,
-        "address": address,
-        "province": province,
+        "product_ids": ids,
+        "product_names": names,
+        "customer_name": customer.get("full_name", "N/A"),
+        "address": customer.get("address", "N/A"),
+        "province": customer.get("province", "N/A"),
         "payment_method": method_label,
         "payment_amount": expected_amount,
         "order_status": "Processing",
         "transaction_date": datetime.datetime.utcnow(),
-        "phone_number": phone_number
+        "phone_number": customer.get("phone_number", "N/A")
     }
-    mongo.db.orders.insert_one(order_data)
-    
-    return jsonify({"status": "success", "message": "Payment verified successfully!"})
+    mongo.db.orders.insert_one(order)
 
+    return jsonify({"status": "success", "message": "Payment verified successfully!"})
 
 
 @app.route("/redirect_to_pay", methods=["POST"])
@@ -2412,7 +2403,7 @@ def order_placed():
     admin_msg = Message(
         subject="🚨 Payment Alert - ShopKhana",
         sender=app.config["MAIL_DEFAULT_SENDER"],
-        recipients=["contact.mrnow285@gmail.com"]
+        recipients=["info.shopkhana@gmail.com"]
     )
     admin_msg.body = f"""Dear Admin,
 
