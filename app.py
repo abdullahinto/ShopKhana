@@ -316,6 +316,9 @@ app.register_blueprint(google_bp, url_prefix="/login")
 
 
 
+from flask import url_for, flash, redirect, request, render_template
+from itsdangerous import URLSafeTimedSerializer
+
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
@@ -325,34 +328,93 @@ def forgot_password():
             # Generate a secure token valid for 1 hour
             token = serializer.dumps(email, salt='password-reset-salt')
             reset_url = url_for('reset_password', token=token, _external=True)
-            # Send reset email using Flask-Mail
-            subject = "Password Reset Request for ShopKhana"
-            body = f"""Hello,
+
+            subject = "🔒 ShopKhana Password Reset Request"
+
+            # Plain-text fallback
+            plaintext = f"""Hello {user.get('name', '')},
 
 We received a request to reset the password for your ShopKhana account.
 
-To reset your password, please click the following link or copy it into your browser:
-
+Reset Link:
 {reset_url}
 
-This link will expire in 1 hour.
-
-If you did not request a password reset, please ignore this email.
+This link will expire in 1 hour. If you did not request a reset, simply ignore this email.
 
 Thank you,
-The ShopKhana Team
+ShopKhana Team
 """
+
+            # HTML email
+            html_content = f"""<html>
+  <body style="margin:0; padding:0; background-color:#fffbe6; font-family:Segoe UI, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding:20px 0; background:#fffbe6;">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border:2px solid #FFA726; border-radius:8px; overflow:hidden;">
+            <!-- Title -->
+            <tr>
+              <td style="padding:20px; text-align:center;">
+                <h2 style="margin:0; color:#FB8C00;">🔒 Password Reset Request</h2>
+              </td>
+            </tr>
+            <!-- Message -->
+            <tr>
+              <td style="padding:0 20px 20px 20px; color:#333;">
+                <p>Hello {user.get('name', '')},</p>
+                <p>We received a request to reset your ShopKhana password. Click the button below to set a new password. This link will expire in <strong>1 hour</strong>.</p>
+                <p style="text-align:center; margin:30px 0;">
+                  <a href="{reset_url}" target="_blank"
+                     style="background:linear-gradient(135deg,#FFA726,#FFB300);
+                            color:#ffffff;
+                            padding:14px 28px;
+                            text-decoration:none;
+                            border-radius:6px;
+                            font-size:16px;
+                            font-weight:bold;">
+                    Reset Password
+                  </a>
+                </p>
+                <p>If the button doesn’t work, copy and paste this URL into your browser:</p>
+                <p style="word-break:break-all; color:#E65100;">{reset_url}</p>
+                <p>If you did not request a password reset, simply ignore this email—your account is safe.</p>
+                <p>Thank you,<br>
+                   <span style="color:#FB8C00; font-weight:bold;">ShopKhana Team</span>
+                </p>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td style="background:#FFF8E1; text-align:center; padding:15px; font-size:12px; color:#666;">
+                © {datetime.datetime.utcnow().year} ShopKhana. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>"""
+
+            # Send email
+            msg = Message(subject, recipients=[email])
+            msg.body = plaintext
+            msg.html = html_content
+            msg.content_subtype = "html"
             try:
-                msg = Message(subject, recipients=[email], body=body)
                 mail.send(msg)
-                flash('A password reset link has been sent to your email. Check your inbox now.', "info")
+                flash('A password reset link has been sent to your email. Please check your gmail inbox', "info")
             except Exception as e:
                 app.logger.error("Error sending password reset email: %s", e)
                 flash("Error sending reset email. Please try again later.", "error")
+
         else:
             flash("Email not found. Please check and try again.", "error")
+
         return redirect(url_for('forgot_password'))
+
     return render_template('forgot_password.html')
+
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
@@ -2387,7 +2449,7 @@ def order_placed():
     product_list_txt  = ', '.join(i['title'] for i in items) or 'N/A'
     product_list_html = '<br>'.join(i['title'] for i in items) or 'N/A'
     wa_text           = f"Hello ShopKhana, I would like to track my order (Order ID: {order_id})."
-    wa_url            = "https://wa.me/92098245609?" + urlencode({'text': wa_text})
+    wa_url            = "https://wa.me/923098245609?" + urlencode({'text': wa_text})
 
     order_details = {
         "order_id":          order_id,

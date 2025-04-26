@@ -91,10 +91,10 @@ My Wishlist - ShopKhana
     <button class="sk-wl-close-share">&times;</button>
     <h3>Share Your Wishlist</h3>
     <div class="sk-wl-social-icons">
-      <a href="https://www.facebook.com" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-      <a href="https://www.twitter.com" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://twitter.com/intent/tweet?url={{ request.url }}" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
       <a href="https://www.instagram.com" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-      <a href="https://wa.me/?text=Your%20message%20here" target="_blank" title="WhatsApp"><i
+      <a href="https://wa.me/?text={{ request.url }}" target="_blank" title="WhatsApp"><i
           class="fab fa-whatsapp"></i></a>
 
     </div>
