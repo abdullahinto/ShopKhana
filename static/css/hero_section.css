@@ -1,0 +1,150 @@
+:root {
+  --overlay: rgba(0,0,0,0.4);
+  --btn-bg: #FFD500;
+  --btn-color: #333;
+  --btn-radius: 0.5rem;
+  --transition: 0.3s ease;
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Carousel container keeps a 16:9 ratio, with a vh fallback */
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  height: auto;
+  overflow: hidden;
+  margin-top: 20px;
+}
+@supports not (aspect-ratio: 16/9) {
+  .hero-carousel {
+    height: clamp(40vh, 50vw, 60vh);
+  }
+}
+
+/* Each slide */
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.slide.active {
+  opacity: 1;
+}
+
+/* Background image fills container */
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Dark overlay */
+.slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+}
+
+/* Centered caption + CTA */
+.slide-content {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  z-index: 1;
+  padding: 0 clamp(1rem, 5vw, 2rem);
+  width: 100%;
+  max-width: 90%;
+}
+
+/* Headline */
+.slide-content h1 {
+  font-size: clamp(1.5rem, 6vw, 3rem);
+  font-weight: 550;
+  margin-bottom: clamp(0.75rem, 3vw, 1.5rem);
+  line-height: 1.2;
+}
+
+/* CTA button */
+.slide-content .cta {
+  display: inline-block;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 600;
+  border-radius: var(--btn-radius);
+  text-decoration: none;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
+}
+.slide-content .cta:hover,
+.slide-content .cta:focus {
+  background-color: var(--btn-color);
+  color: var(--btn-bg);
+  transform: translateY(-2px);
+}
+
+/* Nav arrows */
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(2rem, 5vw, 3rem);
+  height: clamp(2rem, 5vw, 3rem);
+  background: rgba(255,255,255,0.6);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background var(--transition), transform var(--transition);
+}
+.nav-arrow:hover {
+  background: rgba(255,255,255,0.9);
+  transform: scale(1.1);
+}
+.nav-arrow svg {
+  width: clamp(1rem, 3vw, 1.5rem);
+  height: clamp(1rem, 3vw, 1.5rem);
+  fill: #000;
+}
+.nav-arrow.prev { left: clamp(1rem, 5vw, 2rem); }
+.nav-arrow.next { right: clamp(1rem, 5vw, 2rem); }
+
+/* Dots */
+.dots {
+  position: absolute;
+  bottom: clamp(1rem, 4vw, 2rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  z-index: 2;
+}
+.dot {
+  width: clamp(0.75rem, 2vw, 1rem);
+  height: clamp(0.75rem, 2vw, 1rem);
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+.dot:hover {
+  transform: scale(1.2);
+}
+.dot.active {
+  background: var(--btn-bg);
+}

@@ -10,6 +10,8 @@ Home - ShopKhana
 <link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css' , v='1.1') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/just4u.css', v='1.2') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hero_section.css') }}">
 {% endblock extra_css %}
 
 {% block extra_js %}
@@ -23,9 +25,62 @@ Home - ShopKhana
 <script src="{{ url_for('static', filename='js/just4u.js') }}"></script>
 <!-- <script src="{{ url_for('static', filename='js/footer.js') }}"></script> -->
 <script src="{{ url_for('static', filename='js/cat.js') }}"></script>
+<script src="{{ url_for('static', filename='js/hero_section.js') }}"></script>
+
 {% endblock extra_js %}
 
 {% block body %}
+
+
+<!-- hero section -->
+<div class="hero-carousel" id="heroCarousel">
+  <!-- Slides -->
+  <div class="slide active" data-index="0">
+    <img src="{{ url_for('static', filename='img/1.jpg') }}" alt="Limited Edition" loading="lazy">
+    <div class="slide-content">
+      <h1>Discover Our Limited-Edition Collection</h1>
+      <a href="#" class="cta">Shop Limited Editions</a>
+    </div>
+  </div>
+  <div class="slide" data-index="1">
+    <img src="{{ url_for('static', filename='img/2.jpg') }}" alt="Pearls" loading="lazy">
+    <div class="slide-content">
+      <h1>Timeless Pearls, Modern Designs</h1>
+      <a href="#" class="cta">Explore Pearls</a>
+    </div>
+  </div>
+  <div class="slide" data-index="2">
+    <img src="{{ url_for('static', filename='img/3.jpg') }}" alt="Statement Pieces" loading="lazy">
+    <div class="slide-content">
+      <h1>Bold Statement Pieces</h1>
+      <a href="#" class="cta">See Statement Collection</a>
+    </div>
+  </div>
+  <div class="slide" data-index="3">
+    <img src="{{ url_for('static', filename='img/4.jpg') }}" alt="Necklaces" loading="lazy">
+    <div class="slide-content">
+      <h1>Elegance Necklaces like never before</h1>
+      <a href="#" class="cta">Explore Necklaces</a>
+    </div>
+  </div>
+
+
+  <!-- Navigation Arrows -->
+  <button class="nav-arrow prev" aria-label="Previous Slide">
+    <svg viewBox="0 0 20 20"><path d="M13 3l-7 7 7 7" /></svg>
+  </button>
+  <button class="nav-arrow next" aria-label="Next Slide">
+    <svg viewBox="0 0 20 20"><path d="M7 3l7 7-7 7" /></svg>
+  </button>
+
+  <!-- Dots -->
+  <div class="dots">
+    <div class="dot active" data-index="0"></div>
+    <div class="dot" data-index="1"></div>
+    <div class="dot" data-index="2"></div>
+    <div class="dot" data-index="3"></div>
+  </div>
+</div>
 
 
 
