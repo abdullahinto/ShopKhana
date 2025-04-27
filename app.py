@@ -224,11 +224,11 @@ def get_flash_sale_products(limit=20):
         # prod.images now contains Cloudinary URLs
     return flash_sale_products
 
-def get_categories():
+def get_categories(limit=7):
     """
     Fetch categories from the 'categories' collection.
     """
-    cat_cursor = mongo.db.categories.find()
+    cat_cursor = mongo.db.categories.find().limit(limit)
     categories = []
     for cat in cat_cursor:
         cat['_id'] = str(cat['_id'])
@@ -654,7 +654,7 @@ def main_page():
     """
     banners = get_banners(limit=5)
     flash_sale_products = get_flash_sale_products(limit=10)
-    categories = get_categories()
+    categories = get_categories(limit=7)
     just_for_you_products = get_just_for_you_products(limit=40)
 
     # Pass the data to main_page.html (Jinja2 template)

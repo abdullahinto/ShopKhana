@@ -30,19 +30,21 @@
 }
 
 .promotion-product-card {
-  background-color: #fff;
-  border-radius: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  transition: box-shadow 0.3s, transform 0.3s;
+  background: #fff;
+  border: 2px solid transparent; /* Add this */
+  border-radius: 25px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease; /* Add border-color transition */
 }
 
 .promotion-product-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transform: translateY(-3px);
+  border-color: #ffd700; /* Yellowish animated border */
 }
 
 .promotion-product-image {
@@ -158,15 +160,22 @@
 }
 
 .promotion-add-to-cart-btn {
-  background-color: #ffde59;
-  border: none;
-  border-radius: 15px;
-  padding: 8px 12px;
+  display: inline-block;
+  background-color: #fed500;
+  color: black;
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 400;
+  border-radius: 25px;
+  text-decoration: none;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease; /* Add border-color transition */
 }
 
-.promotion-add-to-cart-btn:hover {
-  background-color: orange;
-  transform: scale(1.03);
+.promotion-add-to-cart-btn:hover,
+.promotion-add-to-cart-btn:focus {
+  background-color: black;
+  color: #fed500;
+  transform: translateY(-2px);
 }
 
 .promotion-load-more-container {

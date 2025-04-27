@@ -8,6 +8,8 @@
   --brand-highlight-hover: orange;
   --text-dark: #000;
   --text-mid: #555;
+  --btn-bg: #fed500;
+  --btn-color: #000;
 }
 
 /* Reset */
@@ -23,7 +25,7 @@
   max-width: 1200px;
   margin: clamp(2rem, 5vw, 3rem) auto 0;
   padding: clamp(0.5rem, 2vw, 1rem);
-  background-color: #fdfbf6;
+  /* background-color: #fdfbf6; */
   font-family: Poppins, sans-serif;
 }
 
@@ -35,7 +37,7 @@
 .rec-products-header h2 {
   font-size: clamp(1.5rem, 4vw, 2rem);
   color: var(--text-dark);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 /* Responsive grid */
@@ -48,17 +50,19 @@
 /* Product card */
 .product-card {
   background: #fff;
+  border: 2px solid transparent; /* Add this */
   border-radius: var(--radius);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: clamp(0.75rem, 2vw, 1.5rem);
-  transition: box-shadow var(--transition), transform var(--transition);
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition); /* Add border-color transition */
 }
 .product-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transform: translateY(-3px);
+  border-color: #ffd700; /* Yellowish animated border */
 }
 
 /* Image container */
@@ -170,20 +174,22 @@
 
 /* Add to cart button */
 .add-to-cart-btn {
-  font-family: Poppins, sans-serif;
-  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-  background-color: var(--brand-highlight);
-  color: var(--text-dark);
-  border: none;
-  border-radius: var(--radius);
-  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
-  width: 100%;
+  display: inline-block;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 400;
+  border-radius: 25px;
+  text-decoration: none;
   text-align: center;
-  transition: background var(--transition), transform var(--transition);
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
 }
-.add-to-cart-btn:hover {
-  background-color: var(--brand-highlight-hover);
-  transform: scale(1.03);
+.add-to-cart-btn:hover,
+.add-to-cart-btn:focus {
+  background-color: var(--btn-color);
+  color: var(--btn-bg);
+  transform: translateY(-2px);
 }
 
 /* Load more */
@@ -192,19 +198,21 @@
   margin-top: clamp(1.5rem, 4vw, 3rem);
 }
 .load-more-btn {
-  font-family: Poppins, sans-serif;
-  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-  background: linear-gradient(45deg, var(--brand-highlight), gold);
-  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 3vw, 2rem);
-  border: none;
+  display: inline-block;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 400;
   border-radius: 25px;
-  color: var(--text-dark);
-  cursor: pointer;
-  transition: background var(--transition), transform var(--transition);
+  text-decoration: none;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
 }
-.load-more-btn:hover {
-  background-color: var(--brand-highlight-hover);
-  transform: scale(1.05);
+.load-more-btn:hover,
+.load-more-btn:focus {
+  background-color: var(--btn-color);
+  color: var(--btn-bg);
+  transform: translateY(-2px);
 }
 
 /* Fade-in animation for cards */

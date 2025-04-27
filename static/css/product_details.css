@@ -8,6 +8,7 @@
   --brand-link-hover: #00508f;
   --bg-page: #fdfbf6;
   --discount-color: orange;
+  --btn-bg: #0077b6;
 }
 
 /* Reset */
@@ -322,20 +323,91 @@ body {
   font-size: clamp(1rem, 2vw, 1.125rem);
   font-weight: 500;
   cursor: pointer;
-  transition: transform var(--transition), background var(--transition);
+  transition: 
+    transform var(--transition), 
+    background var(--transition), 
+    box-shadow var(--transition),
+    color var(--transition);
   text-align: center;
+  background-color: var(--discount-color);
+  color: var(--text-dark);
+  position: relative;
+  overflow: hidden;
 }
-.PD_add-to-cart-btn:hover {
-  background-color: #e37b38;
-  transform: scale(1.03);
+
+.PD_buy-now-btn::after {
+  content: '🚀';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translate(150%, -50%);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.3s ease;
+  font-size: 1.25em;
+}
+
+/* ✨ Shine overlay */
+.PD_buy-now-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.PD_buy-now-btn:hover::before {
+  left: 130%;
+}
+
+.PD_buy-now-btn:hover {
+  background-color: #f5cc47;
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.PD_buy-now-btn:hover::after {
+  transform: translate(0%, -50%) scale(1.1);
+  opacity: 1;
+  animation: bounce 0.6s ease;
+}
+
+.PD_buy-now-btn:active {
+  transform: scale(0.97);
+  background-color: #eab308;
+}
+
+/* Tiny bounce animation for emoji */
+@keyframes bounce {
+  0%   { transform: translate(0%, -50%) scale(1); }
+  50%  { transform: translate(0%, -50%) scale(1.2); }
+  100% { transform: translate(0%, -50%) scale(1.1); }
+}
+
+
+.PD_add-to-cart-btn:hover,
+.PD_add-to-cart-btn:focus {
+  background-color:#fed500;
+  color: var(--text-dark);
+  transform: translateY(-2px);
 }
 .PD_buy-now-btn {
   background-color: var(--discount-color);
   color: var(--text-dark);
 }
-.PD_buy-now-btn:hover {
+/* .PD_buy-now-btn:hover {
   background-color: #f5cc47;
-}
+} */
 
 /* Modals */
 .ask-question-modal,

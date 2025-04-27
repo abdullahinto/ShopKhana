@@ -92,7 +92,7 @@
 
 
 
-  
+
 
       <!-- Variations (Example: Colors) -->
       <div class="variations-section">
@@ -139,13 +139,15 @@
           <!-- Copy the selected color from the hidden input -->
           <input type="hidden" name="selected_color" id="form-selected-color" value="">
           <button type="submit" id="add-to-cart-btn" class="PD_add-to-cart-btn requires-auth">
-            Add to Cart
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to Cart
           </button>
+
         </form>
         <a style="text-decoration: none;" href="{{ url_for('del_info_promo_page', product_id=product._id) }}"
           class="PD_buy-now-btn requires-auth">
-          Buy Now
+          <i class="fa fa-shopping-bag" aria-hidden="true"></i> Buy Now
         </a>
+
 
 
 

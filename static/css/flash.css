@@ -38,20 +38,21 @@
 /* Adjust button to be inline-block */
 .explore-all-btn {
   display: inline-block;
-  margin-top: 0; /* Remove previous margin */
-  /* Existing styles remain */
-  background: linear-gradient(45deg, #ffde59, gold);
-  padding: 10px 20px;
-  text-decoration: none;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 400;
   border-radius: 25px;
-  font-size: 14px;
-  transition: background 0.3s, transform 0.3s;
-  color: black;
+  text-decoration: none;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
 }
 
-.explore-all-btn:hover {
-  transform: scale(1.05);
-  background-color: orange;
+.explore-all-btn:hover,
+.explore-all-btn:focus {
+  background-color: var(--btn-color);
+  color: var(--btn-bg);
+  transform: translateY(-2px);
 }
 
 .flash-sale-products {

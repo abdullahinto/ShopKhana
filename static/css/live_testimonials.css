@@ -154,23 +154,27 @@
   color: #fff;
   border-radius: var(--radius);
   margin-bottom: 0.75rem;
+  text-align: center;
 }
 
 /* Buy button */
 .btn-buy {
-  margin-top: auto;
-  align-self: flex-start;
-  background-color: #ffde59;
-  color: black;
+  display: inline-block;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 400;
+  border-radius: 25px;
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-  transition: background var(--transition), transform var(--transition);
+  text-align: center;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
 }
-.btn-buy:hover {
-  background-color: orange;
-  transform: scale(1.05);
+.btn-buy:hover,
+.btn-buy:focus {
+  background-color: var(--btn-color);
+  color: var(--btn-bg);
+  transform: translateY(-2px);
 }
 
 /* Sliding & floating animations */
@@ -259,26 +263,44 @@
   font-weight: 600;
 }
 
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px green;
+  }
+  50% {
+    box-shadow: 0 0 15px green;
+  }
+  100% {
+    box-shadow: 0 0 5px green;
+  }
+}
+
 .live-sale-card .badge {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
   background-color: green;
   color: #fff;
   border-radius: var(--radius);
+  animation: glow 1.5s infinite ease-in-out;
 }
 
 .live-sale-card .btn-buy {
-  background: var(--brand-primary);
-  color: #fff;
+  display: inline-block;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 400;
+  border-radius: 25px;
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  border-radius: var(--radius);
-  transition: background var(--transition), transform var(--transition);
+  text-align: center;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
 }
-.live-sale-card .btn-buy:hover {
-  background: #e69500;
-  transform: scale(1.05);
+.live-sale-card .btn-buy:hover,
+.live-sale-card .btn-buy:focus {
+  background-color: var(--btn-color);
+  color: var(--btn-bg);
+  transform: translateY(-2px);
 }
 
 /* Large screens: allow a bit more width */
