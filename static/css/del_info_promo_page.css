@@ -1,318 +1,228 @@
-/* Global font and base element settings */
-#deliveryForm label,
-.label-btn {
-    font-size: 14px;
+:root {
+    --gutter: 1rem;
+    --radius: 8px;
+    --transition: 0.3s ease;
+    --brand-primary: orange;
+    --brand-secondary: #ffde59;
+    --bg-light: #fff;
+    --border-light: #ccc;
+    --text-dark: #333;
+    --text-mid: #555;
+    --container-max: 1200px;
+  }
+  
+  /* Base reset */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
     font-family: Poppins, sans-serif;
-}
-
-#deliveryForm label,
-.delivery-info h2,
-.label-btn {
-    font-family: Poppins, sans-serif;
-}
-
-.delivery-info h2,
-.promotion-summary h2 {
-    font-size: 20px;
-    font-weight: 500;
-    color: #333;
-}
-
-/* Main container */
-.delivery-promo-container {
+    color: var(--text-dark);
+    background-color: #fafafa;
+  }
+  
+  /* Main wrapper */
+  .delivery-promo-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-    border: 2px solid orange;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 120px auto 20px;
-    max-width: 1200px;
-    background-color: #fff;
-    animation: 0.7s forwards slideFadeIn;
+    gap: var(--gutter);
+    border: 2px solid var(--brand-primary);
+    border-radius: var(--radius);
+    padding: clamp(1rem, 4vw, 2rem);
+    margin: clamp(4rem, 8vw, 8rem) auto clamp(1rem, 4vw, 2rem);
+    max-width: var(--container-max);
+    background-color: var(--bg-light);
+    animation: slideFadeIn 0.7s forwards;
     opacity: 0;
     transform: translateY(30px);
-}
-
-@keyframes slideFadeIn {
+  }
+  @keyframes slideFadeIn {
     to {
-        opacity: 1;
-        transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
-}
-
-/* Section Flex Basis */
-.delivery-info {
-    flex: 1 1 60%;
+  }
+  
+  /* Flex children */
+  .delivery-info,
+  .promotion-summary {
+    flex: 1 1 300px;
     min-width: 280px;
-}
-
-.delivery-info h2 {
-    margin-bottom: 15px;
-}
-
-.promotion-summary {
-    flex: 1 1 35%;
-    min-width: 280px;
+  }
+  
+  /* Section headings */
+  .delivery-info h2,
+  .promotion-summary h2 {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-weight: 500;
+    margin-bottom: clamp(0.75rem, 2vw, 1rem);
+    color: var(--text-dark);
+  }
+  
+  /* Form */
+  #deliveryForm {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-/* Form Styles */
-#deliveryForm {
+    gap: var(--gutter);
+  }
+  #deliveryForm label {
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    color: var(--text-dark);
+  }
+  #deliveryForm input[type="text"],
+  #deliveryForm select,
+  #userEmail,
+  .coupon-input input[type="text"] {
+    padding: clamp(0.75rem, 2vw, 1rem);
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  #deliveryForm input:focus,
+  #deliveryForm select:focus,
+  #userEmail:focus,
+  .coupon-input input:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 4px rgba(255,165,0,0.4);
+    outline: none;
+  }
+  
+  /* Label toggle buttons */
+  .label-toggle {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-#deliveryForm label {
-    color: #333;
-    margin-bottom: 5px;
-}
-
-#deliveryForm input[type="text"],
-#deliveryForm select {
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-family: Poppins, sans-serif;
-}
-
-/* Label Button and Toggle */
-.label-toggle {
-    display: flex;
-    gap: 10px;
-}
-
-.label-btn {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .label-btn {
     background-color: #eee;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-light);
     border-radius: 25px;
-    padding: 8px 12px;
+    padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 5px;
-    transition: background 0.3s, color 0.3s;
-}
-
-.label-btn.active,
-.label-btn:hover {
-    background-color: #ffde59;
-    color: #333;
-}
-
-/* Action Buttons */
-.apply-btn,
-.pay-btn,
-.save-btn {
-    cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
-}
-
-.save-btn {
-    background-color: orange;
-    color: #fff;
+    gap: 0.5rem;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    transition: background var(--transition), color var(--transition), transform var(--transition);
+  }
+  .label-btn:hover,
+  .label-btn.active {
+    background-color: var(--brand-secondary);
+    color: var(--text-dark);
+    transform: translateY(-2px);
+  }
+  
+  /* Action buttons */
+  .apply-btn,
+  .pay-btn,
+  .save-btn {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
     border: none;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 4px;
-    width: 120px;
-    font-family: Poppins, sans-serif;
-}
-
-.pay-btn:hover,
-.save-btn:hover {
-    background-color: #e69500;
-    transform: scale(1.03);
-}
-
-/* Email and Coupon Input */
-#userEmail,
-.coupon-input input[type="text"] {
-    border: 1px solid #ccc;
-    font-family: Poppins, sans-serif;
-}
-
-.promotion-summary h2 {
-    font-family: Poppins, sans-serif;
-    margin-bottom: 10px;
-}
-
-.coupon-area label {
-    font-size: 14px;
-    color: #333;
-    font-family: Poppins, sans-serif;
-    margin-bottom: 5px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--transition), transform var(--transition);
+  }
+  .apply-btn {
+    background-color: var(--brand-secondary);
+    color: var(--text-dark);
+  }
+  .save-btn,
+  .pay-btn {
+    background-color: var(--brand-primary);
+    color: #fff;
+  }
+  .apply-btn:hover,
+  .save-btn:hover,
+  .pay-btn:hover {
+    background-color: var(--brand-primary-hover, orange);
+    transform: translateY(-2px) scale(1.02);
+  }
+  
+  /* Coupon & invoice */
+  .coupon-area label {
     display: block;
-}
-
-.coupon-input input[type="text"] {
-    flex: 1;
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 4px;
-}
-
-.apply-btn {
-    background-color: #ffde59;
-    color: #000;
-    border: none;
-    padding: 10px 16px;
-    font-size: 14px;
-    border-radius: 4px;
-    font-family: Poppins, sans-serif;
-}
-
-.apply-btn:hover {
-    background-color: orange;
-    transform: scale(1.03);
-}
-
-/* Invoice Contact */
-.invoice-contact {
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    margin-bottom: 0.25rem;
+  }
+  .coupon-input {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.invoice-contact p {
-    font-size: 14px;
-    margin: 0;
-    font-family: Poppins, sans-serif;
-    color: #333;
-}
-
-.edit-link {
-    color: #0077b6;
-    font-size: 14px;
-    margin-left: 10px;
-    cursor: pointer;
+    gap: 0.5rem;
+  }
+  .invoice-contact {
+    margin-top: var(--gutter);
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+  }
+  .invoice-contact p {
+    margin-bottom: 0.5rem;
+  }
+  .edit-link {
+    color: var(--brand-primary);
     text-decoration: underline;
-}
-
-#userEmail {
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 14px;
+    cursor: pointer;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+  }
+  
+  /* Order summary */
+  .order-summary {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: clamp(1rem, 3vw, 1.5rem);
+    background: #fafafa;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+  }
+  .order-summary h3 {
+    margin-bottom: clamp(0.5rem, 2vw, 1rem);
+    font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+  }
+  .order-summary p {
+    margin-bottom: 0.5rem;
+    color: var(--text-mid);
+  }
+  .order-summary hr {
+    margin: clamp(1rem, 3vw, 1.5rem) 0;
+  }
+  
+  /* Pay button inside summary */
+  .order-summary .pay-btn {
     width: 100%;
-    background-color: #f9f9f9;
-    color: #555;
-}
-
-/* Order Summary */
-.order-summary {
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 15px;
-    font-family: Poppins, sans-serif;
-}
-
-.order-summary h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 16px;
-    color: #333;
-}
-
-.order-summary p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: #555;
-}
-
-.order-summary hr {
-    margin: 10px 0;
-}
-
-.pay-btn {
-    background-color: orange;
-    color: #fff;
-    border: none;
-    padding: 12px 20px;
-    font-size: 16px;
-    border-radius: 4px;
-    margin-top: 10px;
-}
-
-/* Responsive Breakpoints */
-
-/* For medium devices and smaller, stack content vertically */
-@media (max-width: 768px) {
+    text-align: center;
+    margin-top: var(--gutter);
+  }
+  
+  /* Responsive tweaks */
+  
+  /* Under 768px: stack columns */
+  @media (max-width: 768px) {
     .delivery-promo-container {
-        flex-direction: column;
-        margin: 80px auto 20px;
+      flex-direction: column;
     }
-
-    .delivery-info,
-    .promotion-summary {
-        flex: 1 1 100%;
-    }
-}
-
-/* For small devices - adjust padding and font sizes */
-@media (max-width: 600px) {
+  }
+  
+  /* Under 480px: tighten spacing & text */
+  @media (max-width: 480px) {
     .delivery-promo-container {
-        padding: 15px;
-        gap: 15px;
-        margin: 60px auto 15px;
+      padding: clamp(0.5rem, 3vw, 1rem);
+      gap: clamp(0.5rem, 3vw, 1rem);
+      margin: clamp(2rem, 6vw, 4rem) auto clamp(0.5rem, 3vw, 1rem);
     }
-
-    #deliveryForm input[type="text"],
-    #deliveryForm select {
-        padding: 8px;
-        font-size: 13px;
-    }
-
-    .label-btn {
-        padding: 6px 10px;
-        font-size: 13px;
-    }
-
-    .save-btn,
-    .pay-btn,
-    .apply-btn {
-        padding: 10px 14px;
-        font-size: 14px;
-    }
-}
-
-/* Extra small devices (modern mobile screens) */
-@media (max-width: 480px) {
-    .delivery-promo-container {
-        margin: 40px auto 10px;
-        padding: 10px;
-        gap: 10px;
-    }
-
     .delivery-info h2,
     .promotion-summary h2 {
-        font-size: 18px;
+      font-size: clamp(1rem, 3vw, 1.25rem);
     }
-
-    #deliveryForm input[type="text"],
-    #deliveryForm select,
-    #userEmail,
-    .coupon-input input[type="text"] {
-        padding: 8px;
-        font-size: 12px;
-    }
-
     .label-btn {
-        padding: 6px 8px;
-        font-size: 12px;
+      flex: 1 1 45%;
+      justify-content: center;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
     }
-
+    .apply-btn,
     .save-btn,
-    .pay-btn,
-    .apply-btn {
-        padding: 8px 12px;
-        font-size: 13px;
+    .pay-btn {
+      width: 100%;
+      font-size: clamp(0.9rem, 2vw, 1rem);
     }
-
-    .order-summary {
-        padding: 10px;
-    }
-}
+  }
+  

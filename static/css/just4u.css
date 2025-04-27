@@ -45,18 +45,23 @@
 /* Product card */
 .product-card {
   background: #fff;
+  border: 2px solid transparent; /* Add this */
   border-radius: var(--radius);
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: clamp(0.75rem, 2vw, 1.5rem);
-  transition: box-shadow var(--transition), transform var(--transition);
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition); /* Add border-color transition */
 }
+
+/* On hover */
 .product-card:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transform: translateY(-3px);
+  border-color: #ffd700; /* Yellowish animated border */
 }
+
 
 /* Image area */
 .product-image {
