@@ -34,36 +34,25 @@ Home - ShopKhana
 
 <!-- hero section -->
 <div class="hero-carousel" id="heroCarousel">
-  <!-- Slides -->
-  <div class="slide active" data-index="0">
-    <img src="{{ url_for('static', filename='img/1.jpg') }}" alt="Limited Edition" loading="lazy">
-    <div class="slide-content">
-      <h1>Discover Our Limited-Edition Collection</h1>
-      <a href="#" class="cta">Shop Limited Editions</a>
-    </div>
-  </div>
-  <div class="slide" data-index="1">
-    <img src="{{ url_for('static', filename='img/2.jpg') }}" alt="Pearls" loading="lazy">
-    <div class="slide-content">
-      <h1>Timeless Pearls, Modern Designs</h1>
-      <a href="#" class="cta">Explore Pearls</a>
-    </div>
-  </div>
-  <div class="slide" data-index="2">
-    <img src="{{ url_for('static', filename='img/3.jpg') }}" alt="Statement Pieces" loading="lazy">
-    <div class="slide-content">
-      <h1>Bold Statement Pieces</h1>
-      <a href="#" class="cta">See Statement Collection</a>
-    </div>
-  </div>
-  <div class="slide" data-index="3">
-    <img src="{{ url_for('static', filename='img/4.jpg') }}" alt="Necklaces" loading="lazy">
-    <div class="slide-content">
-      <h1>Elegance Necklaces like never before</h1>
-      <a href="#" class="cta">Explore Necklaces</a>
-    </div>
-  </div>
 
+  {% for banner in banners %}
+    <div class="slide {{ loop.first and 'active' or '' }}" data-index="{{ loop.index0 }}">
+      <img
+        src="{{ banner.image }}"
+        alt="{{ banner.bannerName }}"
+        loading="lazy"
+      >
+      <div class="slide-content">
+        <h1>{{ banner.bannerName }}</h1>
+        <a
+          href="{{ url_for('show_banner_products', banner_id=banner._id) }}"
+          class="cta"
+        >
+          {{ banner.ctaText }}
+        </a>
+      </div>
+    </div>
+  {% endfor %}
 
   <!-- Navigation Arrows -->
   <button class="nav-arrow prev" aria-label="Previous Slide">
@@ -75,10 +64,12 @@ Home - ShopKhana
 
   <!-- Dots -->
   <div class="dots">
-    <div class="dot active" data-index="0"></div>
-    <div class="dot" data-index="1"></div>
-    <div class="dot" data-index="2"></div>
-    <div class="dot" data-index="3"></div>
+    {% for banner in banners %}
+      <div
+        class="dot {{ loop.first and 'active' or '' }}"
+        data-index="{{ loop.index0 }}"
+      ></div>
+    {% endfor %}
   </div>
 </div>
 

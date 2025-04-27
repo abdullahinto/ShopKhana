@@ -181,16 +181,21 @@
 }
 
 .main-add-to-cart-btn {
-  background-color: var(--brand-highlight);
-  color: var(--text-dark);
-  border: none;
-  border-radius: var(--radius);
-  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
-  width: 100%;
+  display: inline-block;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 400;
+  border-radius: 25px;
+  text-decoration: none;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
 }
-.main-add-to-cart-btn:hover {
-  background-color: var(--brand-highlight-hover);
-  transform: scale(1.03);
+.main-add-to-cart-btn:hover,
+.main-add-to-cart-btn:focus {
+  background-color: var(--btn-color);
+  color: var(--btn-bg);
+  transform: translateY(-2px);
 }
 
 /* Load more */
@@ -199,15 +204,21 @@
   margin-top: clamp(1.5rem, 4vw, 3rem);
 }
 .load-more-btn {
-  background: linear-gradient(45deg, var(--brand-highlight), gold);
-  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 3vw, 2rem);
-  border: none;
+  display: inline-block;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 4vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  font-weight: 400;
   border-radius: 25px;
-  color: var(--text-dark);
+  text-decoration: none;
+  transition: background-color var(--transition), color var(--transition), transform var(--transition);
 }
-.load-more-btn:hover {
-  background-color: var(--brand-highlight-hover);
-  transform: scale(1.05);
+.load-more-btn:hover,
+.load-more-btn:focus {
+  background-color: var(--btn-color);
+  color: var(--btn-bg);
+  transform: translateY(-2px);
 }
 
 /* Loader overlay */
