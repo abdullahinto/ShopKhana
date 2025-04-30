@@ -21,6 +21,45 @@
   const PRODUCT_ID = "{{ product._id }}";
 </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const variationBtns = document.querySelectorAll('.variation-btn');
+    const hiddenInput = document.getElementById('selected-color');
+    const formHiddenInput = document.getElementById('form-selected-color');
+    const buyNowLink = document.querySelector('.PD_buy-now-btn');
+
+    function setColor(color) {
+      // 1) store on both hidden inputs
+      hiddenInput.value = color;
+      formHiddenInput.value = color;
+      // 2) rebuild the Buy Now href
+      const base = '{{ url_for("del_info_promo_page") }}';
+      const pid = '{{ product._id }}';
+      buyNowLink.href = `${base}?product_id=${pid}&selected_color=${encodeURIComponent(color)}`;
+      // 3) visually mark selection
+      variationBtns.forEach(b => b.classList.toggle('active', b.dataset.color === color));
+    }
+
+    // Initialize to first color (optional)
+    if (variationBtns.length) {
+      setColor(variationBtns[0].dataset.color);
+    }
+
+    // On each color button click…
+    variationBtns.forEach(btn => {
+      btn.addEventListener('click', () => setColor(btn.dataset.color));
+    });
+
+    // Also sync quantity into the Add-to-Cart form
+    const qtyInput = document.getElementById('quantity-input');
+    const formQty = document.getElementById('form-quantity');
+    qtyInput.addEventListener('input', () => {
+      formQty.value = qtyInput.value;
+    });
+  });
+
+</script>
+
 {% endblock extra_js %}
 
 {% block title %}{{ product.title }} - ShopKhana{% endblock title %}

@@ -224,11 +224,11 @@ def get_flash_sale_products(limit=20):
         # prod.images now contains Cloudinary URLs
     return flash_sale_products
 
-def get_categories(limit=7):
+def get_categories():
     """
     Fetch categories from the 'categories' collection.
     """
-    cat_cursor = mongo.db.categories.find().limit(limit)
+    cat_cursor = mongo.db.categories.find()
     categories = []
     for cat in cat_cursor:
         cat['_id'] = str(cat['_id'])
@@ -654,7 +654,7 @@ def main_page():
     """
     banners = get_banners(limit=5)
     flash_sale_products = get_flash_sale_products(limit=10)
-    categories = get_categories(limit=7)
+    categories = get_categories()
     just_for_you_products = get_just_for_you_products(limit=40)
 
     # Pass the data to main_page.html (Jinja2 template)
@@ -1810,12 +1810,16 @@ def del_info_promo_page():
         product = mongo.db.products.find_one({"_id": ObjectId(product_id)})
         if product:
             product["_id"] = str(product["_id"])
+
+             # **NEW**: grab the selected color from the URL, fallback to first color
+            selected_color = request.args.get("selected_color") \
+                              or (product.get("colors", ["N/A"])[0] if product.get("colors") else "N/A")
             selected_product = {
                 "_id": product["_id"],
                 "title": product["title"],
                 "image": product.get("images", [""])[0],
                 "productCategory": product.get("productCategory", "Uncategorized"),
-                "selected_color": product.get("colors", ["N/A"])[0] if product.get("colors", ["N/A"]) else "N/A",
+                "selected_color": selected_color,
                 "price": product["discountedPrice"],
                 "originalprice": product["originalPrice"],
                 "discountpercent": product["discountPercent"],

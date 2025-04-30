@@ -36,10 +36,13 @@
                         </strong>{{bannerprod.brandName}}</span>
                 </div>
                 <div class="banner-product-pricing">
-                    <span class="banner-discount-price">Rs. {{ "{:,.2f}".format(bannerprod.discountedPrice | default(0)
-                        | float) }}</span>
-                    <span class="banner-original-price">Rs. {{ "{:,.2f}".format(bannerprod.originalPrice | default(0) |
-                        float) }}</span>
+                    <span class="banner-discount-price">
+                        Rs. {{ "{:,.0f}".format(bannerprod.discountedPrice | default(0) | float) }}
+                    </span>
+                    <span class="banner-original-price">     
+                        Rs. {{ "{:,.0f}".format(bannerprod.originalPrice | default(0) | float) }}
+                    </span>
+
 
                     <span class="banner-discount-percent">{{bannerprod.discountPercent}}%</span>
                 </div>

@@ -64,7 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="badge">
             <i class="fas fa-fire" style="color:#FFFF00;"></i> Top Selling
           </span>
-          <a href="${buildProductUrl(o.product_id)}" class="btn-buy">Buy Now</a>
+            <a href="${buildProductUrl(o.product_id)}" class="btn-buy">
+            <i class="fas fa-shopping-bag"></i> Buy Now
+          </a>
         </div>
       `;
 
@@ -152,17 +154,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const card = document.createElement("div");
         card.className = "live-sale-card fade-in";
         card.innerHTML = `
-        <img src="${o.product_image}" alt="${o.product_name}">
-        <div class="live-info">
-          <span class="product">${o.product_name}</span><br>
-          <span class="city">Buying from ${o.city}</span><br>
-          <span class="price">PKR ${o.payment_amount.toLocaleString()}</span>
-        </div>
-        <span class="badge">
-          <i class="fas fa-shipping-fast" style="color: white;"></i> Fast Ship
-        </span>
-        <a href="${buildProductUrl(o.product_id)}" class="btn-buy">Buy Now</a>
-      `;
+          <img src="${o.product_image}" alt="${o.product_name}">
+          <div class="live-info">
+            <span class="product">${o.product_name}</span><br>
+            <span class="city">Buying from ${o.city}</span><br>
+            <span class="price">PKR ${o.payment_amount.toLocaleString()}</span>
+          </div>
+          <span class="badge">
+            <i class="fas fa-shipping-fast" style="color: white;"></i> Fast Ship
+          </span>
+          <a href="${buildProductUrl(o.product_id)}" class="btn-buy">
+            <i class="fas fa-shopping-bag"></i> Buy Now
+          </a>
+        `;
 
         rightList.appendChild(card);
         observer.observe(card);
