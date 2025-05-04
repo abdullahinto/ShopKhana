@@ -23,11 +23,13 @@ Order Placed - ShopKhana
   </p>
   <p class="sk-final-price">
     <span class="sk-final-rs-label">Rs.</span>
-    <span id="skFinalTotalPrice">{{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}</span>
-
+    <span id="skFinalTotalPrice">
+      {{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}
+    </span>
   </p>
   <p class="sk-final-order-number">
-    Your order number is <strong id="skFinalOrderNum">{{ order_details.order_id }}</strong>
+    Your order number is
+    <strong id="skFinalOrderNum">{{ order_details.order_id }}</strong>
     <button id="copyOrderIdBtn" class="copy-btn">Copy</button>
   </p>
 </div>
@@ -41,7 +43,9 @@ Order Placed - ShopKhana
   </p>
   <p class="sk-final-reminder-price">
     <span class="sk-final-rs-label">Rs.</span>
-    <span id="skFinalRemindPrice">{{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}</span>
+    <span id="skFinalRemindPrice">
+      {{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}
+    </span>
   </p>
 
   <!-- Delivery Info Container -->
@@ -51,23 +55,21 @@ Order Placed - ShopKhana
         <p>{{ order_details.estimated_delivery }}</p>
       </div>
       <div class="sk-final-delivery-thumb">
-        <!-- Show a thumbnail of the actual product -->
-        {% set image_url = order_details['items'][0]['image_url'] %}
+        {% set first_item = order_details['items'][0] %}
+        {% set image_url = first_item['image_url'] %}
         {% if image_url.startswith('http') %}
         <img src="{{ image_url }}" alt="Product Thumbnail"
           onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/1.webp') }}';" />
         {% else %}
         <img src="{{ url_for('static', filename='img/1.webp') }}" alt="Product Thumbnail" />
         {% endif %}
-
-
-
       </div>
+
     </div>
     <hr class="sk-final-grey-line" />
     <div class="sk-final-tracking-info">
       <p>
-        To track the delivery of your order, click on your <strong>Account &gt; My Orders</strong>
+        To track your order, go to <strong>Account &gt; My Orders</strong>
         or click the button below:
       </p>
       <button class="sk-final-view-order-btn">View Order</button>
@@ -78,34 +80,44 @@ Order Placed - ShopKhana
   <div class="sk-final-email-sent animate-on-view">
     <i class="fas fa-envelope"></i>
     <p>
-      We’ve sent a confirmation email to <strong>{{ order_details.user_email }}</strong>.
-      Check your email inbox regularly to receive real-time updates of your order.
+      We’ve sent a confirmation email to
+      <strong>{{ order_details.user_email }}</strong>.
+      Check your inbox for real‑time updates.
     </p>
     <p style="font-style: italic;">
-      <strong>Note: </strong>Your order will be processed after <b>2 hours</b>. Please be aware that once your order is
-      placed, it cannot be <b>canceled</b>.
+      <strong>Note:</strong> Your order will be processed after <b>2 hours</b>.
+      Once placed, orders cannot be <b>canceled</b>.
     </p>
   </div>
 
   <!-- Order Summary Dropdown -->
   <div class="sk-final-summary-dropdown animate-on-view">
     <button id="skFinalSummaryToggle" class="sk-final-summary-btn">
-      Order Summary <span id="skFinalSummaryIcon"><i class="fas fa-chevron-down"></i></span>
+      Order Summary
+      <span id="skFinalSummaryIcon"><i class="fas fa-chevron-down"></i></span>
     </button>
     <div id="skFinalSummaryContent" class="sk-final-summary-content">
       <ul>
         {% for item in order_details['items'] %}
-        <li>{{ item['title'] }}: Rs. {{ "{:,.0f}".format(item['price'] | default(0) | int) }}</li>
+        <li>
+          {{ item['name'] }} — Qty: {{ item['quantity'] }},
+          Color: {{ item['color'] }},
+          Rs. {{ "{:,.0f}".format(item['price'] | default(0) | int) }}
+        </li>
         {% endfor %}
         <hr />
-        <li><strong>Total: Rs. {{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}</strong></li>
+        <li>
+          <strong>
+            Total: Rs. {{ "{:,.0f}".format(order_details.payment_amount | default(0) | int) }}
+          </strong>
+        </li>
       </ul>
-
     </div>
+
   </div>
 
   <!-- Continue Shopping Button -->
-  <a style="text-decoration: none;" href="{{ url_for('main_page') }}" class="sk-final-continue-btn">
+  <a href="{{ url_for('main_page') }}" class="sk-final-continue-btn">
     Continue Shopping
   </a>
 </div>

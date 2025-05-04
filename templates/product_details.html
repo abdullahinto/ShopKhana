@@ -133,37 +133,37 @@
 
 
 
-      <!-- Variations (Example: Colors) -->
+      <!-- Variations (Colors) -->
       <div class="variations-section">
         <label>Colors:</label>
         <div class="variation-list">
-          {% if product.colors and product.colors|length > 0 %}
           {% for color in product.colors %}
-          <button type="button" class="variation-btn" data-color="{{ color }}">{{ color }}</button>
+          <button type="button" class="variation-btn" data-color="{{ color }}">
+            {{ color }}
+          </button>
           {% endfor %}
-          {% else %}
-          <span>No color</span>
-          {% endif %}
         </div>
-
         <!-- Hidden input to store the selected color -->
-        <input type="hidden" id="selected-color" name="selected_color" value="">
+        <input type="hidden" class="selected-color" id="selected-color" name="selected_color" value="">
       </div>
 
       <!-- Quantity & Favorite -->
       <div class="quantity-favorite">
-        <label>Quantity</label>
+        <label>Quantity:</label>
         <div class="quantity-box">
-          <button id="qty-decrease"><i class="fas fa-minus"></i></button>
-          <input type="number" id="quantity-input" value="1" min="1" max="50" />
-          <button id="qty-increase"><i class="fas fa-plus"></i></button>
+          <button type="button" id="qty-decrease"><i class="fas fa-minus"></i></button>
+          <input type="number" id="quantity-input" name="quantity" value="1" min="1" max="50" />
+          <button type="button" id="qty-increase"><i class="fas fa-plus"></i></button>
         </div>
-        <button id="favorite-btn" class="favorite-btn requires-auth" title="Add to favorites"
-          data-product-id="{{ product._id }}">
-          <i class="far fa-heart"></i>
-        </button>
 
+        <!-- <button id="buyNowBtn" class="buy-now-btn" data-product-id="{{ product._id }}"
+          data-product-title="{{ product.title }}">
+          Buy Now
+        </button> -->
       </div>
+
+
+      
       <!-- Ask a Question -->
       <div class="ask-question">
         <a href="#" id="ask-question-trigger" class="ask-question-trigger">
@@ -176,7 +176,7 @@
           <input type="hidden" name="product_id" value="{{ product._id }}">
           <input type="hidden" name="quantity" id="form-quantity" value="1">
           <!-- Copy the selected color from the hidden input -->
-          <input type="hidden" name="selected_color" id="form-selected-color" value="">
+          <input type="hidden" class="selected-color" name="selected_color" id="form-selected-color" value="">
           <button type="submit" id="add-to-cart-btn" class="PD_add-to-cart-btn requires-auth">
             <i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to Cart
           </button>

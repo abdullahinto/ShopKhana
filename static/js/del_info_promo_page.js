@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Effective Delivery Button Toggle ---
   const labelButtons = document.querySelectorAll(".label-btn");
   const effectiveDeliveryInput = document.getElementById("effective_delivery");
-  // Pre-select saved label if exists
   if (effectiveDeliveryInput.value) {
     labelButtons.forEach((btn) => {
       if (btn.getAttribute("data-label") === effectiveDeliveryInput.value) {
@@ -29,11 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.success) {
-          showToast(data.message, "success");
-        } else {
-          showToast(data.message, "error");
-        }
+        showToast(data.message, data.success ? "success" : "error");
       })
       .catch((err) => {
         console.error(err);
@@ -60,20 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
     applyCouponBtn.addEventListener("click", () => {
       const couponCode = couponCodeInput.value.trim();
       if (!couponCode) {
-        showToast("Please enter a coupon code.", "error");
-        return;
+        return showToast("Please enter a coupon code.", "error");
       }
       const formData = new FormData();
       formData.append("couponCode", couponCode);
-      // Include product_id if applicable
       const couponProductId = document.getElementById("couponProductId");
       if (couponProductId && couponProductId.value) {
         formData.append("product_id", couponProductId.value);
       }
-      fetch("/apply_coupon", {
-        method: "POST",
-        body: formData,
-      })
+      fetch("/apply_coupon", { method: "POST", body: formData })
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
@@ -91,72 +81,62 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Real-Time Order Summary Updates on Quantity Change ---
+  // --- Order Summary Calculation ---
   const quantityInputs = document.querySelectorAll(
     "input[name='productQuantity']"
   );
-
   quantityInputs.forEach((input) => {
     input.addEventListener("change", updateOrderSummary);
   });
 
+  function updateOrderSummary() {
+    let totalQuantity = 0;
+    let itemTotal = 0;
+    quantityInputs.forEach((input) => {
+      const qty = parseInt(input.value, 10) || 0;
+      totalQuantity += qty;
+      const price = parseFloat(input.getAttribute("data-price")) || 0;
+      itemTotal += qty * price;
+    });
+
+    const itemQuantityEl = document.getElementById("itemQuantity");
+    const itemCostEl = document.getElementById("itemCost");
+    const grandTotalEl = document.getElementById("grandTotal");
+    if (itemQuantityEl) itemQuantityEl.textContent = totalQuantity;
+    if (itemCostEl) itemCostEl.textContent = itemTotal.toFixed(2);
+
+    const deliveryFeePerUnit =
+      parseFloat(document.getElementById("deliveryFee").textContent) || 0;
+    const totalDeliveryFee = deliveryFeePerUnit * totalQuantity;
+    const grandTotal = itemTotal + totalDeliveryFee;
+    if (grandTotalEl) grandTotalEl.textContent = grandTotal.toFixed(2);
+  }
+
+  updateOrderSummary();
   function getSelectedProducts() {
-    // Get all elements that contain the product ID
-    const productIdElements = document.querySelectorAll(".productId");
     const selectedProducts = [];
-    productIdElements.forEach((elem) => {
-      // Get product id from the hidden input's value
-      const prodId = elem.value;
-      // Find the closest product container and then the title element within it
-      // This assumes that the product title is inside the same parent as the hidden input.
-      // Adjust the selector if your structure is different.
-      const productContainer = elem.closest(".package-body");
-      const titleElem = productContainer
-        ? productContainer.querySelector(".product-title")
-        : null;
-      const prodTitle = titleElem ? titleElem.textContent.trim() : "N/A";
+    document.querySelectorAll(".package-body").forEach((container) => {
+      const prodIdElem = container.querySelector(".productId");
+      const titleElem = container.querySelector(".product-title");
+      const colorElem = container.querySelector(".selected-color");
+      const qtyElem = container.querySelector(".product-quantity"); // FIXED
+
+      const prodId = prodIdElem ? prodIdElem.value : null;
+      const title = titleElem ? titleElem.textContent.trim() : "N/A";
+      const selectedColor = colorElem ? colorElem.value : "N/A";
+      const quantity = qtyElem ? parseInt(qtyElem.value, 10) || 1 : 1;
+
       if (prodId) {
-        selectedProducts.push({ _id: prodId, title: prodTitle });
+        selectedProducts.push({
+          _id: prodId,
+          title: title,
+          selected_color: selectedColor,
+          quantity: quantity,
+        });
       }
     });
     return selectedProducts;
   }
-
-  function updateOrderSummary() {
-    let totalQuantity = 0; // Total quantity of all products
-    let itemTotal = 0; // Total cost of all items
-
-    // Loop through each input to calculate total quantity and item total
-    quantityInputs.forEach((input) => {
-      const qty = parseInt(input.value) || 0; // Parse quantity
-      totalQuantity += qty; // Add to total quantity
-      const price = parseFloat(input.getAttribute("data-price")) || 0; // Parse price
-      itemTotal += qty * price; // Add to item total
-    });
-
-    // Update quantity and item total in the UI
-    const itemQuantityEl = document.getElementById("itemQuantity");
-    const itemCostEl = document.getElementById("itemCost");
-    const grandTotalEl = document.getElementById("grandTotal");
-
-    if (itemQuantityEl) itemQuantityEl.textContent = totalQuantity;
-    if (itemCostEl) itemCostEl.textContent = itemTotal.toFixed(2);
-
-    // Fetch delivery fee per unit
-    const deliveryFeePerUnit =
-      parseFloat(document.getElementById("deliveryFee").textContent) || 0;
-
-    // Calculate total delivery fee based on total quantity
-    const totalDeliveryFee = deliveryFeePerUnit * totalQuantity;
-
-    // Calculate grand total
-    const grandTotal = itemTotal + totalDeliveryFee;
-
-    // Update grand total in the UI
-    if (grandTotalEl) grandTotalEl.textContent = grandTotal.toFixed(2);
-  }
-
-  updateOrderSummary(); // initial call
 
   // --- Proceed to Payment ---
   const proceedPayBtn = document.getElementById("proceedPay");
@@ -172,25 +152,21 @@ document.addEventListener("DOMContentLoaded", () => {
       "area",
       "address",
     ];
-    let valid = true;
-    requiredFields.forEach((id) => {
-      const field = document.getElementById(id);
-      if (!field.value.trim()) {
-        valid = false;
-      }
+    const allFilled = requiredFields.every((id) => {
+      const fld = document.getElementById(id);
+      return fld && fld.value.trim();
     });
-    if (!valid) {
-      showToast(
+    if (!allFilled) {
+      return showToast(
         "Please fill in all required delivery fields before proceeding.",
         "error"
       );
-      return;
     }
 
-    // Gather order summary data from the page
+    // Build order_summary
     const order_summary = {
       quantity:
-        parseInt(document.getElementById("itemQuantity").textContent) || 0,
+        parseInt(document.getElementById("itemQuantity").textContent, 10) || 0,
       item_total:
         parseFloat(document.getElementById("itemCost").textContent) || 0,
       delivery_fee:
@@ -199,23 +175,24 @@ document.addEventListener("DOMContentLoaded", () => {
         parseFloat(document.getElementById("grandTotal").textContent) || 0,
     };
 
-    // Get the current contact email (editable field)
+    // Collect user email
     const user_email = document.getElementById("userEmail").value.trim();
 
-    // Get the selected products from the page
+    // Collect selected products
     const selected_ids = getSelectedProducts();
+    console.log("Proceeding with selected products:", selected_ids);
 
-    // Send order summary, user email, and selected_ids to backend to store in session
+    // Send to backend
     fetch("/redirect_to_pay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         order_summary: order_summary,
         user_email: user_email,
-        selected_ids: selected_ids, // Now including multi-product data
+        selected_ids: selected_ids,
       }),
     })
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
           window.location.href = data.redirect_url;
@@ -229,17 +206,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- Toast Notification Function ---
+  // --- Toast Notification ---
   function showToast(message, type = "success") {
-    let toastContainer = document.getElementById("toastContainer");
-    if (!toastContainer) {
-      toastContainer = document.createElement("div");
-      toastContainer.id = "toastContainer";
-      toastContainer.style.position = "fixed";
-      toastContainer.style.top = "20px";
-      toastContainer.style.right = "20px";
-      toastContainer.style.zIndex = "10000";
-      document.body.appendChild(toastContainer);
+    let tc = document.getElementById("toastContainer");
+    if (!tc) {
+      tc = document.createElement("div");
+      tc.id = "toastContainer";
+      tc.style.position = "fixed";
+      tc.style.top = "20px";
+      tc.style.right = "20px";
+      tc.style.zIndex = "10000";
+      document.body.appendChild(tc);
     }
     const toast = document.createElement("div");
     toast.textContent = message;
@@ -249,8 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
     toast.style.marginBottom = "10px";
     toast.style.borderRadius = "4px";
     toast.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
-    toast.style.opacity = "1";
-    toastContainer.appendChild(toast);
+    tc.appendChild(toast);
     setTimeout(() => {
       toast.style.transition = "opacity 0.5s";
       toast.style.opacity = "0";

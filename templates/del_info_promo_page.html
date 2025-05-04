@@ -62,7 +62,6 @@ Delivery Information - ShopKhana
           <i class="fas fa-briefcase"></i> OFFICE
         </button>
       </div>
-      <!-- Hidden input to store selected label; prepopulate if available -->
       <input type="hidden" id="effective_delivery" name="effective_delivery"
         value="{{ delivery_info.effective_delivery if delivery_info }}">
 
@@ -74,7 +73,6 @@ Delivery Information - ShopKhana
   <div class="promotion-summary">
     <h2>Promotion</h2>
     {% if products|length == 1 %}
-    <!-- Coupon area appears only in the Buy Now (single product) scenario -->
     <div class="coupon-area">
       <label for="couponCode">Enter ShopKhana/Coupon Code</label>
       <div class="coupon-input">
@@ -82,13 +80,11 @@ Delivery Information - ShopKhana
         <button type="button" id="applyCoupon" class="apply-btn">Apply</button>
       </div>
     </div>
-    <!-- Hidden field to pass product_id for coupon processing -->
     <input type="hidden" id="couponProductId" value="{{ request.args.get('product_id') }}">
     {% endif %}
 
     <div class="invoice-contact">
       <p>Invoice and Contact Info <span id="editEmailLink" class="edit-link">EDIT</span></p>
-      <!-- Use current user's email if delivery_info.contact_email is empty -->
       <input placeholder="e.g; youremail@gmail.com" type="text" id="userEmail" name="contact_email"
         value="{{ delivery_info.contact_email|default(current_user.email)|trim if delivery_info else current_user.email }}">
     </div>
@@ -103,7 +99,6 @@ Delivery Information - ShopKhana
       <hr>
       <p><strong>Total:</strong> Rs. <span id="grandTotal">{{ "{:,.0f}".format(grand_total | default(0) | int) }}</span>
       </p>
-
       <small>VAT included where applicable</small>
       <button type="button" id="proceedPay" class="pay-btn">Proceed to Pay</button>
     </div>
@@ -119,36 +114,50 @@ Delivery Information - ShopKhana
     <div class="delivery-option">
       <p><strong>Delivery Option:</strong> Standard Delivery (Rs. {{ "{:,.0f}".format(delivery_fee | default(145) | int)
         }})</p>
-
       <p><strong>Guaranteed by:</strong> {{ product.guaranteed_date or "3-7 days" }}</p>
     </div>
   </div>
+
   <div class="package-body">
-    <!-- Product Thumbnail -->
     <div class="product-thumbnail">
       <img src="{{ product.image if product.image else url_for('static', filename='img/placeholder.png') }}"
         alt="{{ product.title }}" />
     </div>
-    <!-- Product Info -->
+
     <div class="product-info">
       <h5 class="product-title">{{ product.title }}</h5>
       <p>Category: <strong>{{ product.productCategory or "Uncategorized" }}</strong></p>
-      <p>Color-Family: {{ product.selected_color }}</p>
+
+      <!-- Optional color selection buttons -->
+      {% if product.colors %}
+      <div class="variation-list">
+        {% for color in product.colors %}
+        <button type="button" class="variation-btn{% if color == product.selected_color %} active{% endif %}"
+          data-color="{{ color }}">{{ color }}</button>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Hidden selected color input -->
+      <input type="hidden" class="selected-color" value="{{ product.selected_color or '' }}">
+
       <div class="product-pricing">
         <span class="discounted-price">Rs. {{ "{:,.0f}".format(product.price | default(0) | int) }}</span>
         <span class="original-price">Rs. {{ "{:,.0f}".format(product.originalprice | default(0) | int) }}</span>
         <span class="discount-percent">{{ product.discountpercent }}%</span>
       </div>
     </div>
-    <!-- Quantity & Actions -->
+
     <div class="product-actions">
       <div class="quantity-container">
         <label for="productQuantity_{{ product._id }}">Quantity</label>
-        <!-- Add a data-price attribute for real-time updates -->
-        <input type="number" id="productQuantity_{{ product._id }}" name="productQuantity"
+        <input type="number" id="productQuantity_{{ product._id }}" class="product-quantity" name="productQuantity"
           value="{{ product.quantity }}" min="1" max="99" data-price="{{ product.price }}" />
       </div>
+
+      <!-- Hidden product ID input -->
       <input type="hidden" class="productId" value="{{ product._id }}" data-price="{{ product.price }}">
+
       <a style="text-decoration: none;" class="change-product-btn" href="{{ url_for('main_page') }}">Change Product</a>
     </div>
   </div>
@@ -162,6 +171,17 @@ Delivery Information - ShopKhana
   function changeProduct(productId) {
     window.location.href = `/product_page/${productId}`;
   }
-</script>
 
+  // Optional: Handle color selection if you're using buttons
+  document.querySelectorAll('.variation-list').forEach(list => {
+    list.addEventListener('click', function (e) {
+      if (e.target.classList.contains('variation-btn')) {
+        const buttons = list.querySelectorAll('.variation-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+        list.parentElement.querySelector('.selected-color').value = e.target.dataset.color;
+      }
+    });
+  });
+</script>
 {% endblock body %}
