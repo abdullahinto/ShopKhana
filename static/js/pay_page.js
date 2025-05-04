@@ -113,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
       infoContainer.innerHTML = `
         <h4>Cash on Delivery (COD)</h4>
         <p>- You may pay in cash to our courier upon receiving your parcel at the doorstep.</p>
-        <p>- Before agreeing to receive the parcel, check if your delivery status has been updated to 'Out for Delivery'.</p>
         <p>- Before receiving, confirm that the bill shows that the parcel is from ShopKhana.</p>
         <p>- Before you make payment to the courier, confirm your order number, sender information and tracking number on the parcel.</p>
         <p>- Cash Payment Fee of <strong>Rs. ${window.codfee}</strong> applies only to COD.</p>
