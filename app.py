@@ -2669,7 +2669,7 @@ def download_invoice(order_id):
     )
     return send_file(io.BytesIO(invoice_content.encode()), mimetype="text/plain", as_attachment=True, download_name=f"Invoice_{order_id}.txt")
 
-# Check Cancellation Eligibility: Allow cancellation only within 2 hours.
+# Check Cancellation Eligibility: Allow cancellation only within 1 hours.
 @app.route('/check-cancel-order/<order_id>')
 @login_required
 def check_cancel_order(order_id):
@@ -2677,9 +2677,25 @@ def check_cancel_order(order_id):
     if not order:
         return jsonify({"allowed": False, "message": "Order not found."})
     now = datetime.datetime.utcnow()
-    if now - order.get("transaction_date") > datetime.timedelta(hours=2):
+    if now - order.get("transaction_date") > datetime.timedelta(hours=1):
         return jsonify({"allowed": False, "message": "Cancellation not allowed."})
     return jsonify({"allowed": True, "message": "Order can be canceled."})
+
+
+
+@app.route('/mark-processing/<order_id>', methods=['POST'])
+@login_required
+def mark_processing(order_id):
+    user_email = current_user.email
+    res = mongo.db.orders.update_one(
+        {"order_id": order_id, "user_email": user_email},
+        {"$set": {"order_status": "Processing"}}
+    )
+    if res.modified_count == 1:
+        return jsonify({"status": "ok"}), 200
+    return jsonify({"status": "fail"}), 400
+
+
 
 # Cancel Order: Update the order status to 'Canceled' if eligible.
 @app.route('/cancel_order/<order_id>', methods=["POST"])

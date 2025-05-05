@@ -172,7 +172,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeNotAllowedBtn =
     cancelNotAllowedPopup.querySelector(".close-dialog");
   function showCancelNotAllowedPopup(message) {
-    document.getElementById("cancelNotAllowedMsg").textContent ="Order cancellations are available within the first 2 hours. Since that time has passed, your order is being processed with care 🤗✨. We hope it brings you joy 😊💖, and we’re here if you need us! 💌" ;
+    document.getElementById("cancelNotAllowedMsg").textContent =
+      "Order cancellations are available within the first 1 hour. Since that time has passed, your order is being processed with care 🤗✨. We hope it brings you joy 😊💖, and we’re here if you need us! 💌";
     cancelNotAllowedPopup.style.display = "flex";
   }
 
@@ -205,4 +206,54 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }, 3000);
   }
+});
+
+// ---- Countdown & auto‑process logic ----
+document.querySelectorAll(".order-summary").forEach((summary) => {
+  const orderId = summary.dataset.orderId;
+  const txIso = summary.dataset.tx;
+  if (!txIso) return;
+  const countdownEl = summary.querySelector(".countdown");
+
+  // compute the target = tx + 1 hour (3600 s)
+  const startTime = new Date(txIso).getTime();
+  const targetTime = startTime + 60 * 60 * 1000;
+
+  const tick = () => {
+    const now = Date.now();
+    let diff = targetTime - now;
+    if (diff <= 0) {
+      // time’s up → mark Processing & clear interval
+      clearInterval(intervalId);
+      fetch(`/mark-processing/${orderId}`, { method: "POST" })
+        .then((r) => r.json())
+        .then((json) => {
+          if (json.status === "ok") {
+            // you could either reload entire page:
+            // window.location.reload();
+            // —or— just update this card’s status:
+            const card = document.querySelector(
+              `.order-card[data-order-id="${orderId}"]`
+            );
+            card.querySelector(".order-status").textContent = "Processing";
+            summary.querySelector(".order-countdown").remove();
+          }
+        });
+      return;
+    }
+    // format HH:MM:SS
+    const hrs = Math.floor(diff / 3600000);
+    diff %= 3600000;
+    const mins = Math.floor(diff / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    countdownEl.textContent =
+      String(hrs).padStart(2, "0") +
+      ":" +
+      String(mins).padStart(2, "0") +
+      ":" +
+      String(secs).padStart(2, "0");
+  };
+
+  tick(); // initial
+  const intervalId = setInterval(tick, 1000);
 });
