@@ -117,30 +117,30 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- Add to Wishlist Functionality ---
-  const wishlistBtn = document.getElementById("favorite-btn");
-  wishlistBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    const selectedColor = selectedColorInput.value; // may be empty if not selected
-    const formData = new FormData();
-    formData.append("selected_color", selectedColor);
-    fetch(`/add_to_wishlist/${PRODUCT_ID}`, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          showToast(data.message, "success");
-        } else {
-          showToast(data.message, "error");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        showToast("Error adding to wishlist.", "error");
-      });
-  });
+  // // --- Add to Wishlist Functionality ---
+  // const wishlistBtn = document.getElementById("favorite-btn");
+  // wishlistBtn.addEventListener("click", (e) => {
+  //   e.preventDefault();
+  //   const selectedColor = selectedColorInput.value; // may be empty if not selected
+  //   const formData = new FormData();
+  //   formData.append("selected_color", selectedColor);
+  //   fetch(`/add_to_wishlist/${PRODUCT_ID}`, {
+  //     method: "POST",
+  //     body: formData,
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data.success) {
+  //         showToast(data.message, "success");
+  //       } else {
+  //         showToast(data.message, "error");
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //       showToast("Error adding to wishlist.", "error");
+  //     });
+  // });
 
   // --- WRITE A REVIEW POPUP ---
   const writeReviewTrigger = document.getElementById("write-review-link");
