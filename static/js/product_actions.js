@@ -152,8 +152,12 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       writeReviewPopup.style.display = "none"; // Force hide first
 
+      const productId = writeReviewTrigger.dataset.productId;
+
       try {
-        const response = await fetch("/check-delivered-orders");
+        const response = await fetch(
+          `/check-delivered-orders?product_id=${productId}`
+        );
         if (!response.ok) throw new Error("Network error");
 
         const data = await response.json();
@@ -162,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
           writeReviewPopup.style.display = "flex";
         } else {
           showToast(
-            "Please purchase an item before writing a review.",
+            "You can only review products you've bought and received.",
             "error"
           );
         }

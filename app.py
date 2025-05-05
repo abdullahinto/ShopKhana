@@ -9,6 +9,7 @@ import re
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from urllib.parse import parse_qs, urlencode
+import math
 
 
 
@@ -1393,21 +1394,28 @@ def share_wishlist_item(product_id):
     share_url = request.host_url.rstrip("/") + "/product/" + product_id
     return jsonify({"share_url": share_url})
 
-import math
+
 
 
 @app.route('/check-delivered-orders')
 @login_required
 def check_delivered_orders():
     user_email = current_user.email
-    # Case-insensitive regex for "delivered" (exact match, trims whitespace)
+    product_id = request.args.get('product_id')
+
+    if not product_id:
+        return jsonify({'hasDelivered': False}), 400
+
+    # Query to check if the user has a delivered order for this product
     query = {
         "user_email": user_email,
         "order_status": {
-            "$regex": r"^\s*delivered\s*$",  # Allows for leading/trailing spaces
+            "$regex": r"^\s*delivered\s*$",  # Allow leading/trailing spaces
             "$options": "i"
-        }
+        },
+        "product_ids": product_id
     }
+
     has_delivered = mongo.db.orders.find_one(query) is not None
     return jsonify({"hasDelivered": has_delivered})
 

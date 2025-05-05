@@ -135,7 +135,7 @@
 
       <!-- Variations (Colors) -->
       <div class="variations-section">
-        <label>Colors:</label>
+        <label>Variations:</label>
         <div class="variation-list">
           {% for color in product.colors %}
           <button type="button" class="variation-btn" data-color="{{ color }}">
@@ -280,7 +280,7 @@
   <!-- TAB CONTENT: REVIEWS -->
   <div class="tab-content active" id="reviewsTab">
     <div class="reviews-container" id="reviewsContainer">
-      <a href="/write-review" id="write-review-link" class="requires-auth">Write a Review 😊</a>
+      <a href="/write-review" id="write-review-link" class="requires-auth" data-product-id="{{ product._id }}">Write a Review 😊</a>
       {% if reviews|length > 0 %}
       {% for rev in reviews %}
       <div class="review-item{% if loop.index > 10 %} hidden{% endif %}">
