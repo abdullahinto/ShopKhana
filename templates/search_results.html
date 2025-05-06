@@ -9,9 +9,9 @@ ShopKhana - Search Results
 {% endblock extra_css %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/search_results.js') }}"></script>
-<script src="{{ url_for('static', filename='js/search.js') }}"></script>
-<script src="{{ url_for('static', filename='js/search_filter.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/search_results.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/search_filter.js') }}"></script>
 {% endblock extra_js %}
 
 {% block body %}
@@ -86,9 +86,9 @@ ShopKhana - Search Results
             <a href="{{ url_for('product_page', product_id=product._id) }}" style="text-decoration: none;">
                 <div class="sk-search-results-product-image">
                     <img src="{{ product.images[0] if product.images else url_for('static', filename='img/placeholder.png') }}"
-                        alt="Product Image" class="sk-search-results-primary-image">
+                        alt="Product Image" class="sk-search-results-primary-image" loading="lazy">
                     <img src="{{ product.images[1] if product.images|length > 1 else product.images[0] }}"
-                        alt="Product Image" class="sk-search-results-secondary-image">
+                        alt="Product Image" class="sk-search-results-secondary-image" loading="lazy">
                 </div>
                 <h3 class="sk-search-results-product-title">{{ product.title }}</h3>
                 <div class="sk-search-results-product-rating">

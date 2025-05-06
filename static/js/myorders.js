@@ -1,85 +1,87 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Toggle Order Details on clicking order summary.
+document.addEventListener("DOMContentLoaded", function () {
   const orderCards = document.querySelectorAll(".order-card");
-  orderCards.forEach((card) => {
+
+  // Toggle Order Details
+  orderCards.forEach(function (card) {
     const summary = card.querySelector(".order-summary");
-    summary.addEventListener("click", (e) => {
-      if (["button", "a"].includes(e.target.tagName.toLowerCase())) return;
+    summary.addEventListener("click", function (event) {
+      const tag = event.target.tagName.toLowerCase();
+      if (tag === "button" || tag === "a") {
+        return;
+      }
       const details = card.querySelector(".order-details");
       details.style.display =
         details.style.display === "block" ? "none" : "block";
     });
   });
 
-  // Filter orders by status.
+  // Filter by status
   const orderFilter = document.getElementById("orderFilter");
-  orderFilter.addEventListener("change", () => {
-    const selected = orderFilter.value.toLowerCase();
-    orderCards.forEach((card) => {
+  orderFilter.addEventListener("change", function (event) {
+    const selected = event.target.value.toLowerCase();
+    orderCards.forEach(function (card) {
       const status = card.getAttribute("data-status").toLowerCase();
       card.style.display =
         selected === "all" || status === selected ? "block" : "none";
     });
   });
 
-  // Copy Tracking Info.
-  document.querySelectorAll(".copy-tracking-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const trackingId =
-        btn.parentElement.querySelector(".tracking-id").textContent;
-      copyToClipboard(trackingId);
-      showToast("Tracking info copied!", "success");
+  // Copy Tracking Info
+  const copyButtons = document.querySelectorAll(".copy-tracking-btn");
+  copyButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const details = btn.closest(".order-details");
+      const trackingId = details.querySelector(".tracking-id").textContent;
+      navigator.clipboard
+        .writeText(trackingId)
+        .then(function () {
+          showToast("Tracking info copied!", "success");
+        })
+        .catch(function () {
+          showToast("Copy failed", "error");
+        });
     });
   });
 
-  function copyToClipboard(text) {
-    const tempInput = document.createElement("input");
-    tempInput.style.position = "absolute";
-    tempInput.style.left = "-9999px";
-    tempInput.value = text;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand("copy");
-    document.body.removeChild(tempInput);
-  }
-
-  // Track Shipment: Redirect to WhatsApp.
-  document.querySelectorAll(".track-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+  // Track Shipment
+  const trackButtons = document.querySelectorAll(".track-btn");
+  trackButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
       const orderId = btn.getAttribute("data-order-id");
-      const message = `Order ${orderId}: You can track your order status on WhatsApp!`;
-      window.open(
-        `https://wa.me/+923098245609?text=${encodeURIComponent(message)}`,
-        "_blank"
-      );
+      const message =
+        "Order " + orderId + ": You can track your order on WhatsApp!";
+      const url =
+        "https://wa.me/+923098245609?text=" + encodeURIComponent(message);
+      window.open(url, "_blank");
     });
   });
 
-  // Cancel Order: Check eligibility and show appropriate popup.
-  document.querySelectorAll(".cancel-order-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+  // Cancel Order button
+  const cancelButtons = document.querySelectorAll(".cancel-order-btn");
+  cancelButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
       const orderId = btn.getAttribute("data-order-id");
-      fetch(`/check-cancel-order/${orderId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (!data.allowed) {
-            showCancelNotAllowedPopup(data.message);
-            return;
-          } else {
+      fetch("/check-cancel-order/" + orderId)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.allowed) {
             showCancelPopup(orderId);
+          } else {
+            showCancelNotAllowedPopup(data.message);
           }
         })
-        .catch((err) => {
-          console.error(err);
+        .catch(function () {
           showToast("Error checking cancellation eligibility.", "error");
         });
     });
   });
 
-  // Cancel Order Popup (Confirmation Overlay)
+  // Cancel Order Popup Elements
   const cancelOrderPopup = document.getElementById("cancelOrderPopup");
   const closePopupBtn = cancelOrderPopup.querySelector(".close-popup-btn");
-  const reasonButtons = document.querySelectorAll("#reasonButtons .reason-btn");
+  const reasonButtons = cancelOrderPopup.querySelectorAll(".reason-btn");
   const otherReasonContainer = document.getElementById("otherReasonContainer");
   const otherReasonText = document.getElementById("otherReasonText");
   const submitCancelBtn = document.getElementById("submitCancel");
@@ -87,19 +89,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showCancelPopup(orderId) {
     currentCancelOrderId = orderId;
-    reasonButtons.forEach((btn) => btn.classList.remove("selected"));
+    reasonButtons.forEach(function (b) {
+      b.classList.remove("selected");
+    });
     otherReasonContainer.style.display = "none";
     otherReasonText.value = "";
     cancelOrderPopup.style.display = "flex";
   }
 
-  closePopupBtn.addEventListener("click", () => {
+  closePopupBtn.addEventListener("click", function () {
     cancelOrderPopup.style.display = "none";
   });
 
-  reasonButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      reasonButtons.forEach((b) => b.classList.remove("selected"));
+  reasonButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      reasonButtons.forEach(function (b) {
+        b.classList.remove("selected");
+      });
       btn.classList.add("selected");
       if (btn.getAttribute("data-reason") === "other") {
         otherReasonContainer.style.display = "block";
@@ -109,9 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  submitCancelBtn.addEventListener("click", () => {
+  submitCancelBtn.addEventListener("click", function () {
     let selectedReason = "";
-    reasonButtons.forEach((btn) => {
+    reasonButtons.forEach(function (btn) {
       if (btn.classList.contains("selected")) {
         selectedReason = btn.getAttribute("data-reason");
       }
@@ -124,43 +130,45 @@ document.addEventListener("DOMContentLoaded", () => {
         "Please select a reason.";
       return;
     }
-    fetch(`/cancel_order/${currentCancelOrderId}`, {
+    fetch("/cancel_order/" + currentCancelOrderId, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reason: selectedReason }),
     })
-      .then((response) => response.json())
-      .then((data) => {
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
         if (data.status === "success") {
           showToast(data.message, "success");
-          const orderCard = document.querySelector(
-            `[data-order-id="${currentCancelOrderId}"]`
+          const card = document.querySelector(
+            '.order-card[data-order-id="' + currentCancelOrderId + '"]'
           );
-          if (orderCard) {
-            orderCard.querySelector(".order-status").textContent = "Canceled";
-            const cancelBtn = orderCard.querySelector(".cancel-order-btn");
-            if (cancelBtn) {
+          card.querySelector(".order-status").textContent = "Canceled";
+          const cancelBtn = card.querySelector(".cancel-order-btn");
+          if (cancelBtn) {
+            const statusText = card
+              .querySelector(".order-status")
+              .textContent.trim();
+            if (statusText !== "Pending") {
               cancelBtn.disabled = true;
-            }
-            const trackBtn = orderCard.querySelector(".track-btn");
-            if (trackBtn) {
-              trackBtn.disabled = true;
-              trackBtn.style.pointerEvents = "none";
-              trackBtn.style.opacity = "0.5";
-            }
-            const invoiceLink = orderCard.querySelector(".invoice-link");
-            if (invoiceLink) {
-              invoiceLink.style.pointerEvents = "none";
-              invoiceLink.style.opacity = "0.5";
+              cancelBtn.style.pointerEvents = "none";
+              cancelBtn.style.opacity = "0.5";
             }
           }
+          const trackBtn = card.querySelector(".track-btn");
+          trackBtn.disabled = true;
+          trackBtn.style.pointerEvents = "none";
+          trackBtn.style.opacity = "0.5";
+          const invoiceLink = card.querySelector(".invoice-link");
+          invoiceLink.style.pointerEvents = "none";
+          invoiceLink.style.opacity = "0.5";
           cancelOrderPopup.style.display = "none";
         } else {
           showToast(data.message, "error");
         }
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(function () {
         showToast("Error canceling order.", "error");
       });
   });
@@ -171,17 +179,17 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   const closeNotAllowedBtn =
     cancelNotAllowedPopup.querySelector(".close-dialog");
+
   function showCancelNotAllowedPopup(message) {
-    document.getElementById("cancelNotAllowedMsg").textContent =
-      "Order cancellations are available within the first 1 hour. Since that time has passed, your order is being processed with care 🤗✨. We hope it brings you joy 😊💖, and we’re here if you need us! 💌";
+    document.getElementById("cancelNotAllowedMsg").textContent = message;
     cancelNotAllowedPopup.style.display = "flex";
   }
 
-  closeNotAllowedBtn.addEventListener("click", () => {
+  closeNotAllowedBtn.addEventListener("click", function () {
     cancelNotAllowedPopup.style.display = "none";
   });
 
-  /* ----- Elegant Toast Notification Function ----- */
+  // Toast Notification
   function showToast(message, type) {
     let container = document.getElementById("toast-container");
     if (!container) {
@@ -190,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
       container.style.position = "fixed";
       container.style.top = "20px";
       container.style.right = "20px";
-      container.style.zIndex = 10000;
+      container.style.zIndex = "10000";
       document.body.appendChild(container);
     }
     const toast = document.createElement("div");
@@ -198,62 +206,80 @@ document.addEventListener("DOMContentLoaded", () => {
     toast.textContent = message;
     container.appendChild(toast);
     toast.classList.add("fade-in");
-    setTimeout(() => {
+    setTimeout(function () {
       toast.classList.remove("fade-in");
       toast.classList.add("fade-out");
-      toast.addEventListener("animationend", () => {
+      toast.addEventListener("animationend", function () {
         toast.remove();
       });
     }, 3000);
   }
-});
 
-// ---- Countdown & auto‑process logic ----
-document.querySelectorAll(".order-summary").forEach((summary) => {
-  const orderId = summary.dataset.orderId;
-  const txIso = summary.dataset.tx;
-  if (!txIso) return;
-  const countdownEl = summary.querySelector(".countdown");
-
-  // compute the target = tx + 1 hour (3600 s)
-  const startTime = new Date(txIso).getTime();
-  const targetTime = startTime + 60 * 60 * 1000;
-
-  const tick = () => {
-    const now = Date.now();
-    let diff = targetTime - now;
-    if (diff <= 0) {
-      // time’s up → mark Processing & clear interval
-      clearInterval(intervalId);
-      fetch(`/mark-processing/${orderId}`, { method: "POST" })
-        .then((r) => r.json())
-        .then((json) => {
-          if (json.status === "ok") {
-            // you could either reload entire page:
-            // window.location.reload();
-            // —or— just update this card’s status:
-            const card = document.querySelector(
-              `.order-card[data-order-id="${orderId}"]`
-            );
-            card.querySelector(".order-status").textContent = "Processing";
-            summary.querySelector(".order-countdown").remove();
-          }
-        });
+  // Countdown & Auto-Process (persistent, using ISO)
+  orderCards.forEach(function (card) {
+    const statusEl = card.querySelector(".order-status");
+    const status = statusEl.textContent.trim().toLowerCase();
+    if (status !== "pending") {
+      const cdC = card.querySelector(".order-countdown");
+      if (cdC) cdC.style.display = "none";
       return;
     }
-    // format HH:MM:SS
-    const hrs = Math.floor(diff / 3600000);
-    diff %= 3600000;
-    const mins = Math.floor(diff / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    countdownEl.textContent =
-      String(hrs).padStart(2, "0") +
-      ":" +
-      String(mins).padStart(2, "0") +
-      ":" +
-      String(secs).padStart(2, "0");
-  };
 
-  tick(); // initial
-  const intervalId = setInterval(tick, 1000);
+    const summary = card.querySelector(".order-summary");
+    const countdownEl = summary.querySelector(".countdown");
+    const txIso = summary.getAttribute("data-tx");
+    if (!txIso || !countdownEl) return;
+
+    const txMs = new Date(txIso).getTime(); // parse ISO correctly
+    const target = txMs + 60 * 60 * 1000; // +1 hour
+    const orderId = card.getAttribute("data-order-id");
+    let interval = null;
+    let calledApi = false; // ensure we flip once
+
+    function tick() {
+      const now = Date.now();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        clearInterval(interval);
+        if (!calledApi) {
+          calledApi = true;
+          fetch("/mark-processing/" + orderId, { method: "POST" })
+            .then(function (res) {
+              // if bad, just log it; no need to throw
+              if (!res.ok) {
+                console.warn("mark-processing failed", res.status);
+                return null;
+              }
+              return res.json();
+            })
+            .then(function (json) {
+              if (json && json.status === "ok") {
+                statusEl.textContent = "Processing";
+                const cdContainer = card.querySelector(".order-countdown");
+                if (cdContainer) cdContainer.remove();
+              }
+            })
+            .catch(function (err) {
+              console.error("Error auto‑processing order", err);
+            });
+        }
+        return;
+      }
+
+      const hrs = Math.floor(diff / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+
+      countdownEl.textContent =
+        String(hrs).padStart(2, "0") +
+        ":" +
+        String(mins).padStart(2, "0") +
+        ":" +
+        String(secs).padStart(2, "0");
+    }
+
+    tick();
+    interval = setInterval(tick, 1000);
+  });
 });

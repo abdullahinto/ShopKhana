@@ -121,7 +121,7 @@ Delivery Information - ShopKhana
   <div class="package-body">
     <div class="product-thumbnail">
       <img src="{{ product.image if product.image else url_for('static', filename='img/placeholder.png') }}"
-        alt="{{ product.title }}" />
+        alt="{{ product.title }}" loading="lazy"/>
     </div>
     <div class="product-info">
       <h5 class="product-title">{{ product.title }}</h5>

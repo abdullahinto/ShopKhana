@@ -160,14 +160,14 @@
 <body>
   <!-- Floating Button -->
   <div class="sw-float-btn" onclick="swToggleWidget()">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png" width="32" alt="WhatsApp Icon">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/WhatsApp_icon.png" width="32" alt="WhatsApp Icon" loading="lazy">
   </div>
 
   <!-- Support Widget -->
   <div id="supportWidget">
     <div class="sw-header">
       <div style="display: flex; align-items: center;">
-        <img src="{{ url_for('static', filename='img/mylogo.webp') }}" width="40" alt="Logo">
+        <img src="{{ url_for('static', filename='img/mylogo.webp') }}" width="40" alt="Logo" loading="lazy">
         <div>
           <div class="title">Support Team</div>
           <small id="greetingText">We're online!</small>
@@ -195,7 +195,7 @@
     </div>
   </div>
 
-  <script>
+  <script defer>
     // Toggle Widget Visibility
     function swToggleWidget() {
       const widget = document.getElementById('supportWidget');

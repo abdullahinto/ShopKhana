@@ -40,9 +40,9 @@ My Reviews - ShopKhana
             <div class="review-header">
                 <a href="{{ url_for('product_page', product_id=review.product_id) }}" class="review-thumb">
                     {% if review.img_urls and review.img_urls|length > 0 %}
-                    <img src="{{ review.img_urls[0] }}" alt="Product Thumbnail">
+                    <img src="{{ review.img_urls[0] }}" alt="Product Thumbnail" loading="lazy">
                     {% else %}
-                    <img src="{{ url_for('static', filename='images/default_product.png') }}" alt="Default Thumbnail">
+                    <img src="{{ url_for('static', filename='images/default_product.png') }}" alt="Default Thumbnail" loading="lazy">
                     {% endif %}
                 </a>
                 <div class="review-info">

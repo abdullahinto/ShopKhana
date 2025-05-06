@@ -26,9 +26,9 @@
             <a href="{{url_for('product_page', product_id = bannerprod._id)}}" style="text-decoration: none;">
                 <div class="banner-product-image">
                     <img src="{{ bannerprod.images[0] if bannerprod.images else '/static/img/placeholder.png' }}"
-                        alt="Product Image" class="banner-primary-image">
+                        alt="Product Image" class="banner-primary-image" loading="lazy">
                     <img src="{{ (bannerprod.images[1] if bannerprod.images|length > 1 else bannerprod.images[0])|default('path/to/default-image.jpg') }}"
-                        alt="Product Image" class="banner-secondary-image">
+                        alt="Product Image" class="banner-secondary-image" loading="lazy">
                 </div>
                 <h3 class="banner-product-title">{{bannerprod.title}}</h3>
                 <div class="banner-product-rating">

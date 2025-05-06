@@ -33,9 +33,9 @@
             <a href="{{ url_for('product_page', product_id=categoryprod._id) }}" style="text-decoration: none;">
                 <div class="category-product-image">
                     <img src="{{ categoryprod.images[0] if categoryprod.images else '/static/img/placeholder.png' }}"
-                        alt="{{ categoryprod.title }}" class="category-primary-image">
+                        alt="{{ categoryprod.title }}" class="category-primary-image" loading="lazy">
                     <img src="{{ (categoryprod.images[1] if categoryprod.images|length > 1 else categoryprod.images[0])|default('path/to/default-image.jpg') }}"
-                        alt="{{ categoryprod.title }}" class="category-secondary-image">
+                        alt="{{ categoryprod.title }}" class="category-secondary-image" loading="lazy">
                 </div>
                 <h3 class="category-product-title">{{ categoryprod.title }}</h3>
                 <div class="category-product-rating">

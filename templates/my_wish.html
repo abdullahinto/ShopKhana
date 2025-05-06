@@ -50,7 +50,7 @@ My Wishlist - ShopKhana
     </div>
     <a href="{{ url_for('product_page', product_id=item.product_id) }}" class="sk-wl-product-link">
       <div class="sk-wl-product-image">
-        <img src="{{ item.image }}" alt="{{ item.title }}">
+        <img src="{{ item.image }}" alt="{{ item.title }} " loading="lazy">
       </div>
       <div class="sk-wl-product-info">
         <div class="sk-wl-product-title">{{ item.title }}</div>

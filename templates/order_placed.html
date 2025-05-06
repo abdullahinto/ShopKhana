@@ -9,7 +9,7 @@ Order Placed - ShopKhana
 {% endblock extra_css %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/final_order.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/final_order.js') }}"></script>
 {% endblock extra_js %}
 
 {% block body %}
@@ -59,9 +59,9 @@ Order Placed - ShopKhana
         {% set image_url = first_item['image_url'] %}
         {% if image_url.startswith('http') %}
         <img src="{{ image_url }}" alt="Product Thumbnail"
-          onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/1.webp') }}';" />
+          onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/1.webp') }}';" loading="lazy" />
         {% else %}
-        <img src="{{ url_for('static', filename='img/1.webp') }}" alt="Product Thumbnail" />
+        <img src="{{ url_for('static', filename='img/1.webp') }}" alt="Product Thumbnail" loading="lazy"/>
         {% endif %}
       </div>
 
@@ -101,7 +101,7 @@ Order Placed - ShopKhana
         {% for item in order_details['items'] %}
         <li>
           {{ item['name'] }} — Qty: {{ item['quantity'] }},
-          Color: {{ item['color'] }},
+          Variation: {{ item['color'] }},
           Rs. {{ "{:,.0f}".format(item['price'] | default(0) | int) }}
         </li>
         {% endfor %}

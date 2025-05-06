@@ -10,6 +10,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from urllib.parse import parse_qs, urlencode
 import math
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+
 
 
 
@@ -2574,6 +2577,7 @@ ShopKhana Team
     </td></tr>
     <tr><td style="padding:10px 20px; color:#333; border-bottom:1px solid #FFECB3;">
       <strong>Order ID:</strong> {order_id}<br>
+      <strong>Product(s): </strong><br>
       {"".join(f"{it['name']} — Qty: {it['quantity']}, Color: {it['color']}<br>" for it in items)}
       <strong>Total:</strong> Rs. {payment_amount}<br>
       <strong>Estimated Delivery:</strong> {estimated_delivery}
@@ -2645,29 +2649,80 @@ def my_orders():
 @login_required
 def track_shipment(order_id):
     message = f"Order {order_id}: You can track your order status on WhatsApp!"
-    whatsapp_number = "+923443680542"
+    whatsapp_number = "+923098245609"
     url = f"https://wa.me/{whatsapp_number}?text={message}"
     return redirect(url)
 
-# Download Invoice: Generate an invoice (read-only text file) with all order details.
+
 @app.route('/download_invoice/<order_id>')
 @login_required
 def download_invoice(order_id):
-    order = mongo.db.orders.find_one({"order_id": order_id, "user_email": current_user.email})
+    # Fetch order
+    order = mongo.db.orders.find_one({
+        "order_id": order_id,
+        "user_email": current_user.email
+    })
     if not order:
         return "Order not found", 404
-    invoice_content = (
-        f"Invoice for Order #{order.get('display_order_number', order.get('order_id'))}\n\n"
-        f"Customer Name: {order.get('customer_name', 'N/A')}\n"
-        f"Phone: {order.get('phone_number', 'N/A')}\n"
-        f"Shipping Address: {order.get('address', '')}, {order.get('province', '')}\n"
-        f"Payment Method: {order.get('payment_method', 'N/A')}\n"
-        f"Order Status: {order.get('order_status', 'N/A')}\n"
-        f"Transaction Date: {order.get('transaction_date').strftime('%Y-%m-%d %H:%M') if order.get('transaction_date') else 'N/A'}\n"
-        f"Total Payment: Rs. {order.get('payment_amount', 0)}\n\n"
-        f"Products: {', '.join(order.get('product_names', []))}\n"
+
+    # Prepare a BytesIO buffer for the PDF
+    buffer = io.BytesIO()
+    # Create the PDF object, using A4 page size
+    p = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    # Draw text lines
+    x_margin = 50
+    y = height - 50
+    line_height = 18
+
+    def draw_line(text, indent=0):
+        nonlocal y
+        p.drawString(x_margin + indent, y, text)
+        y -= line_height
+
+    # Header
+    draw_line(f"Invoice for Order #{order.get('display_order_number', order_id)}")
+    y -= line_height  # extra space
+
+    # Customer details
+    draw_line(f"Customer Name: {order.get('customer_name', 'N/A')}")
+    draw_line(f"Phone: {order.get('phone_number', 'N/A')}")
+    draw_line(f"Shipping Address: {order.get('address', '')}, {order.get('province', '')}")
+    draw_line(f"Payment Method: {order.get('payment_method', 'N/A')}")
+    draw_line(f"Order Status: {order.get('order_status', 'N/A')}")
+    txn = order.get('transaction_date')
+    txn_str = txn.strftime('%Y-%m-%d %H:%M') if txn else 'N/A'
+    draw_line(f"Transaction Date: {txn_str}")
+    draw_line(f"Total Payment: Rs. {order.get('payment_amount', 0):.2f}")
+
+    y -= line_height
+    draw_line("Products:")
+    for name in order.get('product_names', []):
+        draw_line(f"- {name}", indent=20)
+
+    # Footer (optional)
+
+
+    y -= line_height  # add a bit of space before the footer
+    draw_line("Thank you for shopping with us!", indent=0)
+    draw_line("ShopKhana.pk", indent=0)
+   
+    #Finalize and close the page.
+    p.showPage()
+    p.save()
+
+    # Move buffer to start
+    buffer.seek(0)
+    # Send as PDF attachment
+    return send_file(
+        buffer,
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f"Invoice_{order_id}.pdf"
     )
-    return send_file(io.BytesIO(invoice_content.encode()), mimetype="text/plain", as_attachment=True, download_name=f"Invoice_{order_id}.txt")
+
+
 
 # Check Cancellation Eligibility: Allow cancellation only within 1 hours.
 @app.route('/check-cancel-order/<order_id>')
@@ -2683,7 +2738,7 @@ def check_cancel_order(order_id):
 
 
 
-@app.route('/mark-processing/<order_id>', methods=['POST'])
+@app.route('/mark-processing/<order_id>', methods=['GET','POST'])
 @login_required
 def mark_processing(order_id):
     user_email = current_user.email
@@ -2706,7 +2761,7 @@ def cancel_order(order_id):
     if not order:
         return jsonify({"status": "error", "message": "Order not found."}), 404
     now = datetime.datetime.utcnow()
-    if now - order.get("transaction_date") > datetime.timedelta(hours=2):
+    if now - order.get("transaction_date") > datetime.timedelta(hours=1):
         return jsonify({"status": "error", "message": "Cancellation not allowed."}), 400
     result = mongo.db.orders.update_one(
         {"order_id": order_id, "user_email": current_user.email},

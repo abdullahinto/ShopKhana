@@ -10,8 +10,8 @@ ShopKhana - My Returns
 {% endblock extra_css %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/returns_page.js') }}"></script>
-<script src="{{ url_for('static', filename='js/return_popup.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/returns_page.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/return_popup.js') }}"></script>
 {% endblock extra_js %}
 
 {% block body %}
@@ -125,7 +125,7 @@ ShopKhana - My Returns
 
 <div id="return-loading-overlay" style="display: none;">
   <div class="loader-wrapper">
-    <img src="{{ url_for('static', filename='img/mylogo.png') }}" alt="Logo" class="loader-logo">
+    <img src="{{ url_for('static', filename='img/mylogo.png') }}" alt="Logo" class="loader-logo" loading="lazy">
     <div class="loader"></div>
   </div>
 </div>

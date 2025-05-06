@@ -34,10 +34,10 @@
   <script defer src="{{ url_for('static', filename='js/search.js') }}"></script>
   <script defer src="{{ url_for('static', filename='js/auth.js') }}"></script>
   <!-- Add this in your HTML file (before closing </body>) -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- in your <head> or before closing </body> -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-  <audio id="joy-sound" src="{{ url_for('static', filename='audio/ta-da.mp3') }}" preload="auto"></audio>
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
 
 
 
@@ -48,7 +48,7 @@
 
   </script>
 
-  <script>
+  <script defer>
     // Check if the URL has action=login; if so, open the auth popup
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('action') === 'login') {
@@ -125,8 +125,8 @@
       <!-- Logo and Company Name -->
       <div class="logo">
         <a href="{{url_for('main_page')}}">
-          <img class="mylogo" src="{{ url_for('static', filename='img/mylogo.webp') }}" alt="ShopKhana" />
-          <img class="co-name" src="{{ url_for('static', filename='img/ShopKhana.webp') }}" alt="ShopKhana">
+          <img class="mylogo" src="{{ url_for('static', filename='img/mylogo.webp') }}" alt="ShopKhana" loading="lazy"/>
+          <img class="co-name" src="{{ url_for('static', filename='img/ShopKhana.webp') }}" alt="ShopKhana" loading="lazy">
         </a>
       </div>
 
@@ -329,7 +329,7 @@
 
 
 
-  <script>
+  <script defer>
     document.addEventListener('DOMContentLoaded', function () {
       const cartCount = document.querySelector('.cart-count');
       if (cartCount) {
@@ -404,17 +404,13 @@
       <div class="payment-logos">
         <!-- Font Awesome Payment Icons -->
         <img src="{{ url_for('static', filename='img/jc.webp') }}" class="jazz-cash-logo" alt="Jazz Cash"
-          title="Jazz Cash">
+          title="Jazz Cash" loading="lazy">
         <!-- <img src="{{ url_for('static', filename='img/bank.png') }}" class="epaisa-logo" alt="Easy Paisa"
           title="Easy paisa"> -->
         <img src="{{ url_for('static', filename='img/nayapay.webp') }}" class="epaisa-logo" alt="Easy Paisa"
-          title="Easy paisa">
-        <!-- <img src="{{ url_for('static', filename='img/cod.png') }}" class="epaisa-logo" alt="Easy Paisa"
-          title="Easy paisa"> -->
-        <!-- <img src="{{ url_for('static', filename='img/hbl.png') }}" class="epaisa-logo" alt="Easy Paisa"
-          title="Easy paisa"> -->
+          title="Easy paisa" loading="lazy">
         <img src="{{ url_for('static', filename='img/sadapay.webp') }}" class="epaisa-logo" alt="Easy Paisa"
-          title="Easy paisa">
+          title="Easy paisa" loading="lazy">
       </div>
     </div>
 

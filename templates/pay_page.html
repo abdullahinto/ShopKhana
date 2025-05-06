@@ -13,7 +13,7 @@ Payment Methods - ShopKhana
     window.orderSummary = {{ order_summary | tojson }};
     window.codfee = {{ codfee }};
 </script>
-<script src="{{ url_for('static', filename='js/pay_page.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/pay_page.js') }}"></script>
 {% endblock extra_js %}
 
 
@@ -26,31 +26,31 @@ Payment Methods - ShopKhana
         <h2 class="sk-pay-heading">Select Payment Method</h2>
         <div class="sk-pay-methods" id="skPayMethods">
             <div class="sk-pay-method" data-method="jazzcash">
-                <img src="{{ url_for('static', filename='img/jc.webp') }}" alt="JazzCash">
+                <img src="{{ url_for('static', filename='img/jc.webp') }}" alt="JazzCash" loading="lazy">
                 <p>JazzCash</p>
             </div>
             <div class="sk-pay-method" data-method="direct_bank">
-                <img src="{{ url_for('static', filename='img/bank.webp') }}" alt="Direct Bank">
+                <img src="{{ url_for('static', filename='img/bank.webp') }}" alt="Direct Bank" loading="lazy">
                 <p>Direct Bank</p>
             </div>
             <div class="sk-pay-method" data-method="nayapay">
-                <img src="{{ url_for('static', filename='img/nayapay.webp') }}" alt="NayaPay">
+                <img src="{{ url_for('static', filename='img/nayapay.webp') }}" alt="NayaPay" loading="lazy">
                 <p>NayaPay</p>
             </div>
             <div class="sk-pay-method" data-method="cod">
-                <img src="{{ url_for('static', filename='img/cod.webp') }}" alt="Cash on Delivery">
+                <img src="{{ url_for('static', filename='img/cod.webp') }}" alt="Cash on Delivery" loading="lazy">
                 <p>Cash on Delivery</p>
             </div>
             <div class="sk-pay-method" data-method="hbl">
-                <img src="{{ url_for('static', filename='img/hbl.webp') }}" alt="HBL Bank Account">
+                <img src="{{ url_for('static', filename='img/hbl.webp') }}" alt="HBL Bank Account" loading="lazy">
                 <p>HBL Bank Account</p>
             </div>
             <div class="sk-pay-method" data-method="sadapay" style="pointer-events: none; opacity: 0.5;">
-                <img src="{{ url_for('static', filename='img/sadapay.webp') }}" alt="SadaPay">
+                <img src="{{ url_for('static', filename='img/sadapay.webp') }}" alt="SadaPay" loading="lazy">
                 <p>SadaPay</p>
             </div>
             <div class="sk-pay-method" data-method="easypaisa">
-                <img src="{{ url_for('static', filename='img/ep.webp') }}" alt="EasyPaisa">
+                <img src="{{ url_for('static', filename='img/ep.webp') }}" alt="EasyPaisa" loading="lazy">
                 <p>EasyPaisa</p>
             </div>
         </div>

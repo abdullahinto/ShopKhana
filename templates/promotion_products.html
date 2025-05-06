@@ -9,7 +9,7 @@
 {% endblock extra_css %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/promo_products.js') }}"></script>
+<script defer ="{{ url_for('static', filename='js/promo_products.js') }}"></script>
 {% endblock extra_js %}
 
 {% block body %}
@@ -31,11 +31,11 @@
         {% for promotionprod in products %}
         <div class="promotion-product-card">
             <a href="{{ url_for('product_page', product_id=promotionprod._id) }}" style="text-decoration: none;">
-                <div class="promotion-product-image">
+                <div class="promotion-product-image" loading="lazy">
                     <img src="{{ promotionprod.images[0] if promotionprod.images else '/static/img/placeholder.png' }}"
-                        alt="{{ promotionprod.title }}" class="promotion-primary-image">
+                        alt="{{ promotionprod.title }}" class="promotion-primary-image" loading="lazy">
                     <img src="{{ (promotionprod.images[1] if promotionprod.images|length > 1 else promotionprod.images[0])|default('path/to/default-image.jpg') }}"
-                        alt="{{ promotionprod.title }}" class="promotion-secondary-image">
+                        alt="{{ promotionprod.title }}" class="promotion-secondary-image" loading="lazy">
                 </div>
                 <h3 class="promotion-product-title">{{ promotionprod.title }}</h3>
                 <div class="promotion-product-rating">
