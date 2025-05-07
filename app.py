@@ -2738,13 +2738,13 @@ def check_cancel_order(order_id):
 
 
 
-@app.route('/mark-processing/<order_id>', methods=['GET','POST'])
+@app.route('/mark-confirmed/<order_id>', methods=['GET','POST'])
 @login_required
-def mark_processing(order_id):
+def mark_confirmed(order_id):
     user_email = current_user.email
     res = mongo.db.orders.update_one(
         {"order_id": order_id, "user_email": user_email},
-        {"$set": {"order_status": "Processing"}}
+        {"$set": {"order_status": "Confirmed"}}  # Update the order status to 'Confirmed'
     )
     if res.modified_count == 1:
         return jsonify({"status": "ok"}), 200

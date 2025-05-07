@@ -244,24 +244,24 @@ document.addEventListener("DOMContentLoaded", function () {
         clearInterval(interval);
         if (!calledApi) {
           calledApi = true;
-          fetch("/mark-processing/" + orderId, { method: "POST" })
+          fetch("/mark-confirmed/" + orderId, { method: "POST" })
             .then(function (res) {
               // if bad, just log it; no need to throw
               if (!res.ok) {
-                console.warn("mark-processing failed", res.status);
+                console.warn("mark-confirmed failed", res.status);
                 return null;
               }
               return res.json();
             })
             .then(function (json) {
               if (json && json.status === "ok") {
-                statusEl.textContent = "Processing";
+                statusEl.textContent = "Confirmed";
                 const cdContainer = card.querySelector(".order-countdown");
                 if (cdContainer) cdContainer.remove();
               }
             })
             .catch(function (err) {
-              console.error("Error auto‑processing order", err);
+              console.error("Error auto‑confirming order", err);
             });
         }
         return;

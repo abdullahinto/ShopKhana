@@ -85,8 +85,8 @@ Order Placed - ShopKhana
       Check your inbox for real‑time updates.
     </p>
     <p style="font-style: italic;">
-      <strong>Note:</strong> Your order will be processed after <b>2 hours</b>.
-      Once placed, orders cannot be <b>canceled</b>.
+      <strong>Note:</strong> Your order will be confirmed after <b>1 hour</b>.
+      Once it is confirmed, your order cannot be <b>canceled</b>.
     </p>
   </div>
 
@@ -100,8 +100,8 @@ Order Placed - ShopKhana
       <ul>
         {% for item in order_details['items'] %}
         <li>
-          {{ item['name'] }} — Qty: {{ item['quantity'] }},
-          Variation: {{ item['color'] }},
+          {{ item['name'] }} — <b>Qty:</b> {{ item['quantity'] }},
+          <b>Variation:</b> {{ item['color'] }},
           Rs. {{ "{:,.0f}".format(item['price'] | default(0) | int) }}
         </li>
         {% endfor %}
