@@ -38,12 +38,15 @@ Delivery Information - ShopKhana
         value="{{ delivery_info.colony if delivery_info }}" required>
 
       <label for="province">Province</label>
-      <input type="text" id="province" name="province" placeholder="Enter your province (e.g., Punjab, Sindh)"
-        value="{{ delivery_info.province if delivery_info }}" required>
+      <select id="province" name="province" required>
+        <option value="" disabled selected>Select province…</option>
+      </select>
 
       <label for="city">City</label>
-      <input type="text" id="city" name="city" placeholder="Enter your city (e.g., Karachi, Lahore)"
-        value="{{ delivery_info.city if delivery_info }}" required>
+      <select id="city" name="city" required disabled placeholder="Type to search…">
+        <option value="" disabled selected>Select city…</option>
+      </select>
+
 
       <label for="area">Area</label>
       <input type="text" id="area" name="area" placeholder="Enter your area (e.g., DHA, Clifton)"
@@ -121,7 +124,7 @@ Delivery Information - ShopKhana
   <div class="package-body">
     <div class="product-thumbnail">
       <img src="{{ product.image if product.image else url_for('static', filename='img/placeholder.png') }}"
-        alt="{{ product.title }}" loading="lazy"/>
+        alt="{{ product.title }}" loading="lazy" />
     </div>
     <div class="product-info">
       <h5 class="product-title">{{ product.title }}</h5>

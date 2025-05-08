@@ -264,7 +264,10 @@ body {
   cursor: pointer;
   transition: background var(--transition), color var(--transition);
 }
-.PD_add-to-cart-btn,
+.PD_add-to-cart-btn{
+  background-color: #ff8c42;
+  color: #fff;
+}
 .variation-btn:hover {
   background-color: #ff8c42;
   color: #fff;

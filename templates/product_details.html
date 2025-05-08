@@ -5,6 +5,14 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/product_extra_info.css', v='1.0') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='css/related_products.css', v='1.2') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='css/rev.css', v='1.0') }}" />
+
+<style>
+  .variation-btn.selected {
+    border: 2px solid orange;
+    background-color: black;
+    color: white;
+  }
+</style>
 {% endblock extra_css %}
 
 {% block extra_js %}
@@ -99,7 +107,7 @@
       <div class="thumbnails">
         {% for img in product.images %}
         <img src="{{ img }}" alt="Thumb {{ loop.index }}" class="{% if loop.first %}active-thumb{% endif %}"
-          data-full="{{ img }}" loading="lazy"/>
+          data-full="{{ img }}" loading="lazy" />
         {% endfor %}
       </div>
       <div class="main-image">
@@ -132,8 +140,6 @@
 
 
 
-
-      <!-- Variations (Colors) -->
       <div class="variations-section">
         <label>Variations:</label>
         <div class="variation-list">
@@ -143,9 +149,24 @@
           </button>
           {% endfor %}
         </div>
-        <!-- Hidden input to store the selected color -->
         <input type="hidden" class="selected-color" id="selected-color" name="selected_color" value="">
       </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const buttons = document.querySelectorAll(".variation-btn");
+          const hiddenInput = document.getElementById("selected-color");
+
+          buttons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              buttons.forEach(b => b.classList.remove("selected")); // remove from all
+              btn.classList.add("selected"); // add to clicked one
+              hiddenInput.value = btn.getAttribute("data-color"); // update hidden input
+            });
+          });
+        });
+      </script>
+
 
       <!-- Quantity & Favorite -->
       <div class="quantity-favorite">
@@ -163,7 +184,7 @@
       </div>
 
 
-      
+
       <!-- Ask a Question -->
       <div class="ask-question">
         <a href="#" id="ask-question-trigger" class="ask-question-trigger">
@@ -280,7 +301,8 @@
   <!-- TAB CONTENT: REVIEWS -->
   <div class="tab-content active" id="reviewsTab">
     <div class="reviews-container" id="reviewsContainer">
-      <a href="/write-review" id="write-review-link" class="requires-auth" data-product-id="{{ product._id }}">Write a Review 😊</a>
+      <a href="/write-review" id="write-review-link" class="requires-auth" data-product-id="{{ product._id }}">Write a
+        Review 😊</a>
       {% if reviews|length > 0 %}
       {% for rev in reviews %}
       <div class="review-item{% if loop.index > 10 %} hidden{% endif %}">
