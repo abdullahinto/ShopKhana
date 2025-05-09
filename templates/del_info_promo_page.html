@@ -10,7 +10,7 @@ Delivery Information - ShopKhana
 {% endblock extra_css %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/del_info_promo_page.js') }}"></script>
+<script src="{{ url_for('static', filename='js/del_info_promo_page.js', v='1.0') }}"></script>
 <script src="{{ url_for('static', filename='js/package_details.js') }}"></script>
 {% endblock extra_js %}
 
@@ -38,12 +38,14 @@ Delivery Information - ShopKhana
         value="{{ delivery_info.colony if delivery_info }}" required>
 
       <label for="province">Province</label>
-      <select id="province" name="province" required>
+      <select id="province" name="province" data-selected="{{ delivery_info.province if delivery_info else '' }}"
+        required>
         <option value="" disabled selected>Select province…</option>
       </select>
 
       <label for="city">City</label>
-      <select id="city" name="city" required disabled placeholder="Type to search…">
+      <select id="city" name="city" data-selected="{{ delivery_info.city if delivery_info else '' }}" required
+        placeholder="Type to search…" disabled>
         <option value="" disabled selected>Select city…</option>
       </select>
 

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Province & City Dropdowns with Search (Tom Select) ---
+  // --- 2. Province & City Dropdowns with Tom Select + Flask proxy ---
   const provinces = [
     "Punjab",
     "Sindh",
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let citySelectInstance = null;
   let cityFetchController = null;
 
-  // Populate province dropdown
+  // Populate provinces
   provinces.forEach((p) => {
     const o = document.createElement("option");
     o.value = p;
@@ -38,44 +38,39 @@ document.addEventListener("DOMContentLoaded", () => {
     provSel.appendChild(o);
   });
 
-  // Load cities for a given province, with abort & re-init logic
-  async function loadCities(province) {
-    // Destroy old Tom Select immediately
+  async function loadCities(state) {
+    // 1) Destroy old Tom Select
     if (citySelectInstance) {
       citySelectInstance.destroy();
       citySelectInstance = null;
     }
 
-    // Abort any pending fetch
+    // 2) Abort any in-flight request
     if (cityFetchController) {
       cityFetchController.abort();
     }
     cityFetchController = new AbortController();
 
-    // Show loading state
+    // 3) Show loading
     citySel.disabled = true;
     citySel.innerHTML = "";
     citySel.add(new Option("Loading…", "", true, true));
 
     try {
-      const resp = await fetch(
-        "https://countriesnow.space/api/v0.1/countries/state/cities",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ country: "Pakistan", state: province }),
-          signal: cityFetchController.signal,
-        }
-      );
+      const resp = await fetch("/get_cities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ state }),
+        signal: cityFetchController.signal,
+      });
       const json = await resp.json();
 
-      // Populate with new data
+      // Clear & populate
       citySel.innerHTML = "";
       citySel.add(new Option("Select city…", "", true, true));
+
       if (!json.error && Array.isArray(json.data)) {
-        json.data.forEach((city) => {
-          citySel.add(new Option(city, city));
-        });
+        json.data.forEach((c) => citySel.add(new Option(c, c)));
         citySel.disabled = false;
       } else {
         citySel.innerHTML = "";
@@ -83,13 +78,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (err) {
       if (err.name !== "AbortError") {
-        console.error(err);
+        console.error("City load error:", err);
         citySel.innerHTML = "";
         citySel.add(new Option("Error loading cities", "", true, true));
       }
     }
 
-    // Re‑initialize Tom Select
+    // 4) Re‑init Tom Select
     citySelectInstance = new TomSelect(citySel, {
       create: false,
       sortField: { field: "text", direction: "asc" },
@@ -97,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dropdownDirection: "auto",
       placeholder: "Type to search…",
       onInitialize() {
-        const existingCity = citySel.getAttribute("data-selected");
+        const existingCity = citySel.dataset.selected;
         if (existingCity) {
           this.setValue(existingCity);
         }
@@ -105,13 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Trigger city reload on province change
-  provSel.addEventListener("change", () => {
-    loadCities(provSel.value);
-  });
+  provSel.addEventListener("change", () => loadCities(provSel.value));
 
-  // If editing existing info, pre-select province & load cities
-  const existingProv = provSel.getAttribute("data-selected");
+  // Pre‑select if editing
+  const existingProv = provSel.dataset.selected;
   if (existingProv) {
     provSel.value = existingProv;
     loadCities(existingProv);

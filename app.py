@@ -12,6 +12,7 @@ from urllib.parse import parse_qs, urlencode
 import math
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+import requests
 
 
 
@@ -1878,6 +1879,25 @@ def del_info_promo_page():
 
 
 
+
+@app.route('/get_cities', methods=['POST'])
+def get_cities():
+    """
+    Accepts JSON {"state": "Punjab"} and returns the same
+    response as the external countriesnow API, but via Flask.
+    """
+    payload = request.get_json()
+    # optionally validate payload['state'] here
+    try:
+        resp = requests.post(
+            'https://countriesnow.space/api/v0.1/countries/state/cities',
+            json={'country': 'Pakistan', 'state': payload.get('state')}
+        )
+        resp.raise_for_status()
+        return jsonify(resp.json())
+    except Exception as e:
+        # on error, return a safe JSON shape
+        return jsonify({'error': True, 'msg': str(e), 'data': []}), 500
 
 
 
