@@ -110,7 +110,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (method === "hbl") {
       infoContainer.innerHTML = `<p>Hold on buddy, we're just coming soon!🔥</p>`;
     } else if (method === "cod") {
-      infoContainer.innerHTML = `
+      infoContainer.innerHTML = `note
+      
         <h4>Cash on Delivery (COD)</h4>
         <p>- You may pay in cash to our courier upon receiving your parcel at the doorstep.</p>
         <p>- Before receiving, confirm that the bill shows that the parcel is from ShopKhana.</p>
@@ -190,6 +191,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmOrderBtn = document.getElementById("skPayConfirmOrder");
   if (confirmOrderBtn) {
     confirmOrderBtn.addEventListener("click", () => {
+      // Change text immediately and prevent double clicks
+      confirmOrderBtn.textContent = "Confirming...";
+      confirmOrderBtn.disabled = true;
+
       const selectedMethodElem = document.querySelector(
         ".sk-pay-method.active"
       );
@@ -198,6 +203,9 @@ document.addEventListener("DOMContentLoaded", () => {
           "Please select a payment method before confirming your order.",
           "error"
         );
+        // Revert button state
+        confirmOrderBtn.textContent = "Confirm";
+        confirmOrderBtn.disabled = false;
         return;
       }
       const method = selectedMethodElem.getAttribute("data-method");
@@ -214,11 +222,16 @@ document.addEventListener("DOMContentLoaded", () => {
               window.location.href = "/order_placed";
             } else {
               showToast(data.message, "error");
+              // revert on error
+              confirmOrderBtn.textContent = "Confirm";
+              confirmOrderBtn.disabled = false;
             }
           })
           .catch((err) => {
             console.error(err);
             showToast("Error processing COD payment.", "error");
+            confirmOrderBtn.textContent = "Confirm";
+            confirmOrderBtn.disabled = false;
           });
       } else {
         // For digital payments, require that the screenshot has been verified.
@@ -227,6 +240,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "Please verify your payment by uploading a screenshot.",
             "error"
           );
+          confirmOrderBtn.textContent = "Confirm";
+          confirmOrderBtn.disabled = false;
           return;
         }
         window.location.href = "/order_placed";
