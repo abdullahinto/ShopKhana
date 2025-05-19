@@ -33,7 +33,7 @@ from flask_mail import Mail, Message
 from flask_pymongo import PyMongo
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from PIL import Image, ImageEnhance, ImageOps
-from pymongo import DESCENDING
+from pymongo import DESCENDING, ReturnDocument
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -1549,10 +1549,10 @@ def returns_page():
             ret["requested_at_formatted"] = ""
     return render_template('returns_page.html', returns=returns)
 
-@app.route('/check_return_eligibility/<order_id>')
+@app.route('/check_return_eligibility/<order_no>')
 @login_required
-def check_return_eligibility(order_id):
-    order = mongo.db.orders.find_one({"order_id": order_id, "user_email": current_user.email})
+def check_return_eligibility(order_no):
+    order = mongo.db.orders.find_one({"order_no": order_no, "user_email": current_user.email})
     if not order:
         return jsonify({"eligible": False, "message": "Order ID not found."})
     if order.get("order_status", "").lower() != "delivered":
@@ -2101,6 +2101,24 @@ def get_current_product_data(user_email):
     return current_product_ids, current_product_names
 
 
+
+def get_next_order_no():
+    """
+    Atomically increments a counter in 'counters' and returns
+    first‐last#NN (or NNN once past 99). Starts numbering at 10.
+    """
+    counter = mongo.db.counters.find_one_and_update(
+        {"_id": "order_no"},
+        {"$inc": {"seq": 1}},
+        upsert=True,
+        return_document=ReturnDocument.AFTER
+    )
+    # raw seq starts at 1 → numeric = seq + 9 → first is 10, then 11… 99,100,...
+    num = counter["seq"] + 9
+    # get delivery‐info full name (we’ll uppercase its ends later)
+    return num
+
+
 @app.route("/process_payment", methods=["POST"])
 @login_required
 def process_payment():
@@ -2117,29 +2135,25 @@ def process_payment():
         app.logger.error("Missing order summary for user: %s", user_email)
         return jsonify({"status": "error", "message": "Order details missing. Please try again."}), 400
 
-    # --- Helper: fetch current product(s) along with color & quantity ---
+    # --- Helper: fetch current product(s) with their selections ---
     def get_current_product_data(user_email):
         ids, names, colors, quantities = [], [], [], []
-
         selected_products = session.get("selected_ids")
         if selected_products:
             for item in selected_products:
                 pid = item.get("_id")
-                title = item.get("title", "N/A")
-                color = item.get("selected_color", "N/A")
-                qty = item.get("quantity", 1)
                 if pid:
                     ids.append(pid)
-                    names.append(title)
-                    colors.append(color)
-                    quantities.append(qty)
+                    names.append(item.get("title", "N/A"))
+                    colors.append(item.get("selected_color", "N/A"))
+                    quantities.append(item.get("quantity", 1))
             return ids, names, colors, quantities
 
         product_id = session.get("product_id")
         if product_id:
             prod = mongo.db.products.find_one({"_id": ObjectId(product_id)}, {"title": 1})
             ids = [product_id]
-            names = [prod["title"] if prod and "title" in prod else "N/A"]
+            names = [prod.get("title", "N/A")] if prod else ["N/A"]
             colors = [order_summary.get("selected_color", "N/A")]
             quantities = [order_summary.get("quantity", 1)]
             return ids, names, colors, quantities
@@ -2148,18 +2162,28 @@ def process_payment():
         if cart:
             for entry in cart.get("products", []):
                 pid = entry.get("product_id")
-                color = entry.get("color", "N/A")
-                qty = entry.get("quantity", 1)
                 if pid:
                     doc = mongo.db.products.find_one({"_id": ObjectId(pid)}, {"title": 1})
-                    if doc:
-                        ids.append(pid)
-                        names.append(doc.get("title", "N/A"))
-                        colors.append(color)
-                        quantities.append(qty)
+                    ids.append(pid)
+                    names.append(doc.get("title", "N/A") if doc else "N/A")
+                    colors.append(entry.get("selected_color", "N/A"))
+                    quantities.append(entry.get("quantity", 1))
             return ids, names, colors, quantities
 
         return [], [], [], []
+
+    # Fetch common data for both branches
+    ids, names, colors, quantities = get_current_product_data(user_email)
+    customer = mongo.db.del_info.find_one(
+        {"user_email": user_email},
+        {"full_name": 1, "address": 1, "province": 1, "phone_number": 1}
+    ) or {}
+    raw_name = customer.get("full_name", "N/A").strip()
+    # Uppercase letters and fallback
+    first_char = raw_name[0].upper() if raw_name else "X"
+    last_char = raw_name[-1].upper() if raw_name else "X"
+    seq_num = get_next_order_no()
+    order_no = f"{first_char}#{last_char}{seq_num}"
 
     # --- COD branch ---
     if payment_method == "cod":
@@ -2170,6 +2194,7 @@ def process_payment():
         grand_total = float(order_summary.get("grand_total", 0))
         total_payment = grand_total + (cod_fee * qty)
 
+        # Record payment
         mongo.db.payments.insert_one({
             "user_email": user_email,
             "payment_method": "COD",
@@ -2180,30 +2205,27 @@ def process_payment():
             "screenshot": None
         })
 
-        ids, names, colors, quantities = get_current_product_data(user_email)
-        customer = mongo.db.del_info.find_one(
-            {"user_email": user_email},
-            {"full_name": 1, "address": 1, "province": 1, "phone_number": 1}
-        ) or {}
+        # Insert the order with order_no
         mongo.db.orders.insert_one({
+            "order_no": order_no,
             "order_id": str(ObjectId()),
             "user_email": user_email,
             "product_ids": ids,
             "product_names": names,
             "product_colors": colors,
             "product_quantities": quantities,
-            "customer_name": customer.get("full_name", "N/A"),
+            "customer_name": raw_name,
             "address": customer.get("address", "N/A"),
             "province": customer.get("province", "N/A"),
+            "phone_number": customer.get("phone_number", "N/A"),
             "payment_method": "COD",
             "payment_amount": total_payment,
             "order_status": "Pending",
-            "transaction_date": datetime.datetime.utcnow(),
-            "phone_number": customer.get("phone_number", "N/A")
+            "transaction_date": datetime.datetime.utcnow()
         })
 
-        for key in ("selected_ids", "order_summary", "product_id"):
-            session.pop(key, None)
+        # Clear session keys
+        for key in ("selected_ids", "order_summary", "product_id"): session.pop(key, None)
 
         return jsonify({
             "status": "success",
@@ -2214,32 +2236,31 @@ def process_payment():
     if "payment_screenshot" not in request.files:
         return jsonify({"status": "error", "message": "No file uploaded."})
     file = request.files["payment_screenshot"]
-    if file.filename == "":
+    if not file.filename:
         return jsonify({"status": "error", "message": "Invalid file name."})
     file_bytes = file.read()
 
     try:
         original = Image.open(io.BytesIO(file_bytes))
-        processed = preprocess_white_text_on_orange(original) if payment_method == "sadapay" else preprocess_image_for_ocr(original)
+        processed = (
+            preprocess_white_text_on_orange(original)
+            if payment_method == "sadapay"
+            else preprocess_image_for_ocr(original)
+        )
     except Exception as e:
         return jsonify({"status": "error", "message": f"Error processing image: {e}"})
 
     extracted_amount_str = get_prominent_amount(processed) or ""
-    app.logger.info("Extracted prominent amount: %s", extracted_amount_str)
     expected_amount = order_summary.get("grand_total", 0)
 
-    def normalize_amount(txt):
-        return re.sub(r'[^0-9.]', '', txt)
-
-    norm_ext = normalize_amount(extracted_amount_str)
-    norm_exp = normalize_amount(str(expected_amount))
-    int_ext = norm_ext.split('.', 1)[0] if '.' in norm_ext else norm_ext
-    int_exp = norm_exp.split('.', 1)[0] if '.' in norm_exp else norm_exp
+    # Compare amounts
+    def normalize_amount(txt): return re.sub(r"[^0-9.]", "", txt)
+    int_ext = normalize_amount(extracted_amount_str).split('.',1)[0]
+    int_exp = normalize_amount(str(expected_amount)).split('.',1)[0]
 
     errors = []
-    expected_name = "Muhammad Akasha"
     full_text = pytesseract.image_to_string(processed, config='--oem 3 --psm 6')
-    if expected_name not in full_text:
+    if "Muhammad Akasha" not in full_text:
         errors.append("Account name mismatch.")
     if int_ext != int_exp:
         errors.append(f"Amount mismatch. Expected: Rs.{int_exp} Found: Rs.{int_ext}")
@@ -2256,6 +2277,7 @@ def process_payment():
         })
         return jsonify({"status": "error", "message": " ".join(errors)})
 
+    # Successful digital payment
     method_label = get_direct_bank_label() if payment_method == "direct_bank" else payment_method.capitalize()
     mongo.db.payments.insert_one({
         "user_email": user_email,
@@ -2267,30 +2289,25 @@ def process_payment():
         "screenshot": Binary(file_bytes)
     })
 
-    ids, names, colors, quantities = get_current_product_data(user_email)
-    customer = mongo.db.del_info.find_one(
-        {"user_email": user_email},
-        {"full_name": 1, "address": 1, "province": 1, "phone_number": 1}
-    ) or {}
     mongo.db.orders.insert_one({
+        "order_no": order_no,
         "order_id": str(ObjectId()),
         "user_email": user_email,
         "product_ids": ids,
         "product_names": names,
         "product_colors": colors,
         "product_quantities": quantities,
-        "customer_name": customer.get("full_name", "N/A"),
+        "customer_name": raw_name,
         "address": customer.get("address", "N/A"),
         "province": customer.get("province", "N/A"),
+        "phone_number": customer.get("phone_number", "N/A"),
         "payment_method": method_label,
         "payment_amount": expected_amount,
         "order_status": "Processing",
-        "transaction_date": datetime.datetime.utcnow(),
-        "phone_number": customer.get("phone_number", "N/A")
+        "transaction_date": datetime.datetime.utcnow()
     })
 
     return jsonify({"status": "success", "message": "Payment verified successfully!"})
-
 
 
 @app.route("/redirect_to_pay", methods=["POST"])
@@ -2408,6 +2425,9 @@ def cart_count():
     if cart_doc and "products" in cart_doc:
         total_quantity = sum(item.get("quantity", 1) for item in cart_doc["products"])
     return jsonify({"count": total_quantity})  
+
+
+
 @app.route('/order_placed')
 @login_required
 def order_placed():
@@ -2428,7 +2448,7 @@ def order_placed():
         return "No order found", 404
 
     # ─── 2) Extract & prepare data ──────────────────────────────────────────────
-    order_id       = order_doc.get("order_id", "N/A")
+    order_no       = order_doc.get("order_no", "N/A")
     payment_amount = order_doc.get("payment_amount", 0)
     shipping_addr  = order_doc.get("address", "N/A").replace("\n", "<br>")
     order_status   = order_doc.get("order_status", "Processing")
@@ -2474,12 +2494,12 @@ def order_placed():
     ) or "N/A"
 
     # WhatsApp tracking link
-    wa_text = f"Hello ShopKhana, I would like to track my order (Order ID: {order_id})."
+    wa_text = f"Hello ShopKhana, I would like to track my order (Order ID: {order_no})."
     wa_url  = "https://wa.me/923098245609?" + urlencode({'text': wa_text})
 
     # Shared context for template
     order_details = {
-        "order_id":           order_id,
+        "order_id":           order_no,
         "payment_amount":     payment_amount,
         "items":              items,
         "estimated_delivery": estimated_delivery,
@@ -2499,7 +2519,7 @@ def order_placed():
 
 A new order has been placed on ShopKhana.
 
-Order ID: {order_id}
+Order ID: {order_no}
 User Email: {user_email}
 Payment Method: {order_doc.get('payment_method','N/A')}
 Payment Amount: Rs. {payment_amount}
@@ -2522,7 +2542,7 @@ ShopKhana Team
       <h2 style="margin:0; color:#FB8C00;">🚨 New Order Alert</h2>
     </td></tr>
     <tr><td style="padding:20px; color:#333;">
-      <strong>Order ID:</strong> {order_id}<br>
+      <strong>Order ID:</strong> {order_no}<br>
       <strong>User Email:</strong> {user_email}<br>
       <strong>Payment Method:</strong> {order_doc.get('payment_method','N/A')}<br>
       <strong>Payment Amount:</strong> Rs. {payment_amount}<br>
@@ -2563,7 +2583,7 @@ ShopKhana Team
 
 Thank you for shopping with ShopKhana!
 
-Order ID: {order_id}
+Order ID: {order_no}
 Status: {order_status}
 
 Products:
@@ -2596,7 +2616,7 @@ ShopKhana Team
       Order Summary
     </td></tr>
     <tr><td style="padding:10px 20px; color:#333; border-bottom:1px solid #FFECB3;">
-      <strong>Order ID:</strong> {order_id}<br>
+      <strong>Order ID:</strong> {order_no}<br>
       <strong>Product(s): </strong><br>
       {"".join(f"{it['name']} — Qty: {it['quantity']}, Color: {it['color']}<br>" for it in items)}
       <strong>Total:</strong> Rs. {payment_amount}<br>
@@ -2667,8 +2687,8 @@ def my_orders():
 # Track Shipment: Redirect to WhatsApp with a message using the actual order_id.
 @app.route('/track_shipment/<order_id>')
 @login_required
-def track_shipment(order_id):
-    message = f"Order {order_id}: You can track your order status on WhatsApp!"
+def track_shipment(order_no):
+    message = f"Order {order_no}: You can track your order status on WhatsApp!"
     whatsapp_number = "+923098245609"
     url = f"https://wa.me/{whatsapp_number}?text={message}"
     return redirect(url)
@@ -2676,10 +2696,10 @@ def track_shipment(order_id):
 
 @app.route('/download_invoice/<order_id>')
 @login_required
-def download_invoice(order_id):
+def download_invoice(order_no):
     # Fetch order
     order = mongo.db.orders.find_one({
-        "order_id": order_id,
+        "order_no": order_no,
         "user_email": current_user.email
     })
     if not order:
@@ -2702,7 +2722,7 @@ def download_invoice(order_id):
         y -= line_height
 
     # Header
-    draw_line(f"Invoice for Order #{order.get('display_order_number', order_id)}")
+    draw_line(f"Invoice for Order #{order.get('display_order_number', order_no)}")
     y -= line_height  # extra space
 
     # Customer details
@@ -2739,7 +2759,7 @@ def download_invoice(order_id):
         buffer,
         mimetype='application/pdf',
         as_attachment=True,
-        download_name=f"Invoice_{order_id}.pdf"
+        download_name=f"Invoice_{order_no}.pdf"
     )
 
 
@@ -2747,8 +2767,8 @@ def download_invoice(order_id):
 # Check Cancellation Eligibility: Allow cancellation only within 1 hours.
 @app.route('/check-cancel-order/<order_id>')
 @login_required
-def check_cancel_order(order_id):
-    order = mongo.db.orders.find_one({"order_id": order_id, "user_email": current_user.email})
+def check_cancel_order(order_no):
+    order = mongo.db.orders.find_one({"order_no": order_no, "user_email": current_user.email})
     if not order:
         return jsonify({"allowed": False, "message": "Order not found."})
     now = datetime.datetime.utcnow()
@@ -2760,10 +2780,10 @@ def check_cancel_order(order_id):
 
 @app.route('/mark-confirmed/<order_id>', methods=['GET','POST'])
 @login_required
-def mark_confirmed(order_id):
+def mark_confirmed(order_no):
     user_email = current_user.email
     res = mongo.db.orders.update_one(
-        {"order_id": order_id, "user_email": user_email},
+        {"order_no": order_no, "user_email": user_email},
         {"$set": {"order_status": "Confirmed"}}  # Update the order status to 'Confirmed'
     )
     if res.modified_count == 1:
@@ -2773,18 +2793,18 @@ def mark_confirmed(order_id):
 
 
 # Cancel Order: Update the order status to 'Canceled' if eligible.
-@app.route('/cancel_order/<order_id>', methods=["POST"])
+@app.route('/cancel_order/<order_no>', methods=["POST"])
 @login_required
-def cancel_order(order_id):
+def cancel_order(order_no):
     reason = request.json.get("reason", "")
-    order = mongo.db.orders.find_one({"order_id": order_id, "user_email": current_user.email})
+    order = mongo.db.orders.find_one({"order_no": order_no, "user_email": current_user.email})
     if not order:
         return jsonify({"status": "error", "message": "Order not found."}), 404
     now = datetime.datetime.utcnow()
     if now - order.get("transaction_date") > datetime.timedelta(hours=1):
         return jsonify({"status": "error", "message": "Cancellation not allowed."}), 400
     result = mongo.db.orders.update_one(
-        {"order_id": order_id, "user_email": current_user.email},
+        {"order_no": order_no, "user_email": current_user.email},
         {"$set": {"order_status": "Canceled", "cancellation_reason": reason}}
     )
     if result.modified_count > 0:

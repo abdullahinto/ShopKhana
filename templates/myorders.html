@@ -29,11 +29,11 @@ ShopKhana - My Orders
 
   <div class="orders-container">
     {% for order in orders %}
-    <div class="order-card" data-status="{{ order.order_status | lower }}" data-order-id="{{ order.order_id }}">
-      <div class="order-summary" data-order-id="{{ order.order_id }}"
+    <div class="order-card" data-status="{{ order.order_status | lower }}" data-order-id="{{ order.order_no }}">
+      <div class="order-summary" data-order-id="{{ order.order_no }}"
         data-tx="{{ order.transaction_date.strftime('%Y-%m-%dT%H:%M:%S') }}Z">
         <div class="order-info">
-          <span class="order-number">Order #{{ order.display_order_number }}</span>
+          <span class="order-number">Order-No. {{ order.order_no }}</span>
           <span class="order-date">{{ order.transaction_date_formatted }}</span>
           <span class="order-total">
             Total: Rs. {{ "{:,.0f}".format(order.payment_amount | default(0) | int) }}
@@ -47,16 +47,16 @@ ShopKhana - My Orders
           <span style="font-weight: bold;" class="countdown">--:--:--</span>
         </div>
         <div class="order-actions">
-          <button class="track-btn" data-order-id="{{ order.order_id }}" {% if order.order_status | lower=="canceled" %}
+          <button class="track-btn" data-order-id="{{ order.order_no }}" {% if order.order_status | lower=="canceled" %}
             disabled style="pointer-events: none; opacity: 0.5;" {% endif %}>
             Track Shipment
           </button>
           {% if order.order_status | lower not in ["canceled","delivered"] %}
-          <button class="cancel-order-btn" data-order-id="{{ order.order_id }}">
+          <button class="cancel-order-btn" data-order-id="{{ order.order_no }}">
             Cancel Order
           </button>
           {% else %}
-          <button class="cancel-order-btn" data-order-id="{{ order.order_id }}" disabled>
+          <button class="cancel-order-btn" data-order-id="{{ order.order_no }}" disabled>
             Cancel Order
           </button>
           {% endif %}
@@ -83,7 +83,7 @@ ShopKhana - My Orders
         <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
         <p>
           <strong>Tracking ID:</strong>
-          <span class="tracking-id">{{ order.order_id }}</span>
+          <span class="tracking-id">{{ order.order_no }}</span>
           <button class="copy-tracking-btn">Copy</button>
         </p>
       </div>
