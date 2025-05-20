@@ -33,8 +33,8 @@ function initializeLoadMoreCategories() {
   const categoryCards = document.querySelectorAll(
     "#categories-section .category-card"
   );
-  const initialVisibleCount = 10;
-  // Hide cards beyond the first 10 initially.
+  const initialVisibleCount = 14;
+  // Hide cards beyond the first 14 initially.
   categoryCards.forEach((card, index) => {
     if (index >= initialVisibleCount) {
       card.style.display = "none";
