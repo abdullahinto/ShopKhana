@@ -122,15 +122,12 @@
   align-items: center;
   gap: 0.25rem;
   font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-  color: #ffc107;
   margin-bottom: clamp(0.5rem, 2vw, 1rem);
   
 }
 .rating-text {
   margin-left: 0.25rem;
-  color: var(--text-dark);
-  font-family: "Cinzel Decorative", serif;
-  font-weight: 550;
+  font-family: Poppins, serif;
   font-style: italic;
 }
 

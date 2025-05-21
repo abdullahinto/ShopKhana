@@ -101,7 +101,8 @@ Order Placed - ShopKhana
         {% for item in order_details['items'] %}
         <li>
           {{ item['name'] }} — <b>Qty:</b> {{ item['quantity'] }},
-          <b>Variation:</b> {{ item['color'] }},
+          <b>Color:</b> {{ item['color'] }},
+          <b>Size:</b> {{ item['size'] }},
           Rs. {{ "{:,.0f}".format(item['price'] | default(0) | int) }}
         </li>
         {% endfor %}

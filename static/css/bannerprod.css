@@ -122,15 +122,13 @@
   align-items: center;
   gap: 0.25rem;
   font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-  color: #ffc107;
   margin-bottom: clamp(0.5rem, 2vw, 1rem);
 }
 .banner-rating-text {
   margin-left: 0.25rem;
-  font-family: "Cinzel Decorative", serif;
+  font-family: Poppins, serif;
   font-style: italic;
-  font-weight: 550;
-  color: var(--text-dark);
+
 }
 
 /* Pricing */

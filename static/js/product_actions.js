@@ -1,10 +1,14 @@
+// product_actions.js
+
 document.addEventListener("DOMContentLoaded", () => {
   // --- TABS FUNCTIONALITY (DESKTOP & MOBILE) ---
   const tabsNav = document.getElementById("tabsNav");
-  const tabs = tabsNav.querySelectorAll("li");
+  const tabs = tabsNav ? tabsNav.querySelectorAll("li") : [];
   const tabContents = document.querySelectorAll(".tab-content");
   const tabsDropdown = document.getElementById("tabsDropdown");
-  const dropdownSelect = tabsDropdown.querySelector("select");
+  const dropdownSelect = tabsDropdown
+    ? tabsDropdown.querySelector("select")
+    : null;
 
   // Desktop tab click handler
   tabs.forEach((tab) => {
@@ -13,37 +17,21 @@ document.addEventListener("DOMContentLoaded", () => {
       tab.classList.add("active");
       const target = tab.getAttribute("data-tab");
       tabContents.forEach((tc) => tc.classList.remove("active"));
-      document.getElementById(target).classList.add("active");
+      document.getElementById(target)?.classList.add("active");
     });
   });
 
   // Mobile dropdown change handler
-  dropdownSelect.addEventListener("change", (e) => {
-    const target = e.target.value;
-    tabs.forEach((t) => t.classList.remove("active"));
-    const activeTab = document.querySelector(`[data-tab="${target}"]`);
-    if (activeTab) activeTab.classList.add("active");
-    tabContents.forEach((tc) => tc.classList.remove("active"));
-    document.getElementById(target).classList.add("active");
-  });
-
-  // --- VARIATION COLOR SELECTION (Optional) ---
-  const variationButtons = document.querySelectorAll(".variation-btn");
-  const selectedColorInput = document.getElementById("selected-color");
-  const formSelectedColorInput = document.getElementById("form-selected-color");
-
-  variationButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      // Remove active class from all variation buttons
-      variationButtons.forEach((b) => b.classList.remove("active"));
-      // Add active class to the clicked button
-      btn.classList.add("active");
-      // Update the hidden inputs with the selected color
-      const selectedColor = btn.getAttribute("data-color");
-      selectedColorInput.value = selectedColor;
-      formSelectedColorInput.value = selectedColor;
+  if (dropdownSelect) {
+    dropdownSelect.addEventListener("change", (e) => {
+      const target = e.target.value;
+      tabs.forEach((t) => t.classList.remove("active"));
+      const activeTab = document.querySelector(`[data-tab=\"${target}\"]`);
+      activeTab?.classList.add("active");
+      tabContents.forEach((tc) => tc.classList.remove("active"));
+      document.getElementById(target)?.classList.add("active");
     });
-  });
+  }
 
   // --- Toast Notification Function ---
   function showToast(message, type = "success") {
@@ -75,126 +63,110 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- Add to Cart Functionality ---
-  // Ensure you have a global variable or data attribute that holds the current PRODUCT_ID
-  const addToCartBtns = [
-    document.getElementById("add-to-cart-btn"),
-    document.getElementById("buy-now-btn"),
-  ];
-
-  // Attach the click event listener to the Add to Cart button
   const addToCartBtn = document.getElementById("add-to-cart-btn");
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const selectedColor =
+        document.getElementById("selected-color")?.value || "";
+      const selectedSize =
+        document.getElementById("selected-size")?.value || "";
+      const quantity = document.getElementById("form-quantity")?.value || 1;
 
-  addToCartBtn.addEventListener("click", (e) => {
-    e.preventDefault();
+      const formData = new FormData();
+      formData.append("selected_color", selectedColor);
+      formData.append("selected_size", selectedSize);
+      formData.append("quantity", quantity);
 
-    // Get the selected color (or leave it empty if no selection)
-    const selectedColor = selectedColorInput.value;
-
-    // Prepare form data for the request
-    const formData = new FormData();
-    formData.append("selected_color", selectedColor);
-    formData.append(
-      "quantity",
-      document.getElementById("form-quantity").value || 1
-    );
-
-    // Add the item to the cart
-    fetch(`/add_to_cart/${PRODUCT_ID}`, {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          showToast(data.message, "success");
-        } else {
-          showToast(data.message, "error");
-        }
+      fetch(`/add_to_cart/${PRODUCT_ID}`, {
+        method: "POST",
+        body: formData,
       })
-      .catch((err) => {
-        console.error(err);
-        showToast("Error adding to cart.", "error");
-      });
-  });
+        .then((response) => response.json())
+        .then((data) => {
+          showToast(data.message, data.success ? "success" : "error");
+        })
+        .catch((err) => {
+          console.error(err);
+          showToast("Error adding to cart.", "error");
+        });
+    });
+  }
 
-  // // --- Add to Wishlist Functionality ---
-  // const wishlistBtn = document.getElementById("favorite-btn");
-  // wishlistBtn.addEventListener("click", (e) => {
-  //   e.preventDefault();
-  //   const selectedColor = selectedColorInput.value; // may be empty if not selected
-  //   const formData = new FormData();
-  //   formData.append("selected_color", selectedColor);
-  //   fetch(`/add_to_wishlist/${PRODUCT_ID}`, {
-  //     method: "POST",
-  //     body: formData,
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       if (data.success) {
-  //         showToast(data.message, "success");
-  //       } else {
-  //         showToast(data.message, "error");
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //       showToast("Error adding to wishlist.", "error");
-  //     });
-  // });
+  // --- Unified Variation Selection (Color & Size) ---
+  const colorBtns = document.querySelectorAll(".color-btn");
+  const sizeBtns = document.querySelectorAll(".size-btn");
+  const colorInput = document.getElementById("selected-color");
+  const sizeInput = document.getElementById("selected-size");
+  const formColor = document.getElementById("form-selected-color");
+  const formSize = document.getElementById("form-selected-size");
+  const buyNowLink = document.querySelector(".PD_buy-now-btn");
+  const originalBuyNowHref =
+    buyNowLink?.getAttribute("href").split("?")[0] || "";
+
+  function updateBuyNowHref() {
+    const c = encodeURIComponent(colorInput?.value || "");
+    const s = encodeURIComponent(sizeInput?.value || "");
+    if (buyNowLink) {
+      buyNowLink.href =
+        `${originalBuyNowHref}?product_id=${PRODUCT_ID}` +
+        `&selected_color=${c}` +
+        `&selected_size=${s}`;
+    }
+  }
+
+  function bindGroup(btns, dataAttr, hiddenEl, formHiddenEl) {
+    btns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        // toggle active within group
+        btns.forEach((b) => b.classList.toggle("active", b === btn));
+        // set values
+        const val = btn.dataset[dataAttr];
+        if (hiddenEl) hiddenEl.value = val;
+        if (formHiddenEl) formHiddenEl.value = val;
+        updateBuyNowHref();
+      });
+    });
+    // auto-select first
+    if (btns.length && hiddenEl && !hiddenEl.value) btns[0].click();
+  }
+
+  bindGroup(colorBtns, "color", colorInput, formColor);
+  bindGroup(sizeBtns, "size", sizeInput, formSize);
 
   // --- WRITE A REVIEW POPUP ---
   const writeReviewTrigger = document.getElementById("write-review-link");
   const writeReviewPopup = document.getElementById("write-review-popup");
-  const closeReviewPopup = writeReviewPopup.querySelector(".close-popup");
+  const closeReviewPopup = writeReviewPopup?.querySelector(".close-popup");
 
-  if (writeReviewTrigger) {
+  if (writeReviewTrigger && writeReviewPopup) {
     writeReviewTrigger.addEventListener("click", async (e) => {
       e.preventDefault();
-      writeReviewPopup.style.display = "none"; // Force hide first
-
-      const productId = writeReviewTrigger.dataset.productId;
-
+      writeReviewPopup.style.display = "none";
       try {
-        const response = await fetch(
-          `/check-delivered-orders?product_id=${productId}`
+        const resp = await fetch(
+          `/check-delivered-orders?product_id=${PRODUCT_ID}`
         );
-        if (!response.ok) throw new Error("Network error");
-
-        const data = await response.json();
-
-        if (data.hasDelivered) {
-          writeReviewPopup.style.display = "flex";
-        } else {
-          showToast(
-            "You can only review products you've bought and received.",
-            "error"
-          );
-        }
-      } catch (error) {
-        console.error("Error verifying order status:", error);
-        showToast("An error occurred. Please try again.", "error");
+        const data = await resp.json();
+        if (data.hasDelivered) writeReviewPopup.style.display = "flex";
+        else
+          showToast("You can only review products you've received.", "error");
+      } catch (err) {
+        console.error(err);
+        showToast("Error verifying order status.", "error");
       }
     });
   }
-
-  if (closeReviewPopup) {
-    closeReviewPopup.addEventListener("click", () => {
-      writeReviewPopup.style.display = "none";
-    });
-  }
+  closeReviewPopup?.addEventListener("click", () => {
+    writeReviewPopup.style.display = "none";
+  });
 
   // --- REVIEW IMAGE POPUP ---
   const imagePopup = document.getElementById("sk-img-popup");
   const popupImage = document.getElementById("skImgDisplay");
-  const closeImagePopup = imagePopup
-    ? imagePopup.querySelector(".sk-img-close")
-    : null;
+  const closeImagePopup = imagePopup?.querySelector(".sk-img-close");
 
-  // Attach event listener to all review image thumbnails
-  const reviewImageThumbnails = document.querySelectorAll(
-    ".review-image-thumbnail"
-  );
-  reviewImageThumbnails.forEach((img) => {
+  document.querySelectorAll(".review-image-thumbnail").forEach((img) => {
     img.addEventListener("click", (e) => {
       e.preventDefault();
       if (imagePopup && popupImage) {
@@ -203,25 +175,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-
-  if (closeImagePopup) {
-    closeImagePopup.addEventListener("click", () => {
-      imagePopup.style.display = "none";
-    });
-  }
+  closeImagePopup?.addEventListener("click", () => {
+    imagePopup.style.display = "none";
+  });
   window.addEventListener("click", (e) => {
-    if (imagePopup && e.target === imagePopup) {
-      imagePopup.style.display = "none";
-    }
+    if (e.target === imagePopup) imagePopup.style.display = "none";
   });
 
-  // --- SEE MORE CATEGORY BUTTON (data-url) ---
+  // --- SEE MORE CATEGORY BUTTON ---
   document.querySelectorAll(".see-more-cat").forEach((btn) => {
     btn.addEventListener("click", () => {
       const url = btn.getAttribute("data-url");
-      if (url) {
-        window.location.href = url;
-      }
+      if (url) window.location.href = url;
     });
   });
 });

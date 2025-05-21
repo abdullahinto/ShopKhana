@@ -134,23 +134,19 @@ Delivery Information - ShopKhana
 
       {# show selected color if there is one #}
       {% if product.selected_color %}
-      <p>Variation: <strong>{{ product.selected_color }}</strong></p>
+      <p>Selected Color: <strong>{{ product.selected_color }}</strong></p>
       {% endif %}
 
-      <!-- Optional color selection buttons -->
-      {% if product.colors %}
-      <div class="variation-list">
-        {% for color in product.colors %}
-        <button type="button" class="variation-btn{% if color == product.selected_color %} active{% endif %}"
-          data-color="{{ color }}">
-          {{ color }}
-        </button>
-        {% endfor %}
-      </div>
+      {% if product.selected_size %}
+      <p>Selected Size: <strong>{{ product.selected_size }}</strong></p>
       {% endif %}
 
       <!-- Hidden selected color input -->
       <input type="hidden" class="selected-color" value="{{ product.selected_color or '' }}">
+      <!-- Hidden selected size input -->
+      <input type="hidden" class="selected-size" name="selected_size" value="{{ product.selected_size or '' }}">
+
+
 
       <div class="product-pricing">
         <span class="discounted-price">Rs. {{ "{:,.0f}".format(product.price | default(0) | int) }}</span>

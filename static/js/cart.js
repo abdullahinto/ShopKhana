@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Use cart data from the global variable.
-  let cartItems = window.cartData && window.cartData.products ? window.cartData.products : [];
+  let cartItems =
+    window.cartData && window.cartData.products ? window.cartData.products : [];
 
   // Constants & element references.
   const SHIPPING_FEE_DEFAULT = window.cartData.deliveryFee || 0;
@@ -19,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const couponInput = document.getElementById("couponInput");
   const applyCouponBtn = document.getElementById("applyCouponBtn");
 
+  // cart.js
+
   // Render the cart items.
   function renderCartItems() {
     productCartContainer.innerHTML = "";
@@ -26,12 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const emptyDiv = document.createElement("div");
       emptyDiv.classList.add("empty-cart-message");
       emptyDiv.innerHTML = `
-        <i class="fas fa-shopping-cart"></i>
-        <p>Your cart is empty. Start exploring our amazing products and add them to your cart by clicking the <b>"Add to Cart"</b> button. Happy shopping! 😊</p>
-      `;
+      <i class="fas fa-shopping-cart"></i>
+      <p>Your cart is empty. Start exploring our amazing products and add them to your cart by clicking the <b>"Add to Cart"</b> button. Happy shopping! 😊</p>
+    `;
       productCartContainer.appendChild(emptyDiv);
       return;
     }
+
     cartItems.forEach((item, index) => {
       const row = document.createElement("div");
       row.classList.add("cart-item-row");
@@ -45,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
       checkbox.addEventListener("change", () => {
         item.selected = checkbox.checked;
         recalcCart();
-        // Optionally update selection in DB.
       });
 
       // Product Image.
@@ -62,22 +65,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const titleEl = document.createElement("div");
       titleEl.classList.add("cart-item-title");
       titleEl.textContent = item.title;
-      const brandEl = document.createElement("div");
-      brandEl.classList.add("cart-item-brand");
-      brandEl.textContent = `Brand: ${item.brand || "N/A"}`;
       const colorEl = document.createElement("div");
       colorEl.classList.add("cart-item-color");
       colorEl.textContent = `Color: ${item.selected_color}`;
+      const sizeEl = document.createElement("div");
+      sizeEl.classList.add("cart-item-color");
+      sizeEl.textContent = `Size: ${item.selected_size || "N/A"}`;
       const pricingDiv = document.createElement("div");
       pricingDiv.classList.add("cart-item-pricing");
       pricingDiv.innerHTML = `
-        <span class="cart-discount-price">Rs. ${item.discountPrice}</span>
-        <span class="cart-original-price">Rs. ${item.originalPrice}</span>
-        <span class="cart-discount-percent">${item.discountPercent}</span>
-      `;
+      <span class="cart-discount-price">Rs. ${item.discountPrice}</span>
+      <span class="cart-original-price">Rs. ${item.originalPrice}</span>
+      <span class="cart-discount-percent">${item.discountPercent}</span>
+    `;
       detailsDiv.appendChild(titleEl);
-      detailsDiv.appendChild(brandEl);
       detailsDiv.appendChild(colorEl);
+      detailsDiv.appendChild(sizeEl);
       detailsDiv.appendChild(pricingDiv);
 
       // Actions.
@@ -90,6 +93,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const minusBtn = document.createElement("button");
       minusBtn.classList.add("qty-btn");
       minusBtn.textContent = "-";
+      const qtyInput = document.createElement("input");
+      qtyInput.type = "number";
+      qtyInput.value = item.quantity;
+      qtyInput.classList.add("qty-input");
+      const plusBtn = document.createElement("button");
+      plusBtn.classList.add("qty-btn");
+      plusBtn.textContent = "+";
+
       minusBtn.addEventListener("click", () => {
         if (item.quantity > 1) {
           item.quantity--;
@@ -98,10 +109,12 @@ document.addEventListener("DOMContentLoaded", () => {
           updateCartItem(item);
         }
       });
-      const qtyInput = document.createElement("input");
-      qtyInput.type = "number";
-      qtyInput.value = item.quantity;
-      qtyInput.classList.add("qty-input");
+      plusBtn.addEventListener("click", () => {
+        item.quantity++;
+        qtyInput.value = item.quantity;
+        recalcCart();
+        updateCartItem(item);
+      });
       qtyInput.addEventListener("change", () => {
         let val = parseInt(qtyInput.value);
         if (isNaN(val) || val < 1) val = 1;
@@ -110,15 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         recalcCart();
         updateCartItem(item);
       });
-      const plusBtn = document.createElement("button");
-      plusBtn.classList.add("qty-btn");
-      plusBtn.textContent = "+";
-      plusBtn.addEventListener("click", () => {
-        item.quantity++;
-        qtyInput.value = item.quantity;
-        recalcCart();
-        updateCartItem(item);
-      });
+
       qtyDiv.appendChild(minusBtn);
       qtyDiv.appendChild(qtyInput);
       qtyDiv.appendChild(plusBtn);
@@ -129,11 +134,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const heartIcon = document.createElement("i");
       heartIcon.classList.add("fas", "fa-heart");
       heartIcon.addEventListener("click", () => {
-        // Call wishlist endpoint.
+        // Call wishlist endpoint, including size
+        const body = new URLSearchParams();
+        body.append("selected_color", item.selected_color);
+        body.append("selected_size", item.selected_size || "");
+
         fetch(`/add_to_wishlist/${item._id}`, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `selected_color=${encodeURIComponent(item.selected_color)}`,
+          body: body.toString(),
         })
           .then((response) => response.json())
           .then((data) => {
@@ -147,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const trashIcon = document.createElement("i");
       trashIcon.classList.add("fas", "fa-trash");
       trashIcon.addEventListener("click", () => {
-        // Use a styled confirmation modal instead of the default confirm dialog.
         styledConfirm("Are you sure you want to delete this item?", () => {
           deleteCartItem(item);
         });
@@ -171,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function recalcCart() {
     let subTotal = 0;
     let itemCount = 0;
-    cartItems.forEach(item => {
+    cartItems.forEach((item) => {
       if (item.selected) {
         subTotal += item.discountPrice * item.quantity;
         itemCount += item.quantity;
@@ -188,6 +196,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Update a single cart item via endpoint.
+  // cart.js
+
+  // Update a single cart item via endpoint.
   function updateCartItem(item) {
     fetch("/update_cart_item", {
       method: "POST",
@@ -196,14 +207,15 @@ document.addEventListener("DOMContentLoaded", () => {
         user_email: window.cartData.user_email,
         product_id: item._id,
         selected_color: item.selected_color,
+        selected_size: item.selected_size || "",
         quantity: item.quantity,
       }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         console.log("Cart item updated:", data);
       })
-      .catch(err => console.error("Error updating cart item:", err));
+      .catch((err) => console.error("Error updating cart item:", err));
   }
 
   // Delete a single cart item via endpoint.
@@ -215,20 +227,24 @@ document.addEventListener("DOMContentLoaded", () => {
         user_email: window.cartData.user_email,
         product_id: item._id,
         selected_color: item.selected_color,
+        selected_size: item.selected_size || "",
       }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.success) {
-          cartItems = cartItems.filter(i =>
-            i._id !== item._id || i.selected_color !== item.selected_color
+          cartItems = cartItems.filter(
+            (i) =>
+              i._id !== item._id ||
+              i.selected_color !== item.selected_color ||
+              i.selected_size !== item.selected_size
           );
           renderCartItems();
           recalcCart();
         }
         showToast(data.message, data.success ? "success" : "error");
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         showToast("Error removing cart item.", "error");
       });
@@ -236,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Bulk: Delete Selected Items.
   deleteSelectedBtn.addEventListener("click", () => {
-    const itemsToRemove = cartItems.filter(item => item.selected);
+    const itemsToRemove = cartItems.filter((item) => item.selected);
     if (itemsToRemove.length === 0) {
       showToast("No items selected.", "error");
       return;
@@ -247,22 +263,23 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_email: window.cartData.user_email,
-          items: itemsToRemove.map(item => ({
+          items: itemsToRemove.map((item) => ({
             product_id: item._id,
             selected_color: item.selected_color,
+            selected_size: item.selected_size || "",
           })),
         }),
       })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           if (data.success) {
-            cartItems = cartItems.filter(item => !item.selected);
+            cartItems = cartItems.filter((item) => !item.selected);
             renderCartItems();
             recalcCart();
           }
           showToast(data.message, data.success ? "success" : "error");
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           showToast("Error deleting selected items.", "error");
         });
@@ -273,8 +290,8 @@ document.addEventListener("DOMContentLoaded", () => {
   deleteAllBtn.addEventListener("click", () => {
     styledConfirm("Are you sure you want to delete ALL items?", () => {
       fetch("/delete_cart_all", { method: "POST" })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           if (data.success) {
             cartItems = [];
             renderCartItems();
@@ -282,7 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           showToast(data.message, data.success ? "success" : "error");
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           showToast("Error deleting all items.", "error");
         });
@@ -291,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Bulk: Select All.
   selectAllBtn.addEventListener("click", () => {
-    cartItems.forEach(item => (item.selected = true));
+    cartItems.forEach((item) => (item.selected = true));
     renderCartItems();
     recalcCart();
     updateCartInDB();
@@ -302,13 +319,16 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("/update_cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ products: cartItems, user_email: window.cartData.user_email })
+      body: JSON.stringify({
+        products: cartItems,
+        user_email: window.cartData.user_email,
+      }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         console.log("Cart updated:", data);
       })
-      .catch(err => console.error("Error updating cart:", err));
+      .catch((err) => console.error("Error updating cart:", err));
   }
 
   // Coupon Code (placeholder).
@@ -324,9 +344,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Proceed to Checkout: Only include selected items.
   proceedCheckoutBtn.addEventListener("click", () => {
-    const selectedItems = cartItems.filter(item => item.selected);
+    const selectedItems = cartItems.filter((item) => item.selected);
     if (selectedItems.length === 0) {
-      showToast("Please select at least one item to proceed to checkout.", "error");
+      showToast(
+        "Please select at least one item to proceed to checkout.",
+        "error"
+      );
       return;
     }
     updateCartInDB();

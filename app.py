@@ -453,15 +453,16 @@ def update_cart_item():
     user_email = data.get("user_email")
     product_id = data.get("product_id")
     selected_color = data.get("selected_color")
+    selected_size = data.get("selected_size")
     new_quantity = data.get("quantity")
     
-    if not all([user_email, product_id, selected_color, new_quantity]):
+    if not all([user_email, product_id, selected_color, selected_size, new_quantity]):
         return jsonify({"success": False, "message": "Missing data."}), 400
 
     result = mongo.db.cart.update_one(
         {
             "user_email": user_email,
-            "products": {"$elemMatch": {"product_id": product_id, "selected_color": selected_color}}
+            "products": {"$elemMatch": {"product_id": product_id, "selected_color": selected_color, "selected_size": selected_size}}
         },
         {"$set": {"products.$.quantity": new_quantity}}
     )
@@ -480,13 +481,14 @@ def delete_cart_item():
     user_email = data.get("user_email")
     product_id = data.get("product_id")
     selected_color = data.get("selected_color")
+    selected_size = data.get("selected_size")
     
-    if not all([user_email, product_id, selected_color]):
+    if not all([user_email, product_id, selected_color, selected_size]):
         return jsonify({"success": False, "message": "Missing data."}), 400
 
     result = mongo.db.cart.update_one(
         {"user_email": user_email},
-        {"$pull": {"products": {"product_id": product_id, "selected_color": selected_color}}}
+        {"$pull": {"products": {"product_id": product_id, "selected_color": selected_color, "selected_size": selected_size}}}
     )
     if result.modified_count > 0:
         return jsonify({"success": True, "message": "Cart item removed."})
@@ -507,9 +509,10 @@ def delete_cart_selected():
     for item in items_to_remove:
         product_id = item.get("product_id")
         selected_color = item.get("selected_color")
+        selected_size = item.get("selected_size")
         mongo.db.cart.update_one(
             {"user_email": user_email},
-            {"$pull": {"products": {"product_id": product_id, "selected_color": selected_color}}}
+            {"$pull": {"products": {"product_id": product_id, "selected_color": selected_color, "selected_size": selected_size}}}
         )
     return jsonify({"success": True, "message": "Selected items removed."})
 
@@ -1088,19 +1091,22 @@ def add_to_cart(product_id):
     try:
         # Get selected variation color and quantity from the POST data.
         selected_color = request.form.get("selected_color", "").strip()
+        selected_size = request.form.get("selected_size", "").strip()
         quantity = int(request.form.get("quantity", 1))
         if not selected_color:
             return jsonify({"success": False, "message": "Please select a color variation."}), 400
+        if not selected_size:
+            return jsonify({"success": False, "message": "Please select a size variation."}), 400
         
         user_email = current_user.email
         
         # Find the cart document for this user.
         cart_doc = mongo.db.cart.find_one({"user_email": user_email})
         if cart_doc:
-            # Check if the product (with the same color) already exists in the products array.
+            # Check if the product (with the same color and size) already exists in the products array.
             existing_product = None
             for prod in cart_doc.get("products", []):
-                if prod.get("product_id") == product_id and prod.get("selected_color") == selected_color:
+                if prod.get("product_id") == product_id and prod.get("selected_color") == selected_color and prod.get("selected_size") == selected_size:
                     existing_product = prod
                     break
 
@@ -1110,7 +1116,8 @@ def add_to_cart(product_id):
                     {
                         "user_email": user_email,
                         "products.product_id": product_id,
-                        "products.selected_color": selected_color
+                        "products.selected_color": selected_color,
+                        "products.selected_size": selected_size
                     },
                     {"$inc": {"products.$.quantity": quantity}}
                 )
@@ -1121,6 +1128,7 @@ def add_to_cart(product_id):
                     {"user_email": user_email},
                     {"$push": {"products": {"product_id": product_id,
                                              "selected_color": selected_color,
+                                             "selected_size": selected_size,
                                              "quantity": quantity}}}
                 )
                 message = "Item added to cart successfully."
@@ -1131,6 +1139,7 @@ def add_to_cart(product_id):
                 "products": [{
                     "product_id": product_id,
                     "selected_color": selected_color,
+                    "selected_size": selected_size,
                     "quantity": quantity
                 }]
             }
@@ -1148,9 +1157,13 @@ def add_to_cart(product_id):
 def add_to_wishlist(product_id):
     try:
         selected_color = request.form.get("selected_color", "").strip()
+        selected_size = request.form.get("selected_size", "").strip()
         if not selected_color:
             return jsonify({"success": False, "message": "Please select a color variation."}), 400
         
+        if not selected_size:
+            return jsonify({"success": False, "message": "Please select a size variation."}), 400
+
         user_email = current_user.email
         
         # Find the wishlist document for this user.
@@ -1158,7 +1171,7 @@ def add_to_wishlist(product_id):
         if wishlist_doc:
             # Check if the product (with the same color) is already in the wishlist.
             exists = any(
-                item.get("product_id") == product_id and item.get("selected_color") == selected_color
+                item.get("product_id") == product_id and item.get("selected_color") == selected_color and  item.get("selected_size") == selected_size
                 for item in wishlist_doc.get("products", [])
             )
             if exists:
@@ -1167,7 +1180,7 @@ def add_to_wishlist(product_id):
                 mongo.db.wishlist.update_one(
                     {"user_email": user_email},
                     {"$push": {"products": {"product_id": product_id,
-                                             "selected_color": selected_color}}}
+                                             "selected_color": selected_color, "selected_size": selected_size}}}
                 )
                 message = "Item added to wishlist successfully."
         else:
@@ -1176,7 +1189,8 @@ def add_to_wishlist(product_id):
                 "user_email": user_email,
                 "products": [{
                     "product_id": product_id,
-                    "selected_color": selected_color
+                    "selected_color": selected_color,
+                    "selected_size": selected_size
                 }]
             }
             mongo.db.wishlist.insert_one(new_wishlist)
@@ -1318,6 +1332,7 @@ def my_wishlist():
         for item in wishlist_doc["products"]:
             product_id = item.get("product_id")
             selected_color = item.get("selected_color", "N/A")
+            selected_size = item.get("selected_size", "N/A")
             product = mongo.db.products.find_one(
                 {"_id": ObjectId(product_id)},
                 {
@@ -1339,6 +1354,7 @@ def my_wishlist():
                     "productCategory": product.get("productCategory", "Uncategorized"),
                     "brand": product.get("brandName", "N/A"),
                     "selected_color": selected_color,
+                    "selected_size": selected_size,
                     "discountPrice": float(product.get("discountedPrice", 0)),
                     "originalPrice": float(product.get("originalPrice", 0)),
                     "discountPercent": product.get("discountPercent", 0)
@@ -1350,10 +1366,11 @@ def my_wishlist():
 @login_required
 def delete_wishlist_item(product_id):
     selected_color = request.form.get("selected_color", "").strip()
+    selected_size = request.form.get("selected_size", "").strip()
     user_email = current_user.email
     result = mongo.db.wishlist.update_one(
         {"user_email": user_email},
-        {"$pull": {"products": {"product_id": product_id, "selected_color": selected_color}}}
+        {"$pull": {"products": {"product_id": product_id, "selected_color": selected_color, "selected_size": selected_size}}}   
     )
     if result.modified_count > 0:
         return "Wishlist item removed successfully.", 200
@@ -1803,6 +1820,7 @@ def del_info_promo_page():
                     "image": item.get("image", ""),
                     "productCategory": item.get("productCategory", "Uncategorized"),
                     "selected_color": item.get("selected_color", "N/A"),
+                    "selected_size": item.get("selected_size", "N/A"),
                     "price": item.get("discountPrice", 0),
                     "originalprice": item.get("originalPrice", 0),
                     "discountpercent": item.get("discountPercent", 0),
@@ -1826,12 +1844,15 @@ def del_info_promo_page():
              # **NEW**: grab the selected color from the URL, fallback to first color
             selected_color = request.args.get("selected_color") \
                               or (product.get("colors", ["N/A"])[0] if product.get("colors") else "N/A")
+            selected_size = request.args.get("selected_size") \
+                              or (product.get("sizes", ["N/A"])[0] if product.get("sizes") else "N/A")
             selected_product = {
                 "_id": product["_id"],
                 "title": product["title"],
                 "image": product.get("images", [""])[0],
                 "productCategory": product.get("productCategory", "Uncategorized"),
                 "selected_color": selected_color,
+                "selected_size": selected_size,
                 "price": product["discountedPrice"],
                 "originalprice": product["originalPrice"],
                 "discountpercent": product["discountPercent"],
@@ -1856,6 +1877,7 @@ def del_info_promo_page():
                         "image": prod.get("images", [""])[0],
                         "productCategory": prod.get("productCategory", "Uncategorized"),
                         "selected_color": item.get("selected_color", "N/A"),
+                        "selected_size": item.get("selected_size", "N/A"),
                         "price": prod.get("discountedPrice", 0),
                         "originalprice": prod.get("originalPrice", 0),
                         "discountpercent": prod.get("discountPercent", 0),
@@ -2137,7 +2159,7 @@ def process_payment():
 
     # --- Helper: fetch current product(s) with their selections ---
     def get_current_product_data(user_email):
-        ids, names, colors, quantities = [], [], [], []
+        ids, names, colors, sizes, quantities = [], [], [], [], []
         selected_products = session.get("selected_ids")
         if selected_products:
             for item in selected_products:
@@ -2146,8 +2168,9 @@ def process_payment():
                     ids.append(pid)
                     names.append(item.get("title", "N/A"))
                     colors.append(item.get("selected_color", "N/A"))
+                    sizes.append(item.get("selected_size", "N/A"))
                     quantities.append(item.get("quantity", 1))
-            return ids, names, colors, quantities
+            return ids, names, colors, sizes, quantities
 
         product_id = session.get("product_id")
         if product_id:
@@ -2155,8 +2178,9 @@ def process_payment():
             ids = [product_id]
             names = [prod.get("title", "N/A")] if prod else ["N/A"]
             colors = [order_summary.get("selected_color", "N/A")]
+            sizes = [order_summary.get("selected_size", "N/A")]
             quantities = [order_summary.get("quantity", 1)]
-            return ids, names, colors, quantities
+            return ids, names, colors,sizes, quantities
 
         cart = mongo.db.cart.find_one({"user_email": user_email})
         if cart:
@@ -2167,13 +2191,14 @@ def process_payment():
                     ids.append(pid)
                     names.append(doc.get("title", "N/A") if doc else "N/A")
                     colors.append(entry.get("selected_color", "N/A"))
+                    sizes.append(entry.get("selected_size", "N/A"))
                     quantities.append(entry.get("quantity", 1))
-            return ids, names, colors, quantities
+            return ids, names, colors,sizes, quantities
 
-        return [], [], [], []
+        return [], [], [], [], []
 
     # Fetch common data for both branches
-    ids, names, colors, quantities = get_current_product_data(user_email)
+    ids, names, colors,sizes, quantities = get_current_product_data(user_email)
     customer = mongo.db.del_info.find_one(
         {"user_email": user_email},
         {"full_name": 1, "address": 1, "province": 1, "phone_number": 1}
@@ -2213,6 +2238,7 @@ def process_payment():
             "product_ids": ids,
             "product_names": names,
             "product_colors": colors,
+            "product_sizes": sizes,
             "product_quantities": quantities,
             "customer_name": raw_name,
             "address": customer.get("address", "N/A"),
@@ -2296,6 +2322,7 @@ def process_payment():
         "product_ids": ids,
         "product_names": names,
         "product_colors": colors,
+        "product_sizes": sizes,
         "product_quantities": quantities,
         "customer_name": raw_name,
         "address": customer.get("address", "N/A"),
@@ -2325,10 +2352,13 @@ def redirect_to_pay():
         session["selected_ids"] = selected
 
     # Single‑product buy‑now
-    if data.get("selected_color") and data.get("quantity"):
-        # ensure order_summary stores these for process_payment
+    # Always pull these keys if they’re in the payload:
+    if data.get("selected_color"):
         session["order_summary"]["selected_color"] = data["selected_color"]
-        session["order_summary"]["quantity"]       = data["quantity"]
+    if data.get("selected_size"):
+        session["order_summary"]["selected_size"] = data["selected_size"]
+    if data.get("quantity"):
+        session["order_summary"]["quantity"] = data["quantity"]
 
     return jsonify({"status": "success", "redirect_url": url_for("pay_page")})
 
@@ -2381,6 +2411,7 @@ def cart():
                     "productCategory": prod.get("productCategory", "Uncategorized"),
                     "brand": prod.get("brand", "N/A"),
                     "selected_color": item.get("selected_color", "N/A"),
+                    "selected_size": item.get("selected_size", "N/A"),
                     "discountPrice": float(prod.get("discountedPrice", 0)),
                     "originalPrice": float(prod.get("originalPrice", 0)),
                     "discountPercent": prod.get("discountPercent", 0),
@@ -2457,6 +2488,7 @@ def order_placed():
     p_ids       = order_doc.get("product_ids", [])
     p_names     = order_doc.get("product_names", [])
     p_colors    = order_doc.get("product_colors", [])
+    p_sizes    = order_doc.get("product_sizes", [])
     p_quantities= order_doc.get("product_quantities", [])
 
     # Helper to fetch price & image
@@ -2472,9 +2504,9 @@ def order_placed():
 
     # Build enriched items list
     items = []
-    for pid, pname, color, qty in zip(p_ids, p_names, p_colors, p_quantities):
+    for pid, pname, color, size, qty in zip(p_ids, p_names, p_colors, p_sizes, p_quantities):
         item = fetch_item(pid, pname)
-        item.update({"color": color, "quantity": qty})
+        item.update({"color": color, "size": size, "quantity": qty})
         items.append(item)
 
     # Estimated delivery window
@@ -2485,11 +2517,11 @@ def order_placed():
 
     # Plain‑text & HTML product lists
     product_list_txt = "\n".join(
-        f"- {it['name']} (Qty: {it['quantity']}, Color: {it['color']}, Rs. {it['price']})"
+        f"- {it['name']} (Qty: {it['quantity']}, Color: {it['color']}, Size: {it['size']}, Rs. {it['price']})"
         for it in items
     ) or "N/A"
     product_list_html = "<br>".join(
-        f"{it['name']} — Qty: {it['quantity']}, Color: {it['color']}, Rs. {it['price']}"
+        f"{it['name']} — Qty: {it['quantity']}, Color: {it['color']}, Size: {it['size']}, Rs. {it['price']}"
         for it in items
     ) or "N/A"
 
@@ -2552,13 +2584,14 @@ ShopKhana Team
       <table width="100%" cellpadding="8" cellspacing="0"
              style="border:1px solid #FFECB3; border-collapse:collapse;">
         <tr style="background:#FFF8E1; color:#E65100; font-weight:bold;">
-          <td>Product</td><td>Qty</td><td>Color</td><td>Price</td>
+          <td>Product</td><td>Qty</td><td>Color</td><td>Size</td><td>Price</td>
         </tr>
         {''.join(f"""
         <tr>
           <td>{it['name']}</td>
           <td>{it['quantity']}</td>
           <td>{it['color']}</td>
+          <td>{it['size']}</td>
           <td>Rs. {it['price']}</td>
         </tr>""" for it in items)}
       </table>
@@ -2618,7 +2651,7 @@ ShopKhana Team
     <tr><td style="padding:10px 20px; color:#333; border-bottom:1px solid #FFECB3;">
       <strong>Order ID:</strong> {order_no}<br>
       <strong>Product(s): </strong><br>
-      {"".join(f"{it['name']} — Qty: {it['quantity']}, Color: {it['color']}<br>" for it in items)}
+      {"".join(f"{it['name']} — Qty: {it['quantity']}, Color: {it['color']},  Size: {it['size']}<br>" for it in items)}
       <strong>Total:</strong> Rs. {payment_amount}<br>
       <strong>Estimated Delivery:</strong> {estimated_delivery}
     </td></tr>

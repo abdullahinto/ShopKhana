@@ -232,7 +232,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: var(--gutter);
-  font-family: "Cinzel Decorative", serif;
+  font-family: Poppins, serif;
   font-style: italic;
 }
 .status .fa-circle { font-size: 0.5rem; color: currentColor; }

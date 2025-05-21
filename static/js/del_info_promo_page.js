@@ -1,3 +1,5 @@
+// checkout_page.js
+
 document.addEventListener("DOMContentLoaded", () => {
   // --- Effective Delivery Button Toggle ---
   const labelButtons = document.querySelectorAll(".label-btn");
@@ -39,19 +41,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   async function loadCities(state) {
-    // 1) Destroy old Tom Select
     if (citySelectInstance) {
       citySelectInstance.destroy();
       citySelectInstance = null;
     }
-
-    // 2) Abort any in-flight request
     if (cityFetchController) {
       cityFetchController.abort();
     }
     cityFetchController = new AbortController();
 
-    // 3) Show loading
     citySel.disabled = true;
     citySel.innerHTML = "";
     citySel.add(new Option("Loading…", "", true, true));
@@ -65,10 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const json = await resp.json();
 
-      // Clear & populate
       citySel.innerHTML = "";
       citySel.add(new Option("Select city…", "", true, true));
-
       if (!json.error && Array.isArray(json.data)) {
         json.data.forEach((c) => citySel.add(new Option(c, c)));
         citySel.disabled = false;
@@ -84,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // 4) Re‑init Tom Select
     citySelectInstance = new TomSelect(citySel, {
       create: false,
       sortField: { field: "text", direction: "asc" },
@@ -93,16 +88,12 @@ document.addEventListener("DOMContentLoaded", () => {
       placeholder: "Type to search…",
       onInitialize() {
         const existingCity = citySel.dataset.selected;
-        if (existingCity) {
-          this.setValue(existingCity);
-        }
+        if (existingCity) this.setValue(existingCity);
       },
     });
   }
 
   provSel.addEventListener("change", () => loadCities(provSel.value));
-
-  // Pre‑select if editing
   const existingProv = provSel.dataset.selected;
   if (existingProv) {
     provSel.value = existingProv;
@@ -116,9 +107,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData(deliveryForm);
     fetch("/update_delivery_info", { method: "POST", body: formData })
       .then((response) => response.json())
-      .then((data) => {
-        showToast(data.message, data.success ? "success" : "error");
-      })
+      .then((data) =>
+        showToast(data.message, data.success ? "success" : "error")
+      )
       .catch((err) => {
         console.error(err);
         showToast("Error updating delivery information.", "error");
@@ -143,15 +134,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (applyCouponBtn) {
     applyCouponBtn.addEventListener("click", () => {
       const couponCode = couponCodeInput.value.trim();
-      if (!couponCode) {
-        return showToast("Please enter a coupon code.", "error");
-      }
+      if (!couponCode) return showToast("Please enter a coupon code.", "error");
       const formData = new FormData();
       formData.append("couponCode", couponCode);
       const couponProductId = document.getElementById("couponProductId");
-      if (couponProductId && couponProductId.value) {
+      if (couponProductId?.value)
         formData.append("product_id", couponProductId.value);
-      }
       fetch("/apply_coupon", { method: "POST", body: formData })
         .then((response) => response.json())
         .then((data) => {
@@ -159,9 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
             showToast(data.message, "success");
             itemCostEl.textContent = data.new_total.toFixed(2);
             grandTotalEl.textContent = data.new_total.toFixed(2);
-          } else {
-            showToast(data.message, "error");
-          }
+          } else showToast(data.message, "error");
         })
         .catch((err) => {
           console.error(err);
@@ -174,48 +160,51 @@ document.addEventListener("DOMContentLoaded", () => {
   const quantityInputs = document.querySelectorAll(
     "input[name='productQuantity']"
   );
-  quantityInputs.forEach((input) => {
-    input.addEventListener("change", updateOrderSummary);
-  });
+  quantityInputs.forEach((input) =>
+    input.addEventListener("change", updateOrderSummary)
+  );
   function updateOrderSummary() {
-    let totalQuantity = 0;
-    let itemTotal = 0;
+    let totalQuantity = 0,
+      itemTotal = 0;
     quantityInputs.forEach((input) => {
       const qty = parseInt(input.value, 10) || 0;
       totalQuantity += qty;
-      const price = parseFloat(input.getAttribute("data-price")) || 0;
+      const price = parseFloat(input.dataset.price) || 0;
       itemTotal += qty * price;
     });
     const itemQuantityEl = document.getElementById("itemQuantity");
-    const itemCostEl = document.getElementById("itemCost");
-    const grandTotalEl = document.getElementById("grandTotal");
-    if (itemQuantityEl) itemQuantityEl.textContent = totalQuantity;
-    if (itemCostEl) itemCostEl.textContent = itemTotal.toFixed(2);
     const deliveryFeePerUnit =
       parseFloat(document.getElementById("deliveryFee").textContent) || 0;
-    const totalDeliveryFee = deliveryFeePerUnit * totalQuantity;
-    const grandTotal = itemTotal + totalDeliveryFee;
-    if (grandTotalEl) grandTotalEl.textContent = grandTotal.toFixed(2);
+    itemQuantityEl && (itemQuantityEl.textContent = totalQuantity);
+    itemCostEl && (itemCostEl.textContent = itemTotal.toFixed(2));
+    const grandTotal = itemTotal + deliveryFeePerUnit * totalQuantity;
+    grandTotalEl && (grandTotalEl.textContent = grandTotal.toFixed(2));
   }
   updateOrderSummary();
 
+  // --- Gather Selected Products (includes size) ---
   function getSelectedProducts() {
     const selectedProducts = [];
     document.querySelectorAll(".package-body").forEach((container) => {
       const prodIdElem = container.querySelector(".productId");
       const titleElem = container.querySelector(".product-title");
       const colorElem = container.querySelector(".selected-color");
+      const sizeElem = container.querySelector(".selected-size");
       const qtyElem = container.querySelector(".product-quantity");
+
       const prodId = prodIdElem ? prodIdElem.value : null;
       const title = titleElem ? titleElem.textContent.trim() : "N/A";
       const selectedColor = colorElem ? colorElem.value : "N/A";
+      const selectedSize = sizeElem ? sizeElem.value : "N/A";
       const quantity = qtyElem ? parseInt(qtyElem.value, 10) || 1 : 1;
+
       if (prodId) {
         selectedProducts.push({
           _id: prodId,
-          title,
+          title: title,
           selected_color: selectedColor,
-          quantity,
+          selected_size: selectedSize,
+          quantity: quantity,
         });
       }
     });
@@ -245,6 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "error"
       );
     }
+
     const order_summary = {
       quantity:
         parseInt(document.getElementById("itemQuantity").textContent, 10) || 0,
@@ -257,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const user_email = document.getElementById("userEmail").value.trim();
     const selected_ids = getSelectedProducts();
+
     fetch("/redirect_to_pay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

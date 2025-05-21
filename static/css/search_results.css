@@ -222,14 +222,12 @@ html, body {
 }
 .sk-search-results-product-rating {
   display: flex; align-items: center; gap: 0.25rem;
-  color: #ffc107; font-size: clamp(0.8rem,1.5vw,0.9rem);
+  font-size: clamp(0.8rem,1.5vw,0.9rem);
   margin-bottom: clamp(0.5rem,2vw,1rem);
 }
 .sk-search-results-rating-text {
-  font-family: "Cinzel Decorative", serif;
+  font-family: Poppins, serif;
   font-style: italic;
-  font-weight: 550;
-  color: var(--text-dark);
 }
 
 .sk-search-results-product-pricing {

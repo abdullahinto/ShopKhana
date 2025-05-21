@@ -6,10 +6,88 @@ My Wishlist - ShopKhana
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/my_wish.css', v='1.1') }}">
+
+
+<style>
+  .status-text {
+    font-weight: bold;
+  }
+
+  .status-in-stock {
+    color: green;
+  }
+
+  .status-out-of-stock {
+    color: red;
+  }
+
+  .status-low-stock {
+    color: orange;
+  }
+
+  .status-backordered {
+    color: purple;
+  }
+
+  .status-discontinued {
+    color: gray;
+  }
+
+  .status-pre-order {
+    color: blue;
+  }
+
+  .status-limited-stock {
+    color: darkorange;
+  }
+
+  .status-reserved {
+    color: brown;
+  }
+
+  .status-available-pickup {
+    color: teal;
+  }
+
+  .status-coming-soon {
+    color: #5555ff;
+  }
+</style>
 {% endblock extra_css %}
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/my_wish.js') }}"></script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // map of normalized status → CSS suffix
+    const map = {
+      "in stock": "in-stock",
+      "out of stock": "out-of-stock",
+      "low stock": "low-stock",
+      "backordered": "backordered",
+      "discontinued": "discontinued",
+      "pre-order": "pre-order",
+      "limited stock": "limited-stock",
+      "reserved": "reserved",
+      "available for pickup": "available-pickup",
+      "coming soon": "coming-soon"
+    };
+
+    // for each span with .status-text, normalize its text and apply the matching class
+    document.querySelectorAll(".status-text").forEach(el => {
+      const raw = el.textContent.trim().toLowerCase();
+      // strip any old status-… classes
+      Object.values(map).forEach(suffix =>
+        el.classList.remove("status-" + suffix)
+      );
+      // add the new one
+      const suffix = map[raw];
+      if (suffix) el.classList.add("status-" + suffix);
+    });
+  });
+</script>
 {% endblock extra_js %}
 
 {% block body %}
@@ -54,7 +132,7 @@ My Wishlist - ShopKhana
       </div>
       <div class="sk-wl-product-info">
         <div class="sk-wl-product-title">{{ item.title }}</div>
-        <div class="sk-wl-product-brand">Brand: {{ item.brand }}</div>
+        <div class="sk-wl-product-brand status-text">{{ item.status | default("In Stock") }}</div>
         <div class="sk-wl-product-color">Color: {{ item.selected_color }}</div>
         <div class="sk-wl-product-pricing">
           <span class="sk-wl-discount-price">Rs. {{ "{:,.0f}".format(item.discountPrice | default(0) | int) }}</span>

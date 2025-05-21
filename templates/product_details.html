@@ -7,10 +7,57 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/rev.css', v='1.0') }}" />
 
 <style>
-  .variation-btn.selected {
+  .variation-btn.active {
     border: 2px solid orange;
     background-color: black;
-    color: white;
+    color: orange;
+  }
+</style>
+
+
+<style>
+  .status-text {
+    font-weight: bold;
+  }
+
+  .status-in-stock {
+    color: green;
+  }
+
+  .status-out-of-stock {
+    color: red;
+  }
+
+  .status-low-stock {
+    color: orange;
+  }
+
+  .status-backordered {
+    color: purple;
+  }
+
+  .status-discontinued {
+    color: gray;
+  }
+
+  .status-pre-order {
+    color: blue;
+  }
+
+  .status-limited-stock {
+    color: darkorange;
+  }
+
+  .status-reserved {
+    color: brown;
+  }
+
+  .status-available-pickup {
+    color: teal;
+  }
+
+  .status-coming-soon {
+    color: #5555ff;
   }
 </style>
 {% endblock extra_css %}
@@ -29,44 +76,10 @@
   const PRODUCT_ID = "{{ product._id }}";
 </script>
 
-<script defer>
-  document.addEventListener('DOMContentLoaded', () => {
-    const variationBtns = document.querySelectorAll('.variation-btn');
-    const hiddenInput = document.getElementById('selected-color');
-    const formHiddenInput = document.getElementById('form-selected-color');
-    const buyNowLink = document.querySelector('.PD_buy-now-btn');
 
-    function setColor(color) {
-      // 1) store on both hidden inputs
-      hiddenInput.value = color;
-      formHiddenInput.value = color;
-      // 2) rebuild the Buy Now href
-      const base = '{{ url_for("del_info_promo_page") }}';
-      const pid = '{{ product._id }}';
-      buyNowLink.href = `${base}?product_id=${pid}&selected_color=${encodeURIComponent(color)}`;
-      // 3) visually mark selection
-      variationBtns.forEach(b => b.classList.toggle('active', b.dataset.color === color));
-    }
 
-    // Initialize to first color (optional)
-    if (variationBtns.length) {
-      setColor(variationBtns[0].dataset.color);
-    }
 
-    // On each color button click…
-    variationBtns.forEach(btn => {
-      btn.addEventListener('click', () => setColor(btn.dataset.color));
-    });
 
-    // Also sync quantity into the Add-to-Cart form
-    const qtyInput = document.getElementById('quantity-input');
-    const formQty = document.getElementById('form-quantity');
-    qtyInput.addEventListener('input', () => {
-      formQty.value = qtyInput.value;
-    });
-  });
-
-</script>
 
 {% endblock extra_js %}
 
@@ -133,7 +146,7 @@
 
       <div class="status-rating">
         <span class="rating">
-          <span class="rating-number"><strong style="color: orange;"><i>By</i>:</strong> {{ product.brandName }}</span>
+          <span class="rating-number status-text">{{ product.status | default("In Stock") }}</span>
         </span>
       </div>
 
@@ -141,31 +154,31 @@
 
 
       <div class="variations-section">
-        <label>Variations:</label>
+        <label>Colors:</label>
         <div class="variation-list">
           {% for color in product.colors %}
-          <button type="button" class="variation-btn" data-color="{{ color }}">
+          <button type="button" class="variation-btn color-btn" data-color="{{ color }}">
             {{ color }}
           </button>
           {% endfor %}
         </div>
-        <input type="hidden" class="selected-color" id="selected-color" name="selected_color" value="">
+
+        <label>Sizes:</label>
+        <div class="variation-list">
+          {% for size in product.sizes %}
+          <button type="button" class="variation-btn size-btn" data-size="{{ size }}">
+            {{ size }}
+          </button>
+          {% endfor %}
+        </div>
+        <!-- Hidden inputs to carry selections into form and Buy Now URL -->
+        <input type="hidden" id="selected-color" name="selected_color" value="">
+        <input type="hidden" id="form-selected-color" name="selected_color" value="">
+        <input type="hidden" id="selected-size" name="selected_size" value="">
+        <input type="hidden" id="form-selected-size" name="selected_size" value="">
       </div>
 
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          const buttons = document.querySelectorAll(".variation-btn");
-          const hiddenInput = document.getElementById("selected-color");
 
-          buttons.forEach((btn) => {
-            btn.addEventListener("click", () => {
-              buttons.forEach(b => b.classList.remove("selected")); // remove from all
-              btn.classList.add("selected"); // add to clicked one
-              hiddenInput.value = btn.getAttribute("data-color"); // update hidden input
-            });
-          });
-        });
-      </script>
 
 
       <!-- Quantity & Favorite -->
@@ -176,11 +189,6 @@
           <input type="number" id="quantity-input" name="quantity" value="1" min="1" max="50" />
           <button type="button" id="qty-increase"><i class="fas fa-plus"></i></button>
         </div>
-
-        <!-- <button id="buyNowBtn" class="buy-now-btn" data-product-id="{{ product._id }}"
-          data-product-title="{{ product.title }}">
-          Buy Now
-        </button> -->
       </div>
 
 
@@ -197,7 +205,7 @@
           <input type="hidden" name="product_id" value="{{ product._id }}">
           <input type="hidden" name="quantity" id="form-quantity" value="1">
           <!-- Copy the selected color from the hidden input -->
-          <input type="hidden" class="selected-color" name="selected_color" id="form-selected-color" value="">
+         
           <button type="submit" id="add-to-cart-btn" class="PD_add-to-cart-btn requires-auth">
             <i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to Cart
           </button>
@@ -453,7 +461,7 @@
         </div>
         <h3 class="product-title">{{ recprod.title }}</h3>
         <div class="product-rating">
-          <span class="rating-text"><strong style="color: orange;"><i>By</i>: </strong>{{ recprod.brandName }}</span>
+          <span class="rating-text status-text">{{ recprod.status | default("In Stock") }}</span>
         </div>
         <div class="product-pricing">
           <span class="discount-price">Rs.{{ "{:,.0f}".format(recprod.discountedPrice | default(0) | int) }}</span>
@@ -486,6 +494,35 @@
 </div>
 
 
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // map of normalized status → CSS suffix
+    const map = {
+      "in stock": "in-stock",
+      "out of stock": "out-of-stock",
+      "low stock": "low-stock",
+      "backordered": "backordered",
+      "discontinued": "discontinued",
+      "pre-order": "pre-order",
+      "limited stock": "limited-stock",
+      "reserved": "reserved",
+      "available for pickup": "available-pickup",
+      "coming soon": "coming-soon"
+    };
+
+    // for each span with .status-text, normalize its text and apply the matching class
+    document.querySelectorAll(".status-text").forEach(el => {
+      const raw = el.textContent.trim().toLowerCase();
+      // strip any old status-… classes
+      Object.values(map).forEach(suffix =>
+        el.classList.remove("status-" + suffix)
+      );
+      // add the new one
+      const suffix = map[raw];
+      if (suffix) el.classList.add("status-" + suffix);
+    });
+  });
+</script>
 
 <script>
   document.getElementById("write-review-form").addEventListener("submit", function (event) {
@@ -511,5 +548,9 @@
   });
 
 </script>
+
+
+
+
 
 {% endblock body %}
