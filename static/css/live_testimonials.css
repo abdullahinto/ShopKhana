@@ -85,12 +85,14 @@
   cursor: grab;
   touch-action: pan-y;
   transition: transform var(--transition);
+  display: none;
 }
 .testimonial-card:hover {
   transform: scale(1.02);
 }
 .testimonial-card.active {
   z-index: 1;
+  display: flex;
 }
 
 /* Avatar + content */

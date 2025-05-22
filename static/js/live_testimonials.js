@@ -51,31 +51,38 @@ document.addEventListener("DOMContentLoaded", () => {
         // Views
         const views = Math.floor(50 + Math.random() * 200);
 
+        // truncate the review to 50 chars + ellipsis
+        const maxLen = 50;
+        let reviewText = o.review;
+        if (reviewText.length > maxLen) {
+          reviewText = reviewText.slice(0, maxLen).trimEnd() + "…";
+        }
+        // then build your innerHTML using the truncated text:
         card.innerHTML = `
-        <img class="avatar" src="${o.avatar_url}" alt="${o.customer_name}">
-        <div class="testimonial-content">
-          ${stars}
-          <p class="review-text">“${o.review}”</p>
-          <p>
-            <span class="product">${o.product_name}</span>  
-            purchased by <span class="city">${o.customer_name}</span>
-          </p>
-          <p class="testimonial-date">📅 ${formatted} &ensp;👁️ ${views} viewed this</p>
-          <span class="badge">
-            <i class="fas fa-fire" style="color:#FFFF00;"></i> Top Selling
-          </span>
-            <a href="${buildProductUrl(o.product_id)}" class="btn-buy">
-            <i class="fas fa-shopping-bag"></i> Buy Now
-          </a>
-        </div>
-      `;
+  <img class="avatar" src="${o.avatar_url}" alt="${o.customer_name}">
+  <div class="testimonial-content">
+    ${stars}
+    <p class="review-text">“${reviewText}”</p>
+    <p>
+      <span class="product">${o.product_name}</span>  
+      purchased by <span class="city">${o.customer_name}</span>
+    </p>
+    <p class="testimonial-date">📅 ${formatted} &ensp;👁️ ${views} viewed this</p>
+    <span class="badge">
+      <i class="fas fa-fire" style="color:#FFFF00;"></i> Top Selling
+    </span>
+    <a href="${buildProductUrl(o.product_id)}" class="btn-buy">
+      <i class="fas fa-shopping-bag"></i> Buy Now
+    </a>
+  </div>
+`;
 
         leftCol.appendChild(card);
         observer.observe(card);
         testimonialCards.push(card);
 
         // staggered reveal
-        setTimeout(() => card.classList.add("visible"), i * 600);
+        // setTimeout(() => card.classList.add("visible"), i * 600);
       });
 
       // Carousel init
@@ -85,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function initCarousel() {
     if (!testimonialCards.length) return;
+    testimonialCards.forEach((c) => c.classList.remove("active"));
     testimonialCards[0].classList.add("active", "slide-in");
     testimonialCards[0].addEventListener(
       "animationend",

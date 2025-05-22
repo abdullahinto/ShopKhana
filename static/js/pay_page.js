@@ -187,69 +187,78 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // Confirm button: Check if a payment method is chosen and, for digital methods, if screenshot verification was completed.
-  const confirmOrderBtn = document.getElementById("skPayConfirmOrder");
-  if (confirmOrderBtn) {
-    confirmOrderBtn.addEventListener("click", () => {
-      // Change text immediately and prevent double clicks
-      confirmOrderBtn.textContent = "Confirming...";
-      confirmOrderBtn.disabled = true;
+const confirmOrderBtn = document.getElementById("skPayConfirmOrder");
+if (confirmOrderBtn) {
+  let dotInterval;
 
-      const selectedMethodElem = document.querySelector(
-        ".sk-pay-method.active"
+  confirmOrderBtn.addEventListener("click", () => {
+    // Prevent double clicks
+    confirmOrderBtn.disabled = true;
+
+    // Start your "Confirming..." animation
+    let dotCount = 0;
+    confirmOrderBtn.textContent = "Confirming";
+    dotInterval = setInterval(() => {
+      dotCount = (dotCount + 1) % 4;                // 0,1,2,3,0,1...
+      confirmOrderBtn.textContent = 
+        "Confirming" + ".".repeat(dotCount);
+    }, 500);                                        // change every 500ms
+
+    const selectedMethodElem = document.querySelector(".sk-pay-method.active");
+    if (!selectedMethodElem) {
+      clearInterval(dotInterval);
+      confirmOrderBtn.textContent = "Confirm";
+      confirmOrderBtn.disabled = false;
+      showToast(
+        "Please select a payment method before confirming your order.",
+        "error"
       );
-      if (!selectedMethodElem) {
-        showToast(
-          "Please select a payment method before confirming your order.",
-          "error"
-        );
-        // Revert button state
+      return;
+    }
+    const method = selectedMethodElem.getAttribute("data-method");
+
+    const finalizeError = (msg) => {
+      clearInterval(dotInterval);
+      confirmOrderBtn.textContent = "Confirm";
+      confirmOrderBtn.disabled = false;
+      showToast(msg, "error");
+    };
+
+    if (method === "cod") {
+      const formData = new FormData();
+      formData.append("payment_method", "cod");
+      fetch("/process_payment", { method: "POST", body: formData })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            window.paymentVerified = true;
+            window.location.href = "/order_placed";
+          } else {
+            finalizeError(data.message);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          finalizeError("Error processing COD payment.");
+        });
+    } else {
+      if (!window.paymentVerified) {
+        clearInterval(dotInterval);
         confirmOrderBtn.textContent = "Confirm";
         confirmOrderBtn.disabled = false;
-        return;
-      }
-      const method = selectedMethodElem.getAttribute("data-method");
-
-      // If COD, trigger AJAX call to process payment for COD.
-      if (method === "cod") {
-        const formData = new FormData();
-        formData.append("payment_method", "cod");
-        fetch("/process_payment", { method: "POST", body: formData })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.status === "success") {
-              window.paymentVerified = true;
-              window.location.href = "/order_placed";
-            } else {
-              showToast(data.message, "error");
-              // revert on error
-              confirmOrderBtn.textContent = "Confirm";
-              confirmOrderBtn.disabled = false;
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            showToast("Error processing COD payment.", "error");
-            confirmOrderBtn.textContent = "Confirm";
-            confirmOrderBtn.disabled = false;
-          });
+        showToast(
+          "Please verify your payment by uploading a screenshot.",
+          "error"
+        );
       } else {
-        // For digital payments, require that the screenshot has been verified.
-        if (!window.paymentVerified) {
-          showToast(
-            "Please verify your payment by uploading a screenshot.",
-            "error"
-          );
-          confirmOrderBtn.textContent = "Confirm";
-          confirmOrderBtn.disabled = false;
-          return;
-        }
         window.location.href = "/order_placed";
       }
-    });
-  } else {
-    console.error("Confirm Order button (ID: skPayConfirmOrder) not found.");
-  }
+    }
+  });
+} else {
+  console.error("Confirm Order button (ID: skPayConfirmOrder) not found.");
+}
+
 
   // --- Toast Notification Function ---
   function showToast(message, type) {

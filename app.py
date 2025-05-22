@@ -17,7 +17,6 @@ import requests
 
 
 
-
 # Third-party libraries
 import cv2
 import numpy as np
@@ -31,6 +30,7 @@ from flask_dance.contrib.google import google, make_google_blueprint
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_mail import Mail, Message
 from flask_pymongo import PyMongo
+from flask_apscheduler import APScheduler
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from PIL import Image, ImageEnhance, ImageOps
 from pymongo import DESCENDING, ReturnDocument
@@ -76,6 +76,11 @@ def expensive_view():
 
 
 
+class Config:
+    SCHEDULER_API_ENABLED = True
+    # (optional) configure job stores, executors, etc.
+
+
 # Configure MongoDB
 app.config["MONGO_URI"] = os.getenv("MONGO_URI", "mongodb://localhost:27017/shopkhana")
 
@@ -93,10 +98,10 @@ app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER", app.config["MAIL_USERNAME"])
 
-# app.config.update(
-#     TEMPLATES_AUTO_RELOAD=False,
-#     SEND_FILE_MAX_AGE_DEFAULT=31536000  # cache static files for 1 year
-# )
+app.config.from_object(Config)
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
 
 
 
@@ -2124,21 +2129,31 @@ def get_current_product_data(user_email):
 
 
 
-def get_next_order_no():
+
+
+def get_next_order_no(full_name: str) -> str:
     """
-    Atomically increments a counter in 'counters' and returns
-    first‐last#NN (or NNN once past 99). Starts numbering at 10.
+    Atomically increments the 'order_no' counter and returns
+    an order number in the format: FirstChar_LastCharNN (or NNN).
+    Sequence starts at 10 (i.e. seq=1 → 10).
     """
+    # bump the counter
     counter = mongo.db.counters.find_one_and_update(
         {"_id": "order_no"},
         {"$inc": {"seq": 1}},
         upsert=True,
         return_document=ReturnDocument.AFTER
     )
-    # raw seq starts at 1 → numeric = seq + 9 → first is 10, then 11… 99,100,...
-    num = counter["seq"] + 9
-    # get delivery‐info full name (we’ll uppercase its ends later)
-    return num
+    # seq=1 → 10, seq=2 → 11, etc.
+    seq_num = counter["seq"] + 9
+
+    # derive initials
+    raw = (full_name or "").strip()
+    first = raw[0].upper() if raw else "X"
+    last  = raw[-1].upper() if raw else "X"
+
+    # use underscore instead of '#'
+    return f"{first}_{last}{seq_num}"
 
 
 @app.route("/process_payment", methods=["POST"])
@@ -2151,7 +2166,7 @@ def process_payment():
     if not payment_method:
         return jsonify({"status": "error", "message": "Payment method not provided."})
 
-    user_email = session.get("user_email")
+    user_email = current_user.email
     order_summary = session.get("order_summary", {})
     if not order_summary:
         app.logger.error("Missing order summary for user: %s", user_email)
@@ -2207,8 +2222,8 @@ def process_payment():
     # Uppercase letters and fallback
     first_char = raw_name[0].upper() if raw_name else "X"
     last_char = raw_name[-1].upper() if raw_name else "X"
-    seq_num = get_next_order_no()
-    order_no = f"{first_char}#{last_char}{seq_num}"
+    order_no = get_next_order_no(raw_name)
+
 
     # --- COD branch ---
     if payment_method == "cod":
@@ -2249,6 +2264,15 @@ def process_payment():
             "order_status": "Pending",
             "transaction_date": datetime.datetime.utcnow()
         })
+
+        run_at = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        scheduler.add_job(
+            id=f"confirm_{order_no}",        # unique job ID
+            func=confirm_order,              # the function you defined
+            args=[order_no],                 # pass the order_no
+            trigger="date",                  # one-time run
+            run_date=run_at                  # when to run
+        )
 
         # Clear session keys
         for key in ("selected_ids", "order_summary", "product_id"): session.pop(key, None)
@@ -2333,6 +2357,16 @@ def process_payment():
         "order_status": "Processing",
         "transaction_date": datetime.datetime.utcnow()
     })
+
+
+    
+    scheduler.add_job(
+        id=f"confirm_{order_no}",        # unique job ID
+        func=confirm_order,              # the function you defined
+        args=[order_no],                 # pass the order_no
+        trigger="date",                  # one-time run
+        run_date=run_at                  # when to run
+    )
 
     return jsonify({"status": "success", "message": "Payment verified successfully!"})
 
@@ -2707,6 +2741,13 @@ def my_orders():
             order["transaction_date_formatted"] = order["transaction_date"].strftime("%Y-%m-%d %H:%M")
         else:
             order["transaction_date_formatted"] = ""
+
+        # **Ensure each product_* list exists so Jinja never trips over a missing key**
+        order.setdefault("product_names",     [])
+        order.setdefault("product_colors",    [])
+        order.setdefault("product_sizes",     [])
+        order.setdefault("product_quantities",[])
+    
         orders.append(order)
 
     pagination = {
@@ -2798,7 +2839,7 @@ def download_invoice(order_no):
 
 
 # Check Cancellation Eligibility: Allow cancellation only within 1 hours.
-@app.route('/check-cancel-order/<order_id>')
+@app.route('/check-cancel-order/<order_no>')
 @login_required
 def check_cancel_order(order_no):
     order = mongo.db.orders.find_one({"order_no": order_no, "user_email": current_user.email})
@@ -2811,18 +2852,33 @@ def check_cancel_order(order_no):
 
 
 
-@app.route('/mark-confirmed/<order_id>', methods=['GET','POST'])
-@login_required
-def mark_confirmed(order_no):
-    user_email = current_user.email
-    res = mongo.db.orders.update_one(
-        {"order_no": order_no, "user_email": user_email},
-        {"$set": {"order_status": "Confirmed"}}  # Update the order status to 'Confirmed'
-    )
-    if res.modified_count == 1:
-        return jsonify({"status": "ok"}), 200
-    return jsonify({"status": "fail"}), 400
+# @app.route('/mark-confirmed/<order_no>', methods=['GET','POST'])
+# @login_required
+# def mark_confirmed(order_no):
+#     user_email = current_user.email
+#     res = mongo.db.orders.update_one(
+#         {"order_no": order_no, "user_email": user_email},
+#         {"$set": {"order_status": "Confirmed"}}  # Update the order status to 'Confirmed'
+#     )
+#     if res.modified_count == 1:
+#         return jsonify({"status": "ok"}), 200
+#     return jsonify({"status": "fail"}), 400
 
+
+
+def confirm_order(order_no):
+    """
+    This job will run 1 hour after order creation
+    and flip status from Pending → Confirmed.
+    """
+    result = mongo.db.orders.update_one(
+        {"order_no": order_no, "order_status": "Pending"},
+        {"$set": {"order_status": "Confirmed"}}
+    )
+    if result.modified_count:
+        app.logger.info(f"Order {order_no} auto-confirmed.")
+    else:
+        app.logger.debug(f"Order {order_no} was already processed.")
 
 
 # Cancel Order: Update the order status to 'Canceled' if eligible.

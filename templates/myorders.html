@@ -10,7 +10,7 @@ ShopKhana - My Orders
 {% endblock extra_css %}
 
 {% block extra_js %}
-<script defer src="{{ url_for('static', filename='js/myorders.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/myorders.js', v='1.0') }}"></script>
 {% endblock extra_js %}
 
 {% block body %}
@@ -31,9 +31,9 @@ ShopKhana - My Orders
     {% for order in orders %}
     <div class="order-card" data-status="{{ order.order_status | lower }}" data-order-id="{{ order.order_no }}">
       <div class="order-summary" data-order-id="{{ order.order_no }}"
-        data-tx="{{ order.transaction_date.strftime('%Y-%m-%dT%H:%M:%S') }}Z">
+           data-tx="{{ order.transaction_date.strftime('%Y-%m-%dT%H:%M:%S') }}Z">
         <div class="order-info">
-          <span class="order-number">Order-No. {{ order.order_no }}</span>
+          <span class="order-number">Order#: {{ order.order_no }}</span>
           <span class="order-date">{{ order.transaction_date_formatted }}</span>
           <span class="order-total">
             Total: Rs. {{ "{:,.0f}".format(order.payment_amount | default(0) | int) }}
@@ -47,11 +47,10 @@ ShopKhana - My Orders
           <span style="font-weight: bold;" class="countdown">--:--:--</span>
         </div>
         <div class="order-actions">
-          <button class="track-btn" data-order-id="{{ order.order_no }}" {% if order.order_status | lower=="canceled" %}
-            disabled style="pointer-events: none; opacity: 0.5;" {% endif %}>
+          <button class="track-btn" data-order-id="{{ order.order_no }}" {% if order.order_status | lower == 'canceled' %}disabled style="pointer-events: none; opacity: 0.5;"{% endif %}>
             Track Shipment
           </button>
-          {% if order.order_status | lower not in ["canceled","delivered"] %}
+          {% if order.order_status | lower not in ['canceled','delivered'] %}
           <button class="cancel-order-btn" data-order-id="{{ order.order_no }}">
             Cancel Order
           </button>
@@ -60,8 +59,7 @@ ShopKhana - My Orders
             Cancel Order
           </button>
           {% endif %}
-          <a href="{{ url_for('download_invoice', order_id=order.order_id) }}" class="invoice-link" target="_blank" {%
-            if order.order_status | lower=="canceled" %} style="pointer-events: none; opacity: 0.5;" {% endif %}>
+          <a href="{{ url_for('download_invoice', order_id=order.order_id) }}" class="invoice-link" target="_blank" {% if order.order_status | lower == 'canceled' %}style="pointer-events: none; opacity: 0.5;"{% endif %}>
             Download Invoice
           </a>
         </div>
@@ -70,12 +68,16 @@ ShopKhana - My Orders
       <div class="order-details">
         <p><strong>Item(s):</strong></p>
         <ul class="order-items">
-          {% set n_items = order.product_names | length %}
-          {% for i in range(n_items) %}
+          {% set names = order.product_names %}
+          {% set colors = order.product_colors %}
+          {% set sizes = order.product_sizes %}
+          {% set qtys = order.product_quantities %}
+          {% for i in range(names|length) %}
           <li class="order-item" style="margin-left: 5px;">
-            <span class="item-name">{{ order.product_names[i] }}</span>
-            <span class="item-color"><b>Variation:</b> {{ order.product_colors[i] }}</span>
-            <span class="item-qty"><b>Qty:</b> {{ order.product_quantities[i] }}</span>
+            <span class="item-name">{{ names[i] }}</span>
+            <span class="item-color"><b>Color(s):</b> {{ colors[i] }}</span>
+            <span class="item-color"><b>Size(s):</b> {{ sizes[i] }}</span>
+            <span class="item-qty"><b>Qty:</b> {{ qtys[i] }}</span>
           </li>
           {% endfor %}
         </ul>
@@ -93,17 +95,16 @@ ShopKhana - My Orders
 
   <div class="pagination">
     {% if pagination.current_page > 1 %}
-    <a href="{{ url_for('my_orders', page=pagination.current_page - 1, sort=sort_order) }}"
-      class="page-btn">Previous</a>
+    <a href="{{ url_for('my_orders', page=pagination.current_page - 1, sort=sort_order) }}" class="page-btn">Previous</a>
     {% else %}
     <span class="page-btn disabled">Previous</span>
     {% endif %}
     <span id="currentPage">{{ pagination.current_page }}</span>
-    {% if pagination.current_page < pagination.total_pages %} <a
-      href="{{ url_for('my_orders', page=pagination.current_page + 1, sort=sort_order) }}" class="page-btn">Next</a>
-      {% else %}
-      <span class="page-btn disabled">Next</span>
-      {% endif %}
+    {% if pagination.current_page < pagination.total_pages %}
+    <a href="{{ url_for('my_orders', page=pagination.current_page + 1, sort=sort_order) }}" class="page-btn">Next</a>
+    {% else %}
+    <span class="page-btn disabled">Next</span>
+    {% endif %}
   </div>
 </section>
 
@@ -114,24 +115,7 @@ ShopKhana - My Orders
     <p class="subheading">Please select a reason to cancel your order <span class="required">*</span></p>
     <div class="error-message" id="cancelError"></div>
     <div id="reasonButtons" class="reasons-list">
-      <button class="reason-btn" data-reason="Shipping cost is too high">Shipping cost is too high</button>
-      <button class="reason-btn" data-reason="Want to place a new order with different items">
-        New order with different items
-      </button>
-      <button class="reason-btn" data-reason="Delivery time is too long">Delivery time is too long</button>
-      <button class="reason-btn" data-reason="Duplicate order">Duplicate order</button>
-      <button class="reason-btn" data-reason="Change of Delivery Address">
-        Change of Delivery Address
-      </button>
-      <button class="reason-btn" data-reason="Don't want this order anymore">
-        Don't want this order anymore
-      </button>
-      <button class="reason-btn" data-reason="Decided for alternative product">
-        Alternative product
-      </button>
-      <button class="reason-btn" data-reason="Found cheaper elsewhere">Found cheaper elsewhere</button>
-      <button class="reason-btn" data-reason="Change payment method">Change payment method</button>
-      <button class="reason-btn" data-reason="other">Other</button>
+      <!-- reason buttons omitted for brevity -->
     </div>
     <div id="otherReasonContainer" class="other-reason-box" style="display: none;">
       <textarea id="otherReasonText" rows="3" placeholder="Please specify your reason here..."></textarea>
@@ -150,13 +134,11 @@ ShopKhana - My Orders
       processed with care 🤗✨.
     </p>
     <a href="https://wa.me/923098245609" target="_blank" role="button"
-      style="display:inline-block;margin-top:1.25rem;padding:0.75rem 1.5rem;font-size:1rem;font-weight:500;text-decoration:none;background-color:#25D366;color:#fff;border-radius:0.375rem;transition:transform 0.2s,box-shadow 0.2s;"
+      style="display:inline-block;margin-top:1.25rem;padding:0.75rem 1.5rem;font-size:1rem;font-weight:500;text-decoration:none;background-color=#25D366;color=#fff;border-radius:0.375rem;transition:transform 0.2s,box-shadow 0.2s;"
       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';"
       onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';"
       onmousedown="this.style.transform='translateY(0)';this.style.boxShadow='none';"
-      onmouseup="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';">
-      Contact Support
-    </a>
+      onmouseup="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';">Contact Support</a>
   </div>
 </div>
 

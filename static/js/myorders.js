@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
       toast.addEventListener("animationend", function () {
         toast.remove();
       });
-    }, 3000);
+    }, 3000); 
   }
 
   // Countdown & Auto-Process (persistent, using ISO)
@@ -232,9 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const txMs = new Date(txIso).getTime(); // parse ISO correctly
     const target = txMs + 60 * 60 * 1000; // +1 hour
-    const orderId = card.getAttribute("data-order-id");
     let interval = null;
-    let calledApi = false; // ensure we flip once
 
     function tick() {
       const now = Date.now();
@@ -242,28 +240,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (diff <= 0) {
         clearInterval(interval);
-        if (!calledApi) {
-          calledApi = true;
-          fetch("/mark-confirmed/" + orderId, { method: "POST" })
-            .then(function (res) {
-              // if bad, just log it; no need to throw
-              if (!res.ok) {
-                console.warn("mark-confirmed failed", res.status);
-                return null;
-              }
-              return res.json();
-            })
-            .then(function (json) {
-              if (json && json.status === "ok") {
-                statusEl.textContent = "Confirmed";
-                const cdContainer = card.querySelector(".order-countdown");
-                if (cdContainer) cdContainer.remove();
-              }
-            })
-            .catch(function (err) {
-              console.error("Error auto‑confirming order", err);
-            });
-        }
+
+        // Server will auto-confirm this order in the background.
+        // Update the UI immediately:
+        statusEl.textContent = "Confirmed";
+        const cdContainer = card.querySelector(".order-countdown");
+        if (cdContainer) cdContainer.remove();
+
         return;
       }
 

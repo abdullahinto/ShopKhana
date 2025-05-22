@@ -13,7 +13,7 @@ Payment Methods - ShopKhana
     window.orderSummary = {{ order_summary | tojson }};
     window.codfee = {{ codfee }};
 </script>
-<script defer src="{{ url_for('static', filename='js/pay_page.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/pay_page.js', v='1.0') }}"></script>
 {% endblock extra_js %}
 
 
