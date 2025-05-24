@@ -5,7 +5,7 @@ Payment Methods - ShopKhana
 {% endblock title %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pay_page.css', v='1.0') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pay_page.css', v='1.1') }}">
 {% endblock extra_css %}
 
 {% block extra_js %}
@@ -13,7 +13,7 @@ Payment Methods - ShopKhana
     window.orderSummary = {{ order_summary | tojson }};
     window.codfee = {{ codfee }};
 </script>
-<script defer src="{{ url_for('static', filename='js/pay_page.js', v='1.0') }}"></script>
+<script defer src="{{ url_for('static', filename='js/pay_page.js', v='1.1') }}"></script>
 {% endblock extra_js %}
 
 
